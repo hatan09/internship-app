@@ -42,7 +42,7 @@ namespace InternshipApp.Api.DataObjects
         public int? InternGroupId { get; set; }
     }
 
-    public class GetStudentDTO : BaseDTO<StudentDTO>
+    public class GetStudentDTO : BaseDTO<string>
     {
         public string FullName { get; set; } = string.Empty;
 
@@ -54,13 +54,18 @@ namespace InternshipApp.Api.DataObjects
 
         public Stat Stat { get; set; } = Stat.PENDING;
 
+        public bool IsAccepted { get; set; } = false;
+
         public string CVUrl { get; set; } = string.Empty;
 
         public string Email { get; set; } = string.Empty;
 
+        public int DepartmentId { get; set; }
+
+        public string Birthdate { get; set; } = string.Empty;
+
         [Phone]
         public string PhoneNumber { get; set; } = string.Empty;
-
-        public ICollection<StudentJob> StudentJobs { get; set; } = Array.Empty<StudentJob>();
+        public ICollection<int> SkillIds { get; set; } = Array.Empty<int>();
     }
 }

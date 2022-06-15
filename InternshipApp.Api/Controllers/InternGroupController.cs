@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace InternshipApp.Api.Controllers
 {
-    [Authorize]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class InternGroupController : ControllerBase
@@ -31,6 +30,17 @@ namespace InternshipApp.Api.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
+        {
+            var internGroups = await _internGroupRepository.FindAll().Include(grp => grp.Department).Include(grp => grp.Instructor).ToListAsync(cancellationToken);
+            if (internGroups is null)
+                return NotFound();
+
+            return Ok(_mapper.Map<IEnumerable<InternGroupDTO>>(internGroups));
+        }
+
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -39,6 +49,19 @@ namespace InternshipApp.Api.Controllers
                 return NotFound();
 
             return Ok(_mapper.Map<InternGroupDTO>(internGroup));
+        }
+
+
+        [HttpGet("{instructorId}")]
+        public async Task<IActionResult> GetByInstructor(string instructorId, CancellationToken cancellationToken = default)
+        {
+            var instructor = await _instructorManager.FindByIdAsync(instructorId);
+            if (instructor is null)
+                return NotFound("No Instructor Found");
+
+            var group = await _internGroupRepository.FindAll(grp => grp.InstructorId!.Equals(instructorId)).FirstOrDefaultAsync(cancellationToken);
+
+            return Ok(_mapper.Map<InternGroupDTO>(group));
         }
 
 

@@ -12,16 +12,17 @@ using System.Threading.Tasks;
 
 namespace InternshipApp.Api.Controllers
 {
-    [Authorize]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class RecruiterController : ControllerBase
     {
         private readonly RecruiterManager _recruiterManager;
+        private readonly ICompanyRepository _companyRepository;
         private readonly IMapper _mapper;
 
-        public RecruiterController(RecruiterManager recruiterManager, IMapper mapper)
+        public RecruiterController(RecruiterManager recruiterManager, ICompanyRepository companyRepository, IMapper mapper)
         {
+            _companyRepository = companyRepository;
             _recruiterManager = recruiterManager;
             _mapper = mapper;
         }
@@ -41,7 +42,11 @@ namespace InternshipApp.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] RecruiterDTO dto, CancellationToken cancellationToken = default)
         {
+            var company = await _companyRepository.FindByIdAsync(dto.CompanyId);
+            if(company is null) return NotFound(" No Company Found ");
+
             var recruiter = _mapper.Map<Recruiter>(dto);
+            recruiter.Company = company;
 
             var result = await _recruiterManager.CreateAsync(recruiter, dto.Password);
             if (!result.Succeeded)

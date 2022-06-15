@@ -16,10 +16,10 @@ namespace InternshipApp.Core.Entities
         public Company Company { get; set; }
         public int CompanyId { get; set; }
 
-        public virtual ICollection<Department> Departments { get; set; } = new HashSet<Department>();
+        public virtual ICollection<Department>? Departments { get; set; } = new HashSet<Department>();
 
-        public virtual ICollection<StudentJob> StudentJobs { get; set; } = new HashSet<StudentJob>();
-        public virtual ICollection<JobSkill> JobSkills { get; set; } = new HashSet<JobSkill>();
+        public virtual ICollection<StudentJob>? StudentJobs { get; set; } = new HashSet<StudentJob>();
+        public virtual ICollection<JobSkill>? JobSkills { get; set; } = new HashSet<JobSkill>();
 
 
     }

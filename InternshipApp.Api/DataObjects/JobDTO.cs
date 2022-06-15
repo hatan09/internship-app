@@ -19,9 +19,11 @@ namespace InternshipApp.Api.DataObjects
         public string Title { get; set; } = string.Empty;
 
         public int CompanyId { get; set; }
+
+        public ICollection<int> SkillIds { get; set; } = Array.Empty<int>();
     }
 
-    public class CreateJobDTO : BaseDTO<int>
+    public class CreateJobDTO
     {
         public int MinCredit { get; set; } = 0;
 
@@ -35,6 +37,6 @@ namespace InternshipApp.Api.DataObjects
 
         public ICollection<int> DepartmentIds { get; set; } = Array.Empty<int>();
 
-        public ICollection<JobSkill> JobSkills { get; set; } = Array.Empty<JobSkill>();
+        public ICollection<int> SkillIds { get; set; } = Array.Empty<int>();
     }
 }

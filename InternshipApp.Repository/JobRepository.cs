@@ -19,5 +19,8 @@ namespace InternshipApp.Repository
 
         public override IQueryable<Job> FindAll(Expression<Func<Job, bool>>? predicate = null)
             => _dbSet.WhereIf(predicate != null, predicate!);
+
+        public IQueryable<Job> FindByCompanyId(int companyId)
+            => FindAll(job => job.CompanyId == companyId).Include(job => job.JobSkills);
     }
 }

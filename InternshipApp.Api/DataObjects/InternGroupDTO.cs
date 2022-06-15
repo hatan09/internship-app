@@ -10,7 +10,11 @@ namespace InternshipApp.Api.DataObjects
 {
     public class InternGroupDTO : BaseDTO<int>
     {
+        public string DepartmentTitle { get; set; } = string.Empty;
+
         public int DepartmentId { get; set; } = 0;
+
+        public string InstructorName { get; set; } = string.Empty;
 
         public string InstructorId { get; set; } = string.Empty;
 

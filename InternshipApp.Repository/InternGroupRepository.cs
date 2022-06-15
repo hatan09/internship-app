@@ -21,8 +21,6 @@ namespace InternshipApp.Repository
             => _dbSet.WhereIf(predicate != null, predicate!);
 
         public IQueryable<InternGroup> FindByDepartment(int id)
-        {
-            throw new NotImplementedException();
-        }
+            => FindAll(grp => grp.DepartmentId == id);
     }
 }

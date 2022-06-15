@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="InternshipApp.Contracts.IBaseRepository&lt;T&gt;">
+    <Position X="13.5" Y="1" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAAAAAAAAEAAAAAQIAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IBaseRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="InternshipApp.Contracts.ICompanyRepository">
+    <Position X="11" Y="4" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ICompanyRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="InternshipApp.Contracts.IDepartmentRepository">
+    <Position X="15.75" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IDepartmentRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="InternshipApp.Contracts.IInternGroupRepository">
+    <Position X="8.5" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IInternGroupRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="InternshipApp.Contracts.IJobRepository">
+    <Position X="13.5" Y="4" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IJobRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="InternshipApp.Contracts.ISkillRepository">
+    <Position X="18.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ISkillRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

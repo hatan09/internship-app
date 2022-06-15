@@ -16,6 +16,8 @@ namespace InternshipApp.Api.DataObjects
         [Required]
         public string UserName { get; set; } = string.Empty;
 
+        public string Birthdate { get; set; } = string.Empty;
+
         [Required]
         public string Password { get; set; } = string.Empty;
 

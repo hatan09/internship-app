@@ -18,48 +18,38 @@ namespace InternshipApp.Api.DataObjects
                 .ForMember(dto => dto.Roles, opt => opt.MapFrom(usr => usr.UserRoles.Select(u_r => u_r.Role!.Name)));
             CreateMap<UserDTO, User>();
 
-            CreateMap<Student, StudentDTO>();
+            CreateMap<Student, StudentDTO>().ForMember(dto => dto.Birthdate, opt => opt.MapFrom(ent => ent.Birthdate.Date));
+            CreateMap<Student, GetStudentDTO>()
+                .ForMember(dto => dto.SkillIds, opt => opt.MapFrom(stu => stu.StudentSkills!.Select(ss => ss.SkillId)))
+                .ForMember(dto => dto.IsAccepted, opt => opt.MapFrom(stu => (stu.StudentJobs!).Any(sj => sj.IsAccepted)));
             CreateMap<StudentDTO, Student>()
                 .ForMember(ent => ent.Id, opt => opt.Ignore())
                 .ForMember(ent => ent.Birthdate, o => o.MapFrom(dto => DateTime.Parse(dto.Birthdate, null, DateTimeStyles.AssumeUniversal)));
 
-            CreateMap<Customer, CustomerDTO>();
-            CreateMap<CustomerDTO, Customer>()
-                .ForMember(ent => ent.Id, opt => opt.Ignore());
-            CreateMap<CreateCustomerDTO, Customer>()
+            CreateMap<Instructor, InstructorDTO>();
+            CreateMap<InstructorDTO, Instructor>()
                 .ForMember(ent => ent.Id, opt => opt.Ignore())
                 .ForMember(ent => ent.Birthdate, o => o.MapFrom(dto => DateTime.Parse(dto.Birthdate, null, DateTimeStyles.AssumeUniversal)));
-            CreateMap<Customer, GetCustomerDTO>();
 
-            CreateMap<Staff, StaffDTO>();
-            CreateMap<StaffDTO, Staff>()
-                .ForMember(ent => ent.Id, opt => opt.Ignore());
-            CreateMap<CreateStaffDTO, Staff>()
+            CreateMap<Recruiter, RecruiterDTO>();
+            CreateMap<RecruiterDTO, Recruiter>()
                 .ForMember(ent => ent.Id, opt => opt.Ignore())
-                .ForMember(ent => ent.CompanyId, opt => opt.Ignore())
                 .ForMember(ent => ent.Birthdate, o => o.MapFrom(dto => DateTime.Parse(dto.Birthdate, null, DateTimeStyles.AssumeUniversal)));
-            CreateMap<Staff, GetStaffDTO>();
 
-            CreateMap<Company, CompanyDTO>();
-            CreateMap<CompanyDTO, Company>()
-                .ForMember(ent => ent.Id, opt => opt.Ignore())
-                .ForMember(ent => ent.Guid, opt => opt.Ignore());
+            CreateMap<Job, JobDTO>()
+                .ForMember(dto => dto.SkillIds, opt => opt.MapFrom(job => job.JobSkills!.Select(js => js.SkillId)));
+            CreateMap<JobDTO, Job>()
+                .ForMember(ent => ent.Id, opt => opt.Ignore());
+            CreateMap<CreateJobDTO, Job>();
 
-            CreateMap<App, AppDTO>();
-            CreateMap<AppDTO, App>()
-                .ForMember(ent => ent.Id, opt => opt.Ignore())
-                .ForMember(ent => ent.LeaderId, opt => opt.Ignore());
-            CreateMap<CreateAppDTO, App>()
+            CreateMap<Skill, SkillDTO>();
+            CreateMap<SkillDTO, Skill>()
                 .ForMember(ent => ent.Id, opt => opt.Ignore());
 
-            CreateMap<Report, ReportDTO>();
-            CreateMap<ReportDTO, Report>()
-                .ForMember(ent => ent.Id, opt => opt.Ignore());
-
-            CreateMap<Bug, BugDTO>();
-            CreateMap<BugDTO, Bug>()
-                .ForMember(ent => ent.Id, opt => opt.Ignore());
-            CreateMap<CreateBugDTO, Bug>()
+            CreateMap<InternGroup, InternGroupDTO>()
+                .ForMember(dto => dto.DepartmentTitle, opt => opt.MapFrom(ent => ent.Department.Title))
+                .ForMember(dto => dto.InstructorName, opt => opt.MapFrom(ent => ent.Instructor.FullName));
+            CreateMap<InternGroupDTO, InternGroup>()
                 .ForMember(ent => ent.Id, opt => opt.Ignore());
         }
     }

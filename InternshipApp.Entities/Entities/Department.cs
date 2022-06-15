@@ -10,7 +10,7 @@ namespace InternshipApp.Core.Entities
     {
         public string Title { get; set; } = string.Empty;
 
-        public virtual ICollection<InstructorDepartment> InstructorDepartments { get; set; } = new HashSet<InstructorDepartment>();
-        public virtual ICollection<Job> Jobs { get; set; } = new HashSet<Job>();
+        public virtual Instructor? Instructor { get; set; }
+        public virtual ICollection<Job?> Jobs { get; set; } = new HashSet<Job?>();
     }
 }

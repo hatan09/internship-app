@@ -10,8 +10,8 @@ namespace InternshipApp.Core.Entities
     {
         public string Name { get; set; } = string.Empty;
 
-        public virtual ICollection<StudentSkill> StudentSkills { get; set; } = new HashSet<StudentSkill>();
-        public virtual ICollection<JobSkill> JobSkills { get; set; } = new HashSet<JobSkill>();
+        public virtual ICollection<StudentSkill>? StudentSkills { get; set; } = new HashSet<StudentSkill>();
+        public virtual ICollection<JobSkill>? JobSkills { get; set; } = new HashSet<JobSkill>();
     }
 
     public enum Level { BEGINNER, INTERMEDIATE, ADVANCE, MASTER }

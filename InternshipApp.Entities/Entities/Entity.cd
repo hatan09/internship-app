@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="InternshipApp.Core.Entities.BaseEntity&lt;TKey&gt;">
+    <Position X="12.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\BaseEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.Company">
+    <Position X="10.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAEAAAAAAAAAAAAACAAgAAAAAAAA=</HashCode>
+      <FileName>Entities\Company.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.Department">
+    <Position X="12.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAEAAAAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>Entities\Department.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.Instructor">
+    <Position X="12.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAEAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Entities\Instructor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.InternGroup">
+    <Position X="14.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAgEAAAAAAEAAAECAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>Entities\InternGroup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.Job">
+    <Position X="8" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAIAAEAAACAAEAAAAAAAAAAIAAAABAAAAEA=</HashCode>
+      <FileName>Entities\Job.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.JobSkill">
+    <Position X="12.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAQAAAAAAAgAAAAAAAAAAAAAAACAQABAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\JobSkill.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.Recruiter">
+    <Position X="10.25" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Entities\Recruiter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.Role">
+    <Position X="14.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Role.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.Skill">
+    <Position X="17" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Entities\Skill.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.Student">
+    <Position X="8" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAIBAAAABAAIEAAAAAAIAAIAAAACCEA=</HashCode>
+      <FileName>Entities\Student.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.StudentJob">
+    <Position X="8" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAEAQAAAAAAAAAAAAAAAAAACAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Entities\StudentJob.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.StudentSkill">
+    <Position X="17" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAQAAAAAAAAAAAAAAAAAAAAQABAAAAAAACCAA=</HashCode>
+      <FileName>Entities\StudentSkill.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.User">
+    <Position X="10.25" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAICAAAAAAAQAAAAAAAgAAAAAAQAAAAA=</HashCode>
+      <FileName>Entities\User.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InternshipApp.Core.Entities.UserRole">
+    <Position X="12.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\UserRole.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="InternshipApp.Core.Entities.Level">
+    <Position X="18.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAiAAAAAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Skill.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="InternshipApp.Core.Entities.Stat">
+    <Position X="6" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAQAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Student.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

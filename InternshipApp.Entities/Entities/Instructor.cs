@@ -8,6 +8,8 @@ namespace InternshipApp.Core.Entities
 {
     public class Instructor : User
     {
-        public virtual ICollection<InstructorDepartment> InstructorDepartments { get; set; } = new HashSet<InstructorDepartment>();
+        public int DepartmentId { get; set; }
+        public virtual Department Department { get; set; }
+        public virtual InternGroup? InternGroup { get; set; }
     }
 }

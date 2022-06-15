@@ -42,22 +42,6 @@ namespace InternshipApp.Core.Database
             });
 
 
-            modelBuilder.Entity<InstructorDepartment>(entity =>
-            {
-                entity.HasOne(id => id.Instructor)
-                    .WithMany(ins => ins!.InstructorDepartments)
-                    .HasForeignKey(id => id.InstructorId)
-                    .IsRequired()
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasOne(id => id.Department)
-                    .WithMany(dep => dep!.InstructorDepartments)
-                    .HasForeignKey(id => id.DepartmentId)
-                    .IsRequired()
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
-
-
             modelBuilder.Entity<StudentSkill>(entity =>
             {
                 entity.HasOne(ss => ss.Student)
@@ -71,6 +55,8 @@ namespace InternshipApp.Core.Database
                     .HasForeignKey(ss => ss.SkillId)
                     .IsRequired()
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasKey(ss => new { ss.SkillId, ss.StudentId });
             });
 
 
@@ -87,6 +73,8 @@ namespace InternshipApp.Core.Database
                     .HasForeignKey(sj => sj.JobId)
                     .IsRequired()
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasKey(sj => new { sj.JobId, sj.StudentId });
             });
 
 
@@ -103,6 +91,8 @@ namespace InternshipApp.Core.Database
                     .HasForeignKey(js => js.SkillId)
                     .IsRequired()
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasKey(js => new { js.SkillId, js.JobId });
             });
         }
     }

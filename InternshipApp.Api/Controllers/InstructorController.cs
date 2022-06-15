@@ -12,16 +12,17 @@ using System.Threading.Tasks;
 
 namespace InternshipApp.Api.Controllers
 {
-    [Authorize]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class InstructorController : ControllerBase
     {
         private readonly InstructorManager _instructorManager;
+        private readonly IDepartmentRepository _departmentRepository;
         private readonly IMapper _mapper;
 
-        public InstructorController(InstructorManager instructorManager, IMapper mapper)
+        public InstructorController(InstructorManager instructorManager, IDepartmentRepository departmentRepository, IMapper mapper)
         {
+            _departmentRepository = departmentRepository;
             _instructorManager = instructorManager;
             _mapper = mapper;
         }
@@ -41,7 +42,11 @@ namespace InternshipApp.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] InstructorDTO dto, CancellationToken cancellationToken = default)
         {
+            var dep = await _departmentRepository.FindByIdAsync(dto.DepartmentId, cancellationToken);
+            if (dep is null) return NotFound("No Department Found");
+
             var instructor = _mapper.Map<Instructor>(dto);
+            instructor.Department = dep;
 
             var result = await _instructorManager.CreateAsync(instructor, dto.Password);
             if (!result.Succeeded)

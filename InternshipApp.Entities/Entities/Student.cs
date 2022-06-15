@@ -22,8 +22,8 @@ namespace InternshipApp.Core.Entities
         public InternGroup? InternGroup { get; set; }
         public int? InternGroupId { get; set; }
 
-        public virtual ICollection<StudentSkill> StudentSkills { set; get; } = new HashSet<StudentSkill>();
-        public virtual ICollection<StudentJob> StudentJobs { set; get; } = new HashSet<StudentJob>();
+        public virtual ICollection<StudentSkill>? StudentSkills { set; get; } = new HashSet<StudentSkill>();
+        public virtual ICollection<StudentJob>? StudentJobs { set; get; } = new HashSet<StudentJob>();
 
 
     }
