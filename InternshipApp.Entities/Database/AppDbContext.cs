@@ -17,6 +17,8 @@ namespace InternshipApp.Core.Database
         public virtual DbSet<InternGroup> InternGroups { get; set; } = null!;
         public virtual DbSet<Skill> Skills { get; set; } = null!;
         public virtual DbSet<Job> Jobs { get; set; } = null!;
+        public virtual DbSet<Message> Messages { get; set; } = null!;
+        public virtual DbSet<Conversation> Conversations { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -93,6 +95,15 @@ namespace InternshipApp.Core.Database
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasKey(js => new { js.SkillId, js.JobId });
+            });
+
+            modelBuilder.Entity<Message>(entity =>
+            {
+                entity.HasOne(msg => msg.User)
+                    .WithMany(usr => usr!.Messages)
+                    .HasForeignKey(msg => msg.UserId)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.NoAction);
             });
         }
     }

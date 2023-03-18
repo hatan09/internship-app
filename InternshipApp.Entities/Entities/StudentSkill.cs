@@ -8,7 +8,6 @@ namespace InternshipApp.Core.Entities
         public string? StudentId { get; set; } = string.Empty;
         public Skill? Skill { get; set; }
         public int? SkillId { get; set; }
-        public Level? Level { get; set; }
-        public string Detail { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 }

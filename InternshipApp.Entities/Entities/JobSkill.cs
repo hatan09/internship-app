@@ -8,7 +8,6 @@ namespace InternshipApp.Core.Entities
         public int JobId { get; set; }
         public Skill Skill { get; set; }
         public int SkillId { get; set; }
-        public Level? Level { get; set; }
         public string? Description { get; set; } = string.Empty;
     }
 }

@@ -125,7 +125,6 @@ namespace InternshipApp.Api.Controllers
                     JobId = job.Id, 
                     Skill = skill, 
                     SkillId = skill.Id, 
-                    Level = Level.BEGINNER, 
                     Description = "This is required" }) ;
             }
 

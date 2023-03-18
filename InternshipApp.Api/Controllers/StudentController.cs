@@ -134,7 +134,7 @@ namespace InternshipApp.Api.Controllers
                 var skill = await _skillRepository.FindByIdAsync(id);
                 if (skill is not null)
                 {
-                    student.StudentSkills.Add(new StudentSkill { Student = student, StudentId = student.Id, Skill = skill, SkillId = id, Level = Level.BEGINNER});
+                    student.StudentSkills.Add(new StudentSkill { Student = student, StudentId = student.Id, Skill = skill, SkillId = id});
                 }
             }
 

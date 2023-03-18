@@ -5,11 +5,13 @@ VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InternshipApp.Api", "InternshipApp.Api\InternshipApp.Api.csproj", "{90059886-0137-4958-82C9-C17CE217DA42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternshipApp.Core", "InternshipApp.Entities\InternshipApp.Core.csproj", "{7B6EF9B4-F8AF-42D1-A2E2-6B4DB7000BF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InternshipApp.Core", "InternshipApp.Entities\InternshipApp.Core.csproj", "{7B6EF9B4-F8AF-42D1-A2E2-6B4DB7000BF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternshipApp.Contracts", "InternshipApp.Contracts\InternshipApp.Contracts.csproj", "{B4D06AE8-B52A-4692-921D-E6351AE12EE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InternshipApp.Contracts", "InternshipApp.Contracts\InternshipApp.Contracts.csproj", "{B4D06AE8-B52A-4692-921D-E6351AE12EE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternshipApp.Repository", "InternshipApp.Repository\InternshipApp.Repository.csproj", "{EB690B39-07C3-4438-9241-0D09AEB65DA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InternshipApp.Repository", "InternshipApp.Repository\InternshipApp.Repository.csproj", "{EB690B39-07C3-4438-9241-0D09AEB65DA7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InternshipApp.Portal", "InternshipApp.Portal\InternshipApp.Portal.csproj", "{89DB2029-36A7-4607-AB8C-8F3D3A389F6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{EB690B39-07C3-4438-9241-0D09AEB65DA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB690B39-07C3-4438-9241-0D09AEB65DA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB690B39-07C3-4438-9241-0D09AEB65DA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89DB2029-36A7-4607-AB8C-8F3D3A389F6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89DB2029-36A7-4607-AB8C-8F3D3A389F6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89DB2029-36A7-4607-AB8C-8F3D3A389F6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89DB2029-36A7-4607-AB8C-8F3D3A389F6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

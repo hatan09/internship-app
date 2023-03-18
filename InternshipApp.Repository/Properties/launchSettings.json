@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "InternshipApp.Repository": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:51782;http://localhost:51784"
+    }
+  }
+}

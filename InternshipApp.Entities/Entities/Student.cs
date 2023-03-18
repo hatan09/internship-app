@@ -10,7 +10,7 @@ namespace InternshipApp.Core.Entities
     public class Student : User
     {
         public string StudentId { get; set; } = string.Empty;
-        public float GPA { get; set; }
+        public double GPA { get; set; }
         public Stat Stat { get; set; } = Stat.PENDING;
         public int Credit { get; set; }
         public string CVUrl { get; set; } = string.Empty;

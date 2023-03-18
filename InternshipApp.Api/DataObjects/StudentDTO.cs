@@ -25,7 +25,7 @@ namespace InternshipApp.Api.DataObjects
 
         public int Credit { get; set; } = 0;
 
-        public float GPA { get; set; } = 0;
+        public double GPA { get; set; } = 0;
 
         public Stat Stat { get; set; } = Stat.PENDING;
 
@@ -50,7 +50,7 @@ namespace InternshipApp.Api.DataObjects
 
         public int Credit { get; set; } = 0;
 
-        public float GPA { get; set; } = 0;
+        public double GPA { get; set; } = 0;
 
         public Stat Stat { get; set; } = Stat.PENDING;
 

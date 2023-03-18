@@ -9,7 +9,7 @@ namespace InternshipApp.Core.Entities
     public class Job : BaseEntity<int>
     {
         public int MinCredit { get; set; }
-        public float MinGPA { get; set; }
+        public double MinGPA { get; set; }
         public int Slots { get; set; }
         public string Title { get; set; } = string.Empty;
 

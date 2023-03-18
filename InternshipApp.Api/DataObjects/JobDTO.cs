@@ -12,7 +12,7 @@ namespace InternshipApp.Api.DataObjects
     {
         public int MinCredit { get; set; } = 0;
 
-        public float MinGPA { get; set; } = 0;
+        public double MinGPA { get; set; } = 0;
 
         public int Slots { get; set; } = 0;
 
@@ -27,7 +27,7 @@ namespace InternshipApp.Api.DataObjects
     {
         public int MinCredit { get; set; } = 0;
 
-        public float MinGPA { get; set; } = 0;
+        public double MinGPA { get; set; } = 0;
 
         public int Slots { get; set; } = 0;
 
