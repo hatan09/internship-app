@@ -6,7 +6,7 @@ namespace InternshipApp.Portal.Views;
 public class StudentListViewStates : BaseViewModel
 {
     #region [ Fields ]
-    private ObservableCollection<StudentListRowViewStates> _items;
+    private List<StudentListRowViewStates> _items;
     #endregion
 
     #region [ CTor ]
@@ -17,7 +17,7 @@ public class StudentListViewStates : BaseViewModel
     #endregion
 
     #region [ Properties ]
-    public ObservableCollection<StudentListRowViewStates> Items
+    public List<StudentListRowViewStates> Items
     {
         get { return this._items; }
         set { this.SetProperty(ref this._items, value); }

@@ -1,19 +1,15 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using InternshipApp.Core.Entities;
+using Microsoft.AspNetCore.Components;
+using System.Xml.Linq;
 using Wave5.UI;
 using Wave5.UI.Blazor;
 using Wave5.UI.DataGrids;
+using Wave5.UI.Forms;
 
 namespace InternshipApp.Portal.Views;
 
 public partial class StudentListView : ComponentBase
 {
-    #region [ CTor ]
-    public StudentListView()
-    {
-
-    }
-    #endregion
-
     #region [ Properties - Inject ]
     [Inject]
     public ILogger<StudentListView> Logger { get; set; }
@@ -23,6 +19,8 @@ public partial class StudentListView : ComponentBase
     #endregion
 
     #region [ Properties - States - Contexts ]
+    public FormRequest<FormAction, Student> StudentFormRequest { get; private set; }
+
     protected DetailsListContainerContext ListContainerContext { get; private set; }
 
     protected DataListSearchContext SearchContext { get; private set; }
@@ -71,6 +69,29 @@ public partial class StudentListView : ComponentBase
     }
     #endregion
 
+    #region [ Event Handlers - Search ]
+    private async void OnSearchDatalist(ChangeEventArgs args)
+    {
+        var filtered = new List<StudentListRowViewStates>();
+
+        //await this.AppLogicProvider.InvokeSearchDelayAsync();
+
+        var value = args?.Value.ToString();
+        if (String.IsNullOrWhiteSpace(value))
+        {
+            filtered = this.States.Items;
+        }
+        else
+        {
+            // have to check the string is not null first
+            // for some reasons, the data can be null or blank
+            filtered = this.States.Items.Where(x =>
+                (!string.IsNullOrEmpty(x.Name) && x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase))
+            ).ToList();
+        }
+    }
+    #endregion
+
     #region [ Event Handlers - DataList ]
     private void OnRowClicked(StudentListRowViewStates rowItem)
     {
@@ -88,7 +109,27 @@ public partial class StudentListView : ComponentBase
     #region [ Private Methods - Column ]
     private void InitializeColumn()
     {
-        
+        var id = new DataGridColumnDefinition<StudentListRowViewStates>("Student ID", x => x.StudentId)
+        {
+            ColumnDataKey = nameof(StudentListRowViewStates.StudentId),
+            Width = "1fr"
+        };
+
+        var name = new DataGridColumnDefinition<StudentListRowViewStates>("Student Name", x => x.Name)
+        {
+            ColumnDataKey = nameof(StudentListRowViewStates.Name),
+            Width = "2fr"
+        };
+
+        var status = new DataGridColumnDefinition<StudentListRowViewStates>("Status", x => x.Status)
+        {
+            ColumnDataKey = nameof(StudentListRowViewStates.Status),
+            Width = "1fr"
+        };
+
+        this.ListContext.Columns.Definitions.Add(id);
+        this.ListContext.Columns.Definitions.Add(name);
+        this.ListContext.Columns.Definitions.Add(status);
     }
     #endregion
 
@@ -103,12 +144,67 @@ public partial class StudentListView : ComponentBase
         this.CommandBarContext.Items.AddRefreshButton(this.OnRefreshButtonClicked);
         this.CommandBarContext.Items.AddAddButton(this.OnAddButtonClicked);
         this.CommandBarContext.Items.AddDeleteButton(this.OnDeleteButtonClicked, false);
+    }
+    #endregion
 
-        this.CommandBarContext.FarItems.AddFilterButton(new() {
-            CommandBarFactory.CreateMenuItemFilterAll(this.OnAllFilterButtonClicked),
-            CommandBarFactory.CreateMenuItemFilterActive(this.OnActiveFilterButtonClicked),
-            CommandBarFactory.CreateMenuItemFilterInActive(this.OnInActiveFilterButtonClicked),
-        });
+    #region [ Event Handlers - CommandBars - Buttons ]
+    private async void OnRefreshButtonClicked(EventArgs e)
+    {
+        this.SearchContext.SetDefafultSearchValue(string.Empty);
+        await this.LoadDataAsync();
+    }
+
+    private void OnAddButtonClicked(EventArgs e)
+    {
+        this.StateHasChanged();
+    }
+
+    private void OnEditButtonClicked(EventArgs e)
+    {
+        try
+        {
+            var selectedItem = this.ListContext.GetSelectedItems();
+            if (selectedItem.Count == 0)
+            {
+                return;
+            }
+
+            var item = selectedItem.FirstOrDefault();
+            this.StudentFormRequest = FormRequestFactory.EditRequest(item.ToEntity());
+
+            this.StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            
+        }
+    }
+
+    private async void OnDeleteButtonClicked(EventArgs e)
+    {
+        try
+        {
+            var selectedItem = this.ListContext.GetSelectedItems();
+            if (selectedItem.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var item in selectedItem)
+            {
+                
+            }
+            var tasks = new List<Task>();
+
+            tasks.Add(this.LoadDataAsync());
+
+            await Task.WhenAll(tasks);
+
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
     #endregion
 
@@ -126,18 +222,20 @@ public partial class StudentListView : ComponentBase
             this.StateHasChanged();
 
             var certificationList = new List<Student>();
-            certificationList = await this.Logic.Students.GetAllAsync();
-            this.States.Items = certificationList.ToListRowList();
+            certificationList.Add(new()
+            {
+                Id = Guid.NewGuid().ToString(),
+                FullName = "Tan Ha",
+                StudentId = "ITITIU18184"
+            });
 
+            this.States.Items.AddRange(certificationList.ToListRowList());
             this.ListContext.GetKey = (x => x.Id);
-
-            this.OnFilterDataList(this.States.Items, MenuItemNames.FilterAll);
-            // TODO: await this.AppLogicProvider.InvokeLoadDelayAsync();
+            this.ListContext.ItemsSource.AddRange(this.States.Items);
         }
         catch (Exception ex)
         {
-            this.Logger.LogException(ex);
-            // TODO: this.MessageProvider.AddExceptionMessage(this, ex);
+
         }
         finally
         {
