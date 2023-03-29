@@ -95,7 +95,7 @@ public partial class StudentListView : ComponentBase
     #region [ Event Handlers - DataList ]
     private void OnRowClicked(StudentListRowViewStates rowItem)
     {
-        this.NavigationManager.NavigateTo($"/certification-details/{rowItem.Id}");
+        this.NavigationManager.NavigateTo($"/student/{rowItem.Id}");
     }
 
     private void OnSelectionChanged()

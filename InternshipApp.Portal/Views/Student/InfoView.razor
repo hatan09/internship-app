@@ -1,8 +1,9 @@
 ﻿@namespace InternshipApp.Portal.Views
 @using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.Buttons
+@using Wave5.UI
 
-<Stack HorizontalAlign="Alignment.Center">
+<Stack HorizontalAlign="Wave5.UI.Alignment.Center">
     <div class="avatar">
         <img />
 
@@ -44,11 +45,9 @@
         <h2>
             Skills
         </h2>
-        <Stack Horizontal>
-            <SkillTag />
-            <SkillTag />
-            <SkillTag />
-        </Stack>
+        <SkillTagList>
+
+        </SkillTagList>
     </Stack>
 </Stack>
 

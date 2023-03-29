@@ -1,0 +1,26 @@
+﻿@namespace InternshipApp.Portal.Views
+@using Syncfusion.Blazor.Lists
+
+<SfListView TValue="JobListRowViewStates" ID="job-list" DataSource="@States.Items" HeaderTitle="Jobs" ShowHeader CssClass="e-list-template">
+    <ListViewFieldSettings TValue="JobListRowViewStates" Id="job-list" Text="Text"></ListViewFieldSettings>
+    <ListViewTemplates TValue="JobListRowViewStates">
+        <Template>
+            <Stack Horizontal=false ClassName="list-view-item">
+                <h3><b> @((context as JobListRowViewStates).Title) </b></h3>
+                <lable> @((context as JobListRowViewStates).Company) </lable>
+                <lable> @((context as JobListRowViewStates).Description) </lable>
+                <SkillTagList JobSkills=@((context as JobListRowViewStates).JobSkills)/>
+            </Stack>
+        </Template>
+    </ListViewTemplates>
+</SfListView>
+
+<style>
+    .list-view-item{
+        padding: 5px
+    }
+
+    .e-headertext{
+        font-size: 20pt
+    }
+</style>

@@ -1,0 +1,50 @@
+﻿@namespace InternshipApp.Portal.Views
+@using Syncfusion.Blazor.CircularGauge
+@using Syncfusion.Blazor.Buttons
+
+<Stack Horizontal Style="width:100%">
+    <SfCircularGauge Width= "400px" Height= "400px" EnablePointerDrag="true">
+        <CircularGaugeTooltipSettings Enable="true"></CircularGaugeTooltipSettings>
+        <CircularGaugeAxes>
+            <CircularGaugeAxis Direction="GaugeDirection.ClockWise" StartAngle="270" EndAngle="90" Minimum="0" Maximum="100">
+                <CircularGaugeAxisLineStyle Width="5" />
+
+                <CircularGaugeAxisMajorTicks UseRangeColor="true">
+                </CircularGaugeAxisMajorTicks>
+                <CircularGaugeAxisMinorTicks UseRangeColor="true">
+                </CircularGaugeAxisMinorTicks>
+                <CircularGaugeAxisLabelStyle UseRangeColor="true">
+                </CircularGaugeAxisLabelStyle>
+
+                <CircularGaugeRanges>
+                    <CircularGaugeRange Start="0" End="25" Radius="108%" Color="red">
+                    </CircularGaugeRange>
+                    <CircularGaugeRange Start="25" End="50" Radius="108%" Color="orange">
+                    </CircularGaugeRange>
+                    <CircularGaugeRange Start="50" End="75" Radius="108%" Color="green">
+                    </CircularGaugeRange>
+                    <CircularGaugeRange Start="75" End="100" Radius="108%" Color="cyan">
+                    </CircularGaugeRange>
+                </CircularGaugeRanges>
+
+                <CircularGaugePointers>
+                    <CircularGaugePointer Value="70"></CircularGaugePointer>
+                </CircularGaugePointers>
+            </CircularGaugeAxis>
+        </CircularGaugeAxes>
+    </SfCircularGauge>
+    <Stack Horizontal="false">
+        <h3>Job Title</h3>
+        <label>Company</label>
+        <SfButton Content="Apply" CssClass="apply-btn">
+
+        </SfButton>
+        <SkillTagList></SkillTagList>
+    </Stack>
+</Stack>
+
+<style>
+    .apply-btn{
+        background-color: #F8CECC
+    }
+</style>

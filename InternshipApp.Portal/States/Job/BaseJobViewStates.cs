@@ -6,14 +6,15 @@ namespace InternshipApp.Portal.Views;
 public class BaseJobViewStates : BaseViewModel
 {
     #region [ Fields ]
-    private string _id;
-    public int _credit;
-    public double _gpa;
-    public int _slots;
-    public string _title;
-    public string _companyName;
-    public double _matching;
-    public List<StudentSkill> _studentSkills;
+    private int _id;
+    private int _credit;
+    private double _gpa;
+    private int _slots;
+    private string _title;
+    private string _description;
+    private string _companyName;
+    private double _matching;
+    private List<JobSkill> _jobSkills;
 
     public Company Company { get; set; }
     #endregion
@@ -21,12 +22,12 @@ public class BaseJobViewStates : BaseViewModel
     #region [ CTor ]
     public BaseJobViewStates()
     {
-        _studentSkills = new();
+        _jobSkills = new();
     }
     #endregion
 
     #region [ Properties ]
-    public string Id
+    public int Id
     {
         get { return this._id; }
         set { this.SetProperty(ref this._id, value); }
@@ -56,6 +57,12 @@ public class BaseJobViewStates : BaseViewModel
         set { this.SetProperty(ref this._title, value); }
     }
 
+    public string Description
+    {
+        get { return this._description; }
+        set { this.SetProperty(ref this._description, value); }
+    }
+
     public string CompanyName
     {
         get { return this._companyName; }
@@ -66,6 +73,12 @@ public class BaseJobViewStates : BaseViewModel
     {
         get { return this._matching; }
         set { this.SetProperty(ref this._matching, value); }
+    }
+
+    public List<JobSkill> JobSkills
+    {
+        get { return this._jobSkills; }
+        set { this.SetProperty(ref this._jobSkills, value); }
     }
     #endregion
 }
