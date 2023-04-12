@@ -61,7 +61,7 @@ public static class ApplicationExtension
     {
         return new TBaseViewModel()
         {
-            Id = entity.Id,
+
 
         };
     }
@@ -71,7 +71,7 @@ public static class ApplicationExtension
     {
         return new TEntity()
         {
-            Id = viewModel.Id,
+
 
         };
     }

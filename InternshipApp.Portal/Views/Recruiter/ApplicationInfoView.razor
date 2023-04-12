@@ -1,5 +1,72 @@
-﻿<h3>ApplicationInfoView</h3>
+﻿@namespace InternshipApp.Portal.Views
 
-@code {
+<Stack Horizontal="false" Style="width:100%;margin:20px 40px">
+    <Stack Horizontal Style="width:100%" Wrap=false>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.End">
+            <label class="matching-point">64.5</label><b class="matching-sub">Matching</b>
+        </Stack>
+        <Stack Horizontal="false" Style="width:100%" HorizontalAlign="Wave5.UI.Alignment.Center">
+            <div class="e-avatar e-avatar-xlarge e-avatar-circle image"></div>
+            <b>
+                Name Name
+            </b>
+            <CommandBar></CommandBar>
+        </Stack>
+    </Stack>
 
-}
+    <Stack>
+        <Stack Style="margin-bottom:10px">
+            <h1>Introduction</h1>
+            <label>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </label>
+        </Stack>
+
+        <Stack Style="margin-bottom:10px">
+            <h2>
+                Education
+            </h2>
+            <label>
+                lorem ipsum
+            </label>
+            <label>
+                lorem ipsum
+            </label>
+            <label>
+                lorem ipsum
+            </label>
+        </Stack>
+
+        <Stack Style="margin-bottom:10px">
+        <h2>
+            Skills
+        </h2>
+        <SkillTagList>
+
+        </SkillTagList>
+    </Stack>
+    </Stack>
+</Stack>
+
+
+<style>
+    .matching-point{
+        font-size:100pt
+    }
+
+    .matching-sub{
+        margin: 0px 10px 45px 10px;
+    }
+
+    .e-avatar.image {
+        background-image: url("https://i.imgur.com/xQQXVYs_d.webp?maxwidth=760&fidelity=grand");
+    }
+
+    .e-avatar.e-avatar-xlarge{
+        border-radius:50%;
+        height:100px;
+        width:100px;
+        border:2px;
+        border-color: gold;
+    }
+</style>

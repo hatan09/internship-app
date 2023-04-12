@@ -1,15 +1,26 @@
-﻿using InternshipApp.Core.Entities;
+﻿using InternshipApp.Contracts;
+using InternshipApp.Core.Entities;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Wave5.UI;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Syncfusion.Blazor.DropDowns;
 
-namespace InternshipApp.Portal.Views; 
-public partial class JobListView {
+namespace InternshipApp.Portal.Views;
+public partial class JobListView
+{
     #region
     public JobListViewStates States { get; set; }
+
+    public SfMultiSelect<string[], Option> SfMultiSelect { get; set; }
     #endregion
 
     #region
+    [Inject]
+    public IJobRepository Jobs { get; set; }
+
+    [Inject]
+    public ISkillRepository Skills { get; set; }
+
     [Inject]
     public NavigationManager NavigationManager { get; set; }
     #endregion
@@ -33,37 +44,45 @@ public partial class JobListView {
     #region [ Event Handlers - Search ]
     private void OnSearchDatalist(ChangeEventArgs args)
     {
-        var filtered = new List<JobListRowViewStates>();
-
         var value = args?.Value.ToString();
         if (String.IsNullOrWhiteSpace(value))
         {
-            filtered = this.States.Items;
+
         }
         else
         {
-            
-        }
 
-        this.OnFilterDataList(filtered);
+        }
     }
     #endregion
 
     #region [ Event Handlers - CommandBars - Filters ]
-    private void OnAllFilterButtonClicked(MouseEventArgs obj)
+    private async void FilterChangeHandler()
     {
-        this.OnFilterDataList(this.States.Items, MenuItemNames.FilterAll);
+        await OnFilterItems();
     }
 
-    private void OnFilterDataList(IEnumerable<JobListRowViewStates> filtered, string filterName = "")
+    private List<JobListRowViewStates> GetItemsList(List<Option> options)
     {
-        //this.ListContext.ItemsSource.AddRange(filtered);
-
-        if (!string.IsNullOrEmpty(filterName))
+        var result = new List<JobListRowViewStates>();
+        options.ForEach(x =>
         {
+            result.AddRange(States.OriginalItems.Where(y => y.Id == int.Parse(x.Id)).ToList());
+        });
 
+        return result;
+    }
+
+    public async Task OnFilterItems()
+    {
+        var items = await this.SfMultiSelect.GetItemsAsync();
+        if (!items.Any())
+        {
+            States.Items = States.OriginalItems;
+            return;
         }
-        this.StateHasChanged();
+        var filtered = GetItemsList(items.ToList());
+        States.Items = filtered;
     }
     #endregion
 
@@ -80,17 +99,24 @@ public partial class JobListView {
         try
         {
             this.States.Items.Clear();
-            var jobList = new List<Job>()
+            this.States.Options.Clear();
+            var jobList = new List<Job>();
+            jobList.AddRange(await Jobs.FindAll().ToListAsync());
+
+            var skills = await Skills.FindAll().ToListAsync();
+            skills.ForEach(x =>
             {
-                new Job(),
-                new Job(),
-                new Job(),
-            };
+                States.Options.Add(
+                    new()
+                    {
+                        Id = x.Id.ToString(),
+                        Category = x.Type.ToString(),
+                        Title = x.Name
+                    }
+                );
+            });
 
             this.States.Items = jobList.ToListRowList();
-            this.States.Items.ForEach(x => x.Title = "C# dev");
-            this.States.Items.ForEach(x => x.CompanyName = "iDealogic");
-            this.States.Items.ForEach(x => x.Description = "C# dev");
 
             //this.OnFilterDataList(this.States.Items, MenuItemNames.FilterAll);
             // TODO: await this.AppLogicProvider.InvokeLoadDelayAsync();

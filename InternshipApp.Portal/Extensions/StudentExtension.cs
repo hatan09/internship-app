@@ -40,18 +40,18 @@ public static class StudentExtension
     #endregion
 
     #region [ Public Methods - DetailsViewModel ]
-    //public static StudentDetailsViewStates ToDetailsViewStates(this Student entity)
-    //{
+    public static StudentDetailsViewStates ToDetailsViewStates(this Student entity)
+    {
 
-    //    var viewmodel = ToViewStates<StudentDetailsViewStates>(entity);
+        var viewmodel = ToViewStates<StudentDetailsViewStates>(entity);
 
-    //    return viewmodel;
-    //}
+        return viewmodel;
+    }
 
-    //public static Student ToEntity(this StudentDetailsViewStates viewStates)
-    //{
-    //    return ToEntity<Student>(viewStates);
-    //}
+    public static Student ToEntity(this StudentDetailsViewStates viewStates)
+    {
+        return ToEntity<Student>(viewStates);
+    }
     #endregion
 
     #region [ Private Methods - BaseViewModel ]

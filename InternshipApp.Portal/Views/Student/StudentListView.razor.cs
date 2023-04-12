@@ -1,5 +1,7 @@
 ﻿using InternshipApp.Core.Entities;
+using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 using System.Xml.Linq;
 using Wave5.UI;
 using Wave5.UI.Blazor;
@@ -12,7 +14,7 @@ public partial class StudentListView : ComponentBase
 {
     #region [ Properties - Inject ]
     [Inject]
-    public ILogger<StudentListView> Logger { get; set; }
+    public StudentManager Students { get; set; }
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
@@ -55,7 +57,7 @@ public partial class StudentListView : ComponentBase
         }
         catch (Exception ex)
         {
-            this.Logger.LogError(ex.ToString());
+            
         }
     }
 
@@ -222,12 +224,8 @@ public partial class StudentListView : ComponentBase
             this.StateHasChanged();
 
             var certificationList = new List<Student>();
-            certificationList.Add(new()
-            {
-                Id = Guid.NewGuid().ToString(),
-                FullName = "Tan Ha",
-                StudentId = "ITITIU18184"
-            });
+            var students = await Students.FindAll().ToListAsync();
+            certificationList.AddRange(students);
 
             this.States.Items.AddRange(certificationList.ToListRowList());
             this.ListContext.GetKey = (x => x.Id);

@@ -202,12 +202,11 @@ public partial class ApplicationListView : ComponentBase
             this.StateHasChanged();
 
             var applicationList = new List<StudentJob>();
-            applicationList.Add(new()
-            {
-                
-            });
+            //applicationList.Add(
+            //    new()
+            //    );
 
-            this.States.Items.AddRange(applicationList.ToListRowList());
+            //this.States.Items.AddRange(applicationList.ToListRowList());
             this.ListContext.GetKey = (x => x.Id);
             this.ListContext.ItemsSource.AddRange(this.States.Items);
         }

@@ -1,36 +1,22 @@
-﻿using InternshipApp.Core.Entities;
-using InternshipApp.Repository;
+﻿using InternshipApp.Contracts;
 using Microsoft.AspNetCore.Components;
 using RCode;
-using Wave5.UI.Forms;
 
 namespace InternshipApp.Portal.Views;
 
-public partial class JobInfoView
+public partial class CompanyInfo : ComponentBase
 {
-    #region [ Fields ]
+	#region [ Properties ]
+	[Inject]
+	public ICompanyRepository Companies { get; set; }
 
-    #endregion
-
-    #region [ Properties - Parameter ]
-    [Parameter]
-    public string StudentId { get; set; }
-    #endregion
-
-    #region [ Properties ]
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
-    [Inject]
-    public StudentManager Students { get; set; }
-    #endregion
+    [Parameter]
+	public string CompanyId { get; set; }
 
-    #region [ Properties - Panel ]
-    protected FormRequest<FormAction, Student> LinkedServiceFormRequest { get; private set; }
-    #endregion
-
-    #region [ Properties - Data ]
-    protected StudentDetailsViewStates States { get; private set; }
+    public CompanyDetailsViewStates States { get; set; }
     #endregion
 
     #region [ Protected Methods - Override ]
@@ -41,8 +27,8 @@ public partial class JobInfoView
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        var currentLinkedServiceId = this.StudentId;
-        var parameterLinkedServiceId = parameters.GetValueOrDefault<string>(nameof(this.StudentId));
+        var currentLinkedServiceId = this.CompanyId;
+        var parameterLinkedServiceId = parameters.GetValueOrDefault<string>(nameof(this.CompanyId));
 
         await base.SetParametersAsync(parameters);
 
@@ -56,11 +42,11 @@ public partial class JobInfoView
     #region [ Private Methods - Data ]
     private async Task LoadDataAsync()
     {
-        Guard.ParamIsNullOrEmpty(this.StudentId, nameof(this.StudentId));
+        Guard.ParamIsNullOrEmpty(this.CompanyId, nameof(this.CompanyId));
 
         try
         {
-            var item = await this.Students.FindByIdAsync(this.StudentId);
+            var item = await this.Companies.FindByIdAsync(int.Parse(this.CompanyId));
 
             if (item is null)
             {

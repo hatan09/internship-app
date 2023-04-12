@@ -1,9 +1,8 @@
 using InternshipApp.Core.Entities; 
 
-namespace InternshipApp.Contracts
+namespace InternshipApp.Contracts;
+
+public interface IMessageRepository : IBaseRepository<Message>
 {
-	public interface IMessageRepository : IBaseRepository<Message>
-    {
-        
-    }
+    
 }

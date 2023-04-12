@@ -1,50 +1,65 @@
 ﻿@namespace InternshipApp.Portal.Views
 @using Syncfusion.Blazor.CircularGauge
 @using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Popups
 
-<Stack Horizontal Style="width:100%">
-    <SfCircularGauge Width= "400px" Height= "400px" EnablePointerDrag="true">
-        <CircularGaugeTooltipSettings Enable="true"></CircularGaugeTooltipSettings>
-        <CircularGaugeAxes>
-            <CircularGaugeAxis Direction="GaugeDirection.ClockWise" StartAngle="270" EndAngle="90" Minimum="0" Maximum="100">
-                <CircularGaugeAxisLineStyle Width="5" />
+<Stack Horizontal Style="width:100%" Wrap=false>
+    <SfTooltip ID="gauge-tooltip" Content="C#, Java are matched" MouseTrail>
+        <SfCircularGauge Width= "400px" Height= "400px" EnablePointerDrag="true" Title="Matching">
+            <CircularGaugeTitleStyle Color="blue" FontWeight="bold" Size="25" ></CircularGaugeTitleStyle>
+            <CircularGaugeTooltipSettings Enable="true"></CircularGaugeTooltipSettings>
+            <CircularGaugeAxes>
+                <CircularGaugeAxis Direction="GaugeDirection.ClockWise" StartAngle="270" EndAngle="90" Minimum="0" Maximum="100">
+                    <CircularGaugeAxisLineStyle Width="5" />
 
-                <CircularGaugeAxisMajorTicks UseRangeColor="true">
-                </CircularGaugeAxisMajorTicks>
-                <CircularGaugeAxisMinorTicks UseRangeColor="true">
-                </CircularGaugeAxisMinorTicks>
-                <CircularGaugeAxisLabelStyle UseRangeColor="true">
-                </CircularGaugeAxisLabelStyle>
+                    <CircularGaugeAxisMajorTicks UseRangeColor="true">
+                    </CircularGaugeAxisMajorTicks>
+                    <CircularGaugeAxisMinorTicks UseRangeColor="true">
+                    </CircularGaugeAxisMinorTicks>
+                    <CircularGaugeAxisLabelStyle UseRangeColor="true">
+                    </CircularGaugeAxisLabelStyle>
 
-                <CircularGaugeRanges>
-                    <CircularGaugeRange Start="0" End="25" Radius="108%" Color="red">
-                    </CircularGaugeRange>
-                    <CircularGaugeRange Start="25" End="50" Radius="108%" Color="orange">
-                    </CircularGaugeRange>
-                    <CircularGaugeRange Start="50" End="75" Radius="108%" Color="green">
-                    </CircularGaugeRange>
-                    <CircularGaugeRange Start="75" End="100" Radius="108%" Color="cyan">
-                    </CircularGaugeRange>
-                </CircularGaugeRanges>
+                    <CircularGaugeRanges>
+                        <CircularGaugeRange Start="0" End="25" Radius="108%" Color="red">
+                        </CircularGaugeRange>
+                        <CircularGaugeRange Start="25" End="50" Radius="108%" Color="orange">
+                        </CircularGaugeRange>
+                        <CircularGaugeRange Start="50" End="75" Radius="108%" Color="green">
+                        </CircularGaugeRange>
+                        <CircularGaugeRange Start="75" End="100" Radius="108%" Color="cyan">
+                        </CircularGaugeRange>
+                    </CircularGaugeRanges>
 
-                <CircularGaugePointers>
-                    <CircularGaugePointer Value="70"></CircularGaugePointer>
-                </CircularGaugePointers>
-            </CircularGaugeAxis>
-        </CircularGaugeAxes>
-    </SfCircularGauge>
-    <Stack Horizontal="false">
+                    <CircularGaugePointers>
+                        <CircularGaugePointer Value="70"></CircularGaugePointer>
+                    </CircularGaugePointers>
+                </CircularGaugeAxis>
+            </CircularGaugeAxes>
+        </SfCircularGauge>
+    </SfTooltip>
+
+    <Stack Horizontal="false" Style="width:100%">
         <h3>Job Title</h3>
         <label>Company</label>
         <SfButton Content="Apply" CssClass="apply-btn">
 
         </SfButton>
+        <br/>
         <SkillTagList></SkillTagList>
     </Stack>
 </Stack>
 
 <style>
     .apply-btn{
+        font-size: larger;
+        color: black;
         background-color: #F8CECC
     }
+    .apply-btn:hover{
+        font-size: larger;
+        color: black;
+        background-color: #FAD9D5
+    }
+
+
 </style>

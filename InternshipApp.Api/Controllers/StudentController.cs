@@ -4,12 +4,8 @@ using InternshipApp.Api.Models;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace InternshipApp.Api.Controllers
 {
@@ -52,10 +48,10 @@ namespace InternshipApp.Api.Controllers
         public async Task<IActionResult> GetRegister(int groupId, CancellationToken cancellationToken = default)
         {
             var group = await _internGroupRepository.FindByIdAsync(groupId, cancellationToken);
-            if(group is null) return NotFound("No Intern Group Found");
+            if (group is null) return NotFound("No Intern Group Found");
 
             var students = await _studentManager.FindAll().Where(stu => stu.InternGroupId == groupId && stu.Stat == Stat.PENDING).ToListAsync(cancellationToken);
-            if(students is null) return NotFound("No Student Found");
+            if (students is null) return NotFound("No Student Found");
 
             return Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
 
@@ -129,12 +125,12 @@ namespace InternshipApp.Api.Controllers
             if (student is null || student.IsDeleted)
                 return NotFound("No Student Found");
 
-            foreach(var id in model.Skills)
+            foreach (var id in model.Skills)
             {
                 var skill = await _skillRepository.FindByIdAsync(id);
                 if (skill is not null)
                 {
-                    student.StudentSkills.Add(new StudentSkill { Student = student, StudentId = student.Id, Skill = skill, SkillId = id});
+                    student.StudentSkills.Add(new StudentSkill { Student = student, StudentId = student.Id, Skill = skill, SkillId = id });
                 }
             }
 
@@ -147,14 +143,17 @@ namespace InternshipApp.Api.Controllers
         public async Task<IActionResult> Apply([FromBody] ApplyJobModel model)
         {
             var student = await _studentManager.FindByIdAsync(model.StudentId);
-            if (student is null || student.IsDeleted || student.Stat == Stat.PENDING)
-                return NotFound();
+            if (student is null || student.IsDeleted || student.Stat == Stat.DENIED)
+                return NotFound("No Student Found");
+
+            if (student.Stat == Stat.ACCEPTED)
+                return BadRequest("Student got an intern job");
 
             var job = await _jobRepository.FindByIdAsync(model.JobId);
             if (job is null)
                 return NotFound("No Job Found");
 
-            student.StudentJobs.Add(new StudentJob { Student = student, StudentId = model.StudentId, Job = job, JobId = model.JobId, IsAccepted = false });
+            student.StudentJobs.Add(new StudentJob { Student = student, StudentId = model.StudentId, Job = job, JobId = model.JobId });
 
             await _studentManager.UpdateAsync(student);
             return NoContent();
@@ -165,7 +164,7 @@ namespace InternshipApp.Api.Controllers
         public async Task<IActionResult> Accept([FromBody] UpdateStudentJobModel model, CancellationToken cancellationToken = default)
         {
             var student = await _studentManager.FindAll(stu => stu.Id.Equals(model.StudentId)).Include(stu => stu.StudentJobs).FirstAsync(cancellationToken);
-            if (student is null || student.IsDeleted || student.Stat == Stat.PENDING || student.Stat == Stat.DENIED)
+            if (student is null || student.IsDeleted || student.Stat == Stat.DENIED)
                 return NotFound("No Student Found");
 
             if (student.StudentJobs is null) return NotFound();
@@ -173,7 +172,26 @@ namespace InternshipApp.Api.Controllers
             var sj = student.StudentJobs!.First(sj => sj.JobId == model.JobId);
             if (sj is null) return NotFound("Student Has Not Applied For That Job");
 
-            student.StudentJobs!.First(sj => sj.JobId == model.JobId).IsAccepted = true;
+            student.StudentJobs!.First(sj => sj.JobId == model.JobId).Status = ApplyStatus.ACCEPTED;
+
+            await _studentManager.UpdateAsync(student);
+            return NoContent();
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> Hire([FromBody] UpdateStudentJobModel model, CancellationToken cancellationToken = default)
+        {
+            var student = await _studentManager.FindAll(stu => stu.Id.Equals(model.StudentId)).Include(stu => stu.StudentJobs).FirstAsync(cancellationToken);
+            if (student is null || student.IsDeleted || student.Stat == Stat.DENIED)
+                return NotFound("No Student Found");
+
+            if (student.StudentJobs is null) return NotFound();
+
+            var sj = student.StudentJobs!.First(sj => sj.JobId == model.JobId);
+            if (sj is null) return NotFound("Student Has Not Applied For That Job");
+
+            student.StudentJobs!.First(sj => sj.JobId == model.JobId).Status = ApplyStatus.HIRED;
 
             await _studentManager.UpdateAsync(student);
             return NoContent();
@@ -184,7 +202,7 @@ namespace InternshipApp.Api.Controllers
         public async Task<IActionResult> Reject([FromBody] UpdateStudentJobModel model, CancellationToken cancellationToken = default)
         {
             var student = await _studentManager.FindAll(stu => stu.Id.Equals(model.StudentId)).Include(stu => stu.StudentJobs).FirstAsync(cancellationToken);
-            if (student is null || student.IsDeleted || student.Stat == Stat.PENDING || student.Stat == Stat.DENIED)
+            if (student is null || student.IsDeleted)
                 return NotFound("No Student Found");
 
             if (student.StudentJobs is null) return NotFound();
@@ -192,7 +210,7 @@ namespace InternshipApp.Api.Controllers
             var sj = student.StudentJobs!.First(sj => sj.JobId == model.JobId);
             if (sj is null) return NotFound("Student Has Not Applied For That Job");
 
-            student.StudentJobs!.Remove(sj);
+            student.StudentJobs!.First(sj => sj.JobId == model.JobId).Status = ApplyStatus.REJECTED;
 
             await _studentManager.UpdateAsync(student);
             return NoContent();
@@ -204,7 +222,7 @@ namespace InternshipApp.Api.Controllers
         {
             var student = await _studentManager.FindByIdAsync(model.Id);
             if (student is null || student.IsDeleted)
-                return NotFound();
+                return NotFound("No Student Found");
 
             student.Stat = model.Stat;
             await _studentManager.UpdateAsync(student);
@@ -217,7 +235,7 @@ namespace InternshipApp.Api.Controllers
         {
             var student = await _studentManager.FindByIdAsync(dto.Id);
             if (student is null || student.IsDeleted)
-                return NotFound();
+                return NotFound("No Student Found");
 
             _mapper.Map(dto, student);
             await _studentManager.UpdateAsync(student);
@@ -230,7 +248,7 @@ namespace InternshipApp.Api.Controllers
         {
             var student = await _studentManager.FindByIdAsync(id);
             if (student is null || student.IsDeleted)
-                return NotFound();
+                return NotFound("No Student Found");
 
             student.IsDeleted = true;
             await _studentManager.UpdateAsync(student);

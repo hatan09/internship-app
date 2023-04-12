@@ -14,6 +14,9 @@ namespace InternshipApp.Core.Entities
         public Stat Stat { get; set; } = Stat.PENDING;
         public int Credit { get; set; }
         public string CVUrl { get; set; } = string.Empty;
+        public int Year { get; set; } = 1;
+
+        public int Score { get; set; } = 0;
 
         //[Required]
         public Department? Department { get; set; }
@@ -28,6 +31,6 @@ namespace InternshipApp.Core.Entities
 
     }
 
-    public enum Stat { PENDING, ACCEPTED, DENIED}
+    public enum Stat { PENDING, ACCEPTED, DENIED }
 
 }
