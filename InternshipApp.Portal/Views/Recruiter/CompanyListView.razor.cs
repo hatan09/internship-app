@@ -3,6 +3,7 @@ using InternshipApp.Core.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
+using Syncfusion.Blazor.Lists;
 using Wave5.UI;
 
 namespace InternshipApp.Portal.Views;
@@ -19,7 +20,7 @@ public partial class CompanyListView
     public CompanyListViewStates States { get; set; }
     #endregion
 
-    #region
+    #region [ Private - Override Methods ]
     protected override async Task OnInitializedAsync()
     {
         States = new();
@@ -73,9 +74,11 @@ public partial class CompanyListView
     #endregion
 
     #region [ Event Handlers - DataList ]
-    private void OnRowClicked(CompanyListRowViewStates rowItem)
+    private void OnRowClicked(ClickEventArgs<CompanyListRowViewStates> args)
     {
-        this.NavigationManager.NavigateTo($"/company-details/{rowItem.Id}");
+        var selected = args.ItemData;
+        if(selected != null)
+            this.NavigationManager.NavigateTo($"/company/{selected.Id}");
     }
     #endregion
 

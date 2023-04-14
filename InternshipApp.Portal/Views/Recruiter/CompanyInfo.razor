@@ -1,5 +1,32 @@
-﻿<h3>CompanyInfo</h3>
+﻿@namespace InternshipApp.Portal.Views
 
-@code {
+<Stack Horizontal>
+    <img />
+    <Stack Horizontal=false>
+        <h1>
+            Company Name
+        </h1>
 
-}
+        <label>
+            Location
+        </label>
+
+        <label>
+            Company Type
+        </label>
+
+        <FluentAnchor Href="google.com" Target="blank">
+            Company website
+        </FluentAnchor>
+    </Stack>
+</Stack>
+
+<Stack>
+    <h1>
+        About
+    </h1>
+
+    <label>
+        @States.Description
+    </label>
+</Stack>
