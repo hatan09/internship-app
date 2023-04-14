@@ -1,4 +1,5 @@
 ﻿using InternshipApp.Core.Entities;
+using Microsoft.Fast.Components.FluentUI.DesignTokens;
 
 namespace InternshipApp.Portal.Views;
 
@@ -40,18 +41,18 @@ public static class JobExtension
     #endregion
 
     #region [ Public Methods - DetailsViewModel ]
-    //public static JobDetailsViewStates ToDetailsViewStates(this Job entity)
-    //{
+    public static JobDetailsViewStates ToDetailsViewStates(this Job entity)
+    {
 
-    //    var viewmodel = ToViewStates<JobDetailsViewStates>(entity);
+        var viewmodel = ToViewStates<JobDetailsViewStates>(entity);
 
-    //    return viewmodel;
-    //}
+        return viewmodel;
+    }
 
-    //public static Job ToEntity(this JobDetailsViewStates viewStates)
-    //{
-    //    return ToEntity<Job>(viewStates);
-    //}
+    public static Job ToEntity(this JobDetailsViewStates viewStates)
+    {
+        return ToEntity<Job>(viewStates);
+    }
     #endregion
 
     #region [ Private Methods - BaseViewModel ]
@@ -62,7 +63,12 @@ public static class JobExtension
         return new TBaseViewModel()
         {
             Id = entity.Id,
-
+            Title = entity.Title,
+            Description = entity.Description,
+            CompanyName = entity.Company?.Title,
+            Credit = entity.MinCredit,
+            Gpa = entity.MinGPA,
+            Slots = entity.Slots,
         };
     }
 
@@ -72,7 +78,11 @@ public static class JobExtension
         return new TEntity()
         {
             Id = viewModel.Id,
-
+            Title = viewModel.Title,
+            Description = viewModel.Description,
+            MinCredit = viewModel.Credit,
+            MinGPA = viewModel.Gpa,
+            Slots = viewModel.Slots,
         };
     }
     #endregion
