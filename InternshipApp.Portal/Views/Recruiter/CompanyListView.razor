@@ -2,7 +2,8 @@
 @using Syncfusion.Blazor.Lists
 
 <SfListView TValue="CompanyListRowViewStates" ID="job-list" DataSource="@States.Items" HeaderTitle="Companies" ShowHeader CssClass="e-list-template">
-    <ListViewFieldSettings TValue="CompanyListRowViewStates" Id="job-list" Text="Text"></ListViewFieldSettings>
+    <ListViewEvents TValue="CompanyListRowViewStates" Clicked="OnRowClicked"></ListViewEvents>
+    <ListViewFieldSettings TValue="CompanyListRowViewStates" Id="Id"></ListViewFieldSettings>
     <ListViewTemplates TValue="CompanyListRowViewStates">
         <Template>
             <Stack Horizontal=false ClassName="list-view-item">
