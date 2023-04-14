@@ -1,5 +1,5 @@
 ﻿namespace InternshipApp.Portal.Views;
-public partial class JobInfoPage 
-{ 
 
+public partial class CommandBarView
+{
 }

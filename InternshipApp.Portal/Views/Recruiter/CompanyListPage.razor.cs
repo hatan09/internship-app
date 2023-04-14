@@ -1,5 +1,2 @@
 ﻿namespace InternshipApp.Portal.Views; 
-public partial class JobListView 
-{
-
-}
+public partial class CompanyListPage { }

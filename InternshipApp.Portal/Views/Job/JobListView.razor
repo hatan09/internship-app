@@ -1,5 +1,21 @@
 ﻿@namespace InternshipApp.Portal.Views
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Lists
+
+<h1> Jobs </h1>
+
+<Stack Horizontal=true>
+    <SfTextBox CssClass="search-text-box">
+
+    </SfTextBox>
+
+    <SfMultiSelect @ref="SfMultiSelect" TValue="string[]" AllowFiltering="true" TItem="Option" Mode="@VisualMode.CheckBox" Width="250px" Placeholder="Search for skills" DataSource="@this.States.Options" ShowSelectAll="@true"
+               EnableSelectionOrder="@true" FilterBarPlaceholder="Search for skills" EnableGroupCheckBox="@true" PopupHeight="350px">
+    <MultiSelectEvents TItem="Option" TValue="string[]" ValueChange="@FilterChangeHandler"></MultiSelectEvents>
+    <MultiSelectFieldSettings GroupBy="Category" Value="Title"></MultiSelectFieldSettings>
+</SfMultiSelect>
+</Stack>
 
 <SfListView TValue="JobListRowViewStates" ID="job-list" DataSource="@States.Items" HeaderTitle="Jobs" ShowHeader CssClass="e-list-template">
     <ListViewFieldSettings TValue="JobListRowViewStates" Id="job-list" Text="Text"></ListViewFieldSettings>

@@ -51,6 +51,10 @@ namespace InternshipApp.Api.DataObjects
                 .ForMember(dto => dto.InstructorName, opt => opt.MapFrom(ent => ent.Instructor.FullName));
             CreateMap<InternGroupDTO, InternGroup>()
                 .ForMember(ent => ent.Id, opt => opt.Ignore());
+
+            CreateMap<Evaluation, EvaluationDTO>();
+            CreateMap<EvaluationDTO, Evaluation>()
+                .ForMember(ent => ent.Id, opt => opt.Ignore());
         }
     }
 }

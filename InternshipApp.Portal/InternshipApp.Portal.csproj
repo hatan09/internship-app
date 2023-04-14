@@ -2,20 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 	  <RootNamespace>InternshipApp.Portal.Views</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Views\Chat\ChatPage.razor.cs" />
-    <Compile Remove="Views\Chat\ChatView.razor.cs" />
     <Compile Remove="Views\Chat\GroupChat.razor.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Views\Chat\ChatPage.razor.cs" />
-    <Content Include="Views\Chat\ChatView.razor.cs" />
     <Content Include="Views\Chat\GroupChat.razor.cs" />
   </ItemGroup>
 
@@ -31,6 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.15" />
     <PackageReference Include="RCode.ViewModels.Core" Version="3.0.2" />
     <PackageReference Include="Syncfusion.Blazor" Version="20.4.0.38" />
@@ -40,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InternshipApp.Entities\InternshipApp.Core.csproj" />
+    <ProjectReference Include="..\InternshipApp.Repository\InternshipApp.Repository.csproj" />
   </ItemGroup>
 
 </Project>

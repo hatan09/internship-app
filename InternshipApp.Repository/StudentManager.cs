@@ -1,16 +1,10 @@
-﻿using InternshipApp.Core.Entities;
+﻿using System.Linq.Expressions;
+using InternshipApp.Core.Entities;
 using InternshipApp.Repository.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace InternshipApp.Repository
 {
@@ -42,7 +36,7 @@ namespace InternshipApp.Repository
                 .Where(s => !s.IsDeleted)
                 .WhereIf(predicate != null, predicate!);
 
-        public  async Task<Student?> FindByStudentId(string studentId, CancellationToken cancellationToken)
+        public async Task<Student?> FindByStudentId(string studentId, CancellationToken cancellationToken)
             => await FindAll().Where(stu => stu.StudentId.Equals(studentId)).FirstOrDefaultAsync(cancellationToken);
     }
 }
