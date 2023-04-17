@@ -26,7 +26,7 @@ builder.Services.AddBlazoredLocalStorage();
 
 //Add database
 builder.Services
-    .AddDbContextPool<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection")));
+    .AddDbContextPool<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("StandardConnection")));
 
 //UserIdentity
 builder.Services.AddIdentity<User, Role>(options =>
