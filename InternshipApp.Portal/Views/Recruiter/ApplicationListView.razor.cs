@@ -4,6 +4,9 @@ using Wave5.UI.DataGrids;
 using Wave5.UI.Forms;
 using Wave5.UI;
 using Wave5.UI.Blazor;
+using InternshipApp.Contracts;
+using InternshipApp.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
 
@@ -15,6 +18,12 @@ public partial class ApplicationListView : ComponentBase
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    public IJobRepository Jobs { get; set; }
+
+    [Inject]
+    public StudentManager Students { get; set; }
     #endregion
 
     #region [ Properties - States - Contexts ]
@@ -38,7 +47,7 @@ public partial class ApplicationListView : ComponentBase
     {
         try
         {
-            this.States = new ApplicationListViewStates();
+            this.States = new ();
 
             this.SearchContext = new DataListSearchContext();
             this.ListContainerContext = new DetailsListContainerContext();
@@ -95,7 +104,7 @@ public partial class ApplicationListView : ComponentBase
     #region [ Event Handlers - DataList ]
     private void OnRowClicked(ApplicationListRowViewStates rowItem)
     {
-        this.NavigationManager.NavigateTo($"/student/{rowItem.Id}");
+        this.NavigationManager.NavigateTo($"/student/{rowItem.StudentId}");
     }
 
     private void OnSelectionChanged()
@@ -109,7 +118,34 @@ public partial class ApplicationListView : ComponentBase
     #region [ Private Methods - Column ]
     private void InitializeColumn()
     {
-        
+        var name = new DataGridColumnDefinition<ApplicationListRowViewStates>("Student Name", x => x.StudentName)
+        {
+            ColumnDataKey = nameof(ApplicationListRowViewStates.StudentName),
+            Width = "2fr"
+        };
+
+        var year = new DataGridColumnDefinition<ApplicationListRowViewStates>("Year", x => x.Year)
+        {
+            ColumnDataKey = nameof(ApplicationListRowViewStates.Year),
+            Width = "2fr"
+        };
+
+        var gpa = new DataGridColumnDefinition<ApplicationListRowViewStates>("Gpa", x => x.Gpa)
+        {
+            ColumnDataKey = nameof(ApplicationListRowViewStates.Gpa),
+            Width = "1fr"
+        };
+
+        var matching = new DataGridColumnDefinition<ApplicationListRowViewStates>("Matching point", x => x.Matching)
+        {
+            ColumnDataKey = nameof(ApplicationListRowViewStates.Matching),
+            Width = "2fr"
+        };
+
+        this.ListContext.Columns.Definitions.Add(name);
+        this.ListContext.Columns.Definitions.Add(year);
+        this.ListContext.Columns.Definitions.Add(gpa);
+        this.ListContext.Columns.Definitions.Add(matching);
     }
     #endregion
 
@@ -122,8 +158,6 @@ public partial class ApplicationListView : ComponentBase
         // Items
         this.CommandBarContext = new CommandBarContext();
         this.CommandBarContext.Items.AddRefreshButton(this.OnRefreshButtonClicked);
-        this.CommandBarContext.Items.AddAddButton(this.OnAddButtonClicked);
-        this.CommandBarContext.Items.AddDeleteButton(this.OnDeleteButtonClicked, false);
     }
     #endregion
 
@@ -133,59 +167,6 @@ public partial class ApplicationListView : ComponentBase
         this.SearchContext.SetDefafultSearchValue(string.Empty);
         await this.LoadDataAsync();
     }
-
-    private void OnAddButtonClicked(EventArgs e)
-    {
-        this.StateHasChanged();
-    }
-
-    private void OnEditButtonClicked(EventArgs e)
-    {
-        try
-        {
-            var selectedItem = this.ListContext.GetSelectedItems();
-            if (selectedItem.Count == 0)
-            {
-                return;
-            }
-
-            var item = selectedItem.FirstOrDefault();
-            this.ApplicationFormRequest = FormRequestFactory.EditRequest(item.ToEntity());
-
-            this.StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-
-        }
-    }
-
-    private async void OnDeleteButtonClicked(EventArgs e)
-    {
-        try
-        {
-            var selectedItem = this.ListContext.GetSelectedItems();
-            if (selectedItem.Count == 0)
-            {
-                return;
-            }
-
-            foreach (var item in selectedItem)
-            {
-
-            }
-            var tasks = new List<Task>();
-
-            tasks.Add(this.LoadDataAsync());
-
-            await Task.WhenAll(tasks);
-
-        }
-        catch (Exception ex)
-        {
-
-        }
-    }
     #endregion
 
     #region [ Private Methods - Data ]
@@ -193,20 +174,21 @@ public partial class ApplicationListView : ComponentBase
     {
         try
         {
-            this.ListContainerContext.SetProcessingStates(true, false);
-            this.SearchContext.SetProcessingStates(true);
-            this.CommandBarContext.SetProcessingStates(true);
-            this.ListContext.SetProcessingStates(true);
             this.States.Items.Clear();
 
-            this.StateHasChanged();
-
             var applicationList = new List<StudentJob>();
-            //applicationList.Add(
-            //    new()
-            //    );
+            var job = await Jobs.FindAll().Include(x => x.StudentJobs).FirstOrDefaultAsync();
+            var studentJobs = job.StudentJobs.ToList();
 
-            //this.States.Items.AddRange(applicationList.ToListRowList());
+            States.Items = studentJobs.ToListRowList();
+            States.Items.ForEach(async x => {
+                var student = await Students.FindByIdAsync(x.StudentId);
+
+                x.StudentName = student == null ? "" : student.FullName;
+                x.Year = student == null ? 1 : student.Year;
+                x.Gpa = student == null ? 0 : student.GPA;
+            });
+
             this.ListContext.GetKey = (x => x.Id);
             this.ListContext.ItemsSource.AddRange(this.States.Items);
         }
@@ -216,11 +198,7 @@ public partial class ApplicationListView : ComponentBase
         }
         finally
         {
-            this.ListContainerContext.SetProcessingStates(false, this.ListContext.ItemsSource.Any());
-            this.ListContext.SetProcessingStates(false);
-            this.SearchContext.SetProcessingStates(false);
-            this.CommandBarContext.SetProcessingStates(false);
-            this.CommandBarContext.SetItemIsVisible(ButtonNames.DeleteButton, this.ListContext.GetSelectedItems().Any());
+
             this.StateHasChanged();
         }
     }

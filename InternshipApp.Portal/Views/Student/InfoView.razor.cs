@@ -116,5 +116,9 @@ public partial class InfoView
         }
     }
 
+    public async void OnChat()
+    {
+
+    }
     #endregion
 }

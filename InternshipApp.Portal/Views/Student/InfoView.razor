@@ -4,16 +4,16 @@
 @using Wave5.UI
 
 <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
-    <div class="avatar">
-        <img />
+    <div class="e-avatar e-avatar-xlarge e-avatar-circle image"></div>
 
-    </div>
+    <br />
+
     <Stack>
         <h1>
             @States.Name
         </h1>
     </Stack>
-    <StudentActionBar/>
+    <CommandBarView AcceptCallback="OnChat" ChatCallback="OnChat"/>
 </Stack>
 
 <Stack Style="margin:10px">
@@ -52,3 +52,17 @@
 </Stack>
 
 <StudentInfoFormPanel />
+
+<style>
+    .e-avatar.image {
+        background-image: url("https://i.imgur.com/xQQXVYs_d.webp?maxwidth=760&fidelity=grand");
+    }
+
+    .e-avatar.e-avatar-xlarge{
+        border-radius:50%;
+        height:100px;
+        width:100px;
+        border:2px;
+        border-color: gold;
+    }
+</style>
