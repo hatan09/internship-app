@@ -4,7 +4,7 @@
 @using Syncfusion.Blazor.Popups
 
 <Stack Horizontal Style="width:100%" Wrap=false>
-    <SfTooltip ID="gauge-tooltip" Content="C#, Java are matched" MouseTrail>
+    <SfTooltip ID="gauge-tooltip" Content=@($"Matching point: {States.Matching}. C#, Java are matched") MouseTrail>
         <SfCircularGauge Width= "400px" Height= "400px" EnablePointerDrag="true" Title="Matching">
             <CircularGaugeTitleStyle Color="blue" FontWeight="bold" Size="25" ></CircularGaugeTitleStyle>
             <CircularGaugeTooltipSettings Enable="true"></CircularGaugeTooltipSettings>
@@ -31,7 +31,7 @@
                     </CircularGaugeRanges>
 
                     <CircularGaugePointers>
-                        <CircularGaugePointer Value="70"></CircularGaugePointer>
+                        <CircularGaugePointer Value="@States.Matching"></CircularGaugePointer>
                     </CircularGaugePointers>
                 </CircularGaugeAxis>
             </CircularGaugeAxes>
@@ -41,7 +41,7 @@
     <Stack Horizontal="false" Style="width:100%">
         <h3>Job Title</h3>
         <label>Company</label>
-        <SfButton Content="Apply" CssClass="apply-btn">
+        <SfButton Content="Apply" CssClass="apply-btn" OnClick="OnApply">
 
         </SfButton>
         <br/>

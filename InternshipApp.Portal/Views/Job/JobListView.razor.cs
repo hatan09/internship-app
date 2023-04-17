@@ -1,9 +1,11 @@
-﻿using InternshipApp.Contracts;
+﻿using Blazored.LocalStorage;
+using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Syncfusion.Blazor.DropDowns;
+using Syncfusion.Blazor.Lists;
 
 namespace InternshipApp.Portal.Views;
 public partial class JobListView
@@ -16,10 +18,16 @@ public partial class JobListView
 
     #region
     [Inject]
+    public ILocalStorageService LocalStorage { get; set; }
+
+    [Inject]
     public IJobRepository Jobs { get; set; }
 
     [Inject]
     public ISkillRepository Skills { get; set; }
+
+    [Inject]
+    public ICompanyRepository Companies { get; set; }
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
@@ -94,6 +102,13 @@ public partial class JobListView
     #endregion
 
     #region [ Private Methods - Data ]
+    private void OnRowSelect(ClickEventArgs<JobListRowViewStates> args)
+    {
+        var selected = args.ItemData;
+        if (selected != null)
+            NavigationManager.NavigateTo($"/job/{selected.Id}");
+    }
+
     private async Task LoadDataAsync()
     {
         try
@@ -101,7 +116,7 @@ public partial class JobListView
             this.States.Items.Clear();
             this.States.Options.Clear();
             var jobList = new List<Job>();
-            jobList.AddRange(await Jobs.FindAll().ToListAsync());
+            jobList.AddRange(await Jobs.FindAll().Include(x => x.Company).ToListAsync());
 
             var skills = await Skills.FindAll().ToListAsync();
             skills.ForEach(x =>

@@ -1,4 +1,5 @@
 using System.Text;
+using Blazored.LocalStorage;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Database;
 using InternshipApp.Core.Entities;
@@ -19,6 +20,9 @@ builder.Services
 
 //Register Syncfusion license
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MTMwMzc2M0AzMjMwMmUzNDJlMzBXTGVIY3JZS2NSaE81KzluWjBmQnhQeEcvRDZKTCtSTC9UZlBHZGdndzlBPQ==");
+
+//Local Storage
+builder.Services.AddBlazoredLocalStorage();
 
 //Add database
 builder.Services

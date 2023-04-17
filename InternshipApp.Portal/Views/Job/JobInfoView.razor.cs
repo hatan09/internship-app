@@ -1,6 +1,8 @@
-﻿using InternshipApp.Core.Entities;
+﻿using InternshipApp.Contracts;
+using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 using RCode;
 using Wave5.UI.Forms;
 
@@ -14,7 +16,7 @@ public partial class JobInfoView
 
     #region [ Properties - Parameter ]
     [Parameter]
-    public string StudentId { get; set; }
+    public string JobId { get; set; }
     #endregion
 
     #region [ Properties ]
@@ -23,14 +25,17 @@ public partial class JobInfoView
 
     [Inject]
     public StudentManager Students { get; set; }
+
+    [Inject]
+    public IJobRepository Jobs { get; set; }
     #endregion
 
     #region [ Properties - Panel ]
-    protected FormRequest<FormAction, Student> LinkedServiceFormRequest { get; private set; }
+    protected FormRequest<FormAction, Job> LinkedServiceFormRequest { get; private set; }
     #endregion
 
     #region [ Properties - Data ]
-    protected StudentDetailsViewStates States { get; private set; }
+    protected JobDetailsViewStates States { get; private set; }
     #endregion
 
     #region [ Protected Methods - Override ]
@@ -41,8 +46,8 @@ public partial class JobInfoView
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        var currentLinkedServiceId = this.StudentId;
-        var parameterLinkedServiceId = parameters.GetValueOrDefault<string>(nameof(this.StudentId));
+        var currentLinkedServiceId = this.JobId;
+        var parameterLinkedServiceId = parameters.GetValueOrDefault<string>(nameof(this.JobId));
 
         await base.SetParametersAsync(parameters);
 
@@ -54,13 +59,34 @@ public partial class JobInfoView
     #endregion
 
     #region [ Private Methods - Data ]
+    private async void OnApply()
+    {
+        var student = Students.FindAll().FirstOrDefaultAsync();
+
+        var studentJob = new StudentJob()
+        {
+            StudentId = student.Id.ToString(),
+            JobId = int.Parse(JobId)
+        };
+
+        await OnUpdateApplicationAsync(studentJob);
+    }
+
+    private async Task OnUpdateApplicationAsync(StudentJob studentJob)
+    {
+        var job = await Jobs.FindAll(x => x.Id == int.Parse(JobId)).Include(x => x.StudentJobs).FirstOrDefaultAsync();
+        job?.StudentJobs.Add(studentJob);
+        Jobs.Update(job);
+        await Jobs.SaveChangesAsync();
+    }
+
     private async Task LoadDataAsync()
     {
-        Guard.ParamIsNullOrEmpty(this.StudentId, nameof(this.StudentId));
+        Guard.ParamIsNullOrEmpty(this.JobId, nameof(this.JobId));
 
         try
         {
-            var item = await this.Students.FindByIdAsync(this.StudentId);
+            var item = await this.Jobs.FindByIdAsync(int.Parse(this.JobId));
 
             if (item is null)
             {

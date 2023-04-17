@@ -15,8 +15,6 @@ public class BaseJobViewStates : BaseViewModel
     private string _companyName;
     private double _matching;
     private List<JobSkill> _jobSkills;
-
-    public Company Company { get; set; }
     #endregion
 
     #region [ CTor ]
