@@ -14,4 +14,9 @@
     {
         Other, Language, Field, Role, 
     }
+
+    public enum SkillLevel
+    {
+        NOVICE, LITTLE, AVERAGE, PROFICIENCY
+    }
 }

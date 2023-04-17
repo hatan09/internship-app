@@ -4,6 +4,7 @@ using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using RCode;
+using Syncfusion.Blazor.Schedule.Internal;
 using Wave5.UI.Forms;
 
 namespace InternshipApp.Portal.Views;
@@ -27,11 +28,14 @@ public partial class JobInfoView
     public StudentManager Students { get; set; }
 
     [Inject]
+    public ISkillRepository Skills { get; set; }
+
+    [Inject]
     public IJobRepository Jobs { get; set; }
     #endregion
 
     #region [ Properties - Panel ]
-    protected FormRequest<FormAction, Job> LinkedServiceFormRequest { get; private set; }
+    protected FormRequest<FormAction, Job> JobFormRequest { get; private set; }
     #endregion
 
     #region [ Properties - Data ]
@@ -41,17 +45,18 @@ public partial class JobInfoView
     #region [ Protected Methods - Override ]
     protected override async Task OnInitializedAsync()
     {
+        States = new();
         await base.OnInitializedAsync();
     }
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        var currentLinkedServiceId = this.JobId;
-        var parameterLinkedServiceId = parameters.GetValueOrDefault<string>(nameof(this.JobId));
+        var currentJobId = this.JobId;
+        var parameterJobId = parameters.GetValueOrDefault<string>(nameof(this.JobId));
 
         await base.SetParametersAsync(parameters);
 
-        if (currentLinkedServiceId != parameterLinkedServiceId)
+        if (currentJobId != parameterJobId)
         {
             await this.LoadDataAsync();
         }
@@ -61,8 +66,11 @@ public partial class JobInfoView
     #region [ Private Methods - Data ]
     private async void OnApply()
     {
-        var student = Students.FindAll().FirstOrDefaultAsync();
-
+        var student = await GetStudentAsync();
+        if(student.StudentJobs.FirstOrDefault(x => x.JobId == int.Parse(JobId)) != null)
+        {
+            return;
+        }
         var studentJob = new StudentJob()
         {
             StudentId = student.Id.ToString(),
@@ -70,6 +78,13 @@ public partial class JobInfoView
         };
 
         await OnUpdateApplicationAsync(studentJob);
+    }
+
+    private async Task<Student> GetStudentAsync()
+    {
+        var student = await Students.FindAll().FirstOrDefaultAsync();
+
+        return student;
     }
 
     private async Task OnUpdateApplicationAsync(StudentJob studentJob)
@@ -86,7 +101,12 @@ public partial class JobInfoView
 
         try
         {
-            var item = await this.Jobs.FindByIdAsync(int.Parse(this.JobId));
+            var student = await GetStudentAsync();
+
+            var item = await this.Jobs.FindAll(x => x.Id == int.Parse(JobId))
+                .Include(x => x.JobSkills)
+                .Include(x => x.StudentJobs.Where(y => y.StudentId == student.Id))
+                .FirstOrDefaultAsync();
 
             if (item is null)
             {
@@ -94,7 +114,19 @@ public partial class JobInfoView
                 return;
             }
 
+
             this.States = item.ToDetailsViewStates();
+            States.HasApplied = item.StudentJobs.Any();
+            States.JobSkills = item.JobSkills.ToList();
+            var skillIds = item.JobSkills.Select(x => x.SkillId).ToList();
+
+            skillIds.ForEach(async x =>
+            {
+                if(x > 0)
+                {
+                    States.Skills.Add(await Skills.FindByIdAsync(x));
+                }
+            });
         }
         catch (Exception ex)
         {

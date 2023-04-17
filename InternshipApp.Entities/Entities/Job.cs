@@ -21,7 +21,5 @@ namespace InternshipApp.Core.Entities
 
         public virtual ICollection<StudentJob>? StudentJobs { get; set; } = new HashSet<StudentJob>();
         public virtual ICollection<JobSkill>? JobSkills { get; set; } = new HashSet<JobSkill>();
-
-
     }
 }

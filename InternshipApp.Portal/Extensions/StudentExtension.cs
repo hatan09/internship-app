@@ -27,16 +27,18 @@ public static class StudentExtension
     #endregion
 
     #region [ Public Methods - FormViewModel ]
-    //public static StudentFormViewStates ToFormViewStates(this Student entity) {
+    public static StudentFormViewStates ToFormViewStates(this Student entity)
+    {
 
-    //    var viewmodel = ToViewStates<StudentFormViewStates>(entity);
+        var viewmodel = ToViewStates<StudentFormViewStates>(entity);
 
-    //    return viewmodel;
-    //}
+        return viewmodel;
+    }
 
-    //public static Student ToEntity(this StudentFormViewStates viewStates) {
-    //    return ToEntity<Student>(viewStates);
-    //}
+    public static Student ToEntity(this StudentFormViewStates viewStates)
+    {
+        return ToEntity<Student>(viewStates);
+    }
     #endregion
 
     #region [ Public Methods - DetailsViewModel ]
@@ -64,7 +66,10 @@ public static class StudentExtension
             Id = entity.Id,
 
             Name = entity.FullName,
+            Bio = entity.Bio,
             Gpa = entity.GPA,
+            Year = entity.Year,
+            Credits = entity.Credit,
             Status = entity.Stat.ToString(),
             StudentId = entity.StudentId
         };
@@ -78,9 +83,14 @@ public static class StudentExtension
             Id = viewModel.Id,
 
             FullName = viewModel.Name,
+            Bio = viewModel.Bio,
+            Year = viewModel.Year,
             GPA = viewModel.Gpa,
+            Credit = viewModel.Credits,
             Stat = (Stat)Enum.Parse(typeof(Stat), viewModel.Status, true),
-            StudentId = viewModel.StudentId
+            StudentId = viewModel.StudentId,
+
+            UserName = viewModel.Username
         };
     }
     #endregion

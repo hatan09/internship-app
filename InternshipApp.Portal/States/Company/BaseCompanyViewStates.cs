@@ -7,15 +7,12 @@ public class BaseCompanyViewStates : BaseViewModel
 {
     #region [ Fields ]
     private int _id;
-    private int _credit;
-    private double _gpa;
-    private int _slots;
     private string _title;
+    private string _address;
+    private string _companyWebsite;
     private string _description;
-    private string _companyName;
-    private double _matching;
-
-    public Company Company { get; set; }
+    private string _imgUrl;
+    private string _companyType;
     #endregion
 
     #region [ CTor ]
@@ -32,28 +29,22 @@ public class BaseCompanyViewStates : BaseViewModel
         set { this.SetProperty(ref this._id, value); }
     }
 
-    public int Credit
-    {
-        get { return this._credit; }
-        set { this.SetProperty(ref this._credit, value); }
-    }
-
-    public double Gpa
-    {
-        get { return this._gpa; }
-        set { this.SetProperty(ref this._gpa, value); }
-    }
-
-    public int Slots
-    {
-        get { return this._slots; }
-        set { this.SetProperty(ref this._slots, value); }
-    }
-
     public string Title
     {
         get { return this._title; }
         set { this.SetProperty(ref this._title, value); }
+    }
+
+    public string Address
+    {
+        get { return this._address; }
+        set { this.SetProperty(ref this._address, value); }
+    }
+
+    public string CompanyWebsite
+    {
+        get { return this._companyWebsite; }
+        set { this.SetProperty(ref this._companyWebsite, value); }
     }
 
     public string Description
@@ -62,16 +53,16 @@ public class BaseCompanyViewStates : BaseViewModel
         set { this.SetProperty(ref this._description, value); }
     }
 
-    public string CompanyName
+    public string ImgUrl
     {
-        get { return this._companyName; }
-        set { this.SetProperty(ref this._companyName, value); }
+        get { return this._imgUrl; }
+        set { this.SetProperty(ref this._imgUrl, value); }
     }
 
-    public double Matching
+    public string CompanyType
     {
-        get { return this._matching; }
-        set { this.SetProperty(ref this._matching, value); }
+        get { return this._companyType; }
+        set { this.SetProperty(ref this._companyType, value); }
     }
     #endregion
 }

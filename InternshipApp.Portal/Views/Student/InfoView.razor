@@ -10,7 +10,7 @@
     </div>
     <Stack>
         <h1>
-            Name Name
+            @States.Name
         </h1>
     </Stack>
     <StudentActionBar/>
@@ -22,7 +22,7 @@
             Introduction
         </h2>
         <label>
-            lorem ipsum
+            @States.Bio
         </label>
     </Stack>
 
@@ -31,13 +31,13 @@
             Education
         </h2>
         <label>
-            lorem ipsum
+            International University, HCM National University
         </label>
         <label>
-            lorem ipsum
+            @GetOrderFromInt(States.Year) year, CSE student
         </label>
         <label>
-            lorem ipsum
+            GPA: @States.Gpa. Credits acchieved: @States.Credits
         </label>
     </Stack>
 

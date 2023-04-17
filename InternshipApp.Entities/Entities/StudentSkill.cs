@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace InternshipApp.Core.Entities
+﻿namespace InternshipApp.Core.Entities
 {
     public class StudentSkill
     {
@@ -8,6 +6,7 @@ namespace InternshipApp.Core.Entities
         public string? StudentId { get; set; } = string.Empty;
         public Skill? Skill { get; set; }
         public int? SkillId { get; set; }
+        public SkillLevel Level { get; set; } = SkillLevel.NOVICE;
         public string Description { get; set; } = string.Empty;
     }
 }

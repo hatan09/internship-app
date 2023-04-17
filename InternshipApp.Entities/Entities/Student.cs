@@ -11,10 +11,12 @@ namespace InternshipApp.Core.Entities
     {
         public string StudentId { get; set; } = string.Empty;
         public double GPA { get; set; }
-        public Stat Stat { get; set; } = Stat.PENDING;
+        public Stat Stat { get; set; } = Stat.WAITING;
         public int Credit { get; set; }
         public string CVUrl { get; set; } = string.Empty;
         public int Year { get; set; } = 1;
+        public string? Bio { get; set; } = string.Empty;
+
 
         public int Score { get; set; } = 0;
 
@@ -31,6 +33,6 @@ namespace InternshipApp.Core.Entities
 
     }
 
-    public enum Stat { PENDING, ACCEPTED, DENIED }
+    public enum Stat { WAITING, APPLIED, ACCEPTED, DENIED }
 
 }

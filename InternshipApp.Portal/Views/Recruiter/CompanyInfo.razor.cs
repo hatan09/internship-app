@@ -22,6 +22,7 @@ public partial class CompanyInfo : ComponentBase
     #region [ Protected Methods - Override ]
     protected override async Task OnInitializedAsync()
     {
+        States = new();
         await base.OnInitializedAsync();
     }
 

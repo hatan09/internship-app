@@ -27,7 +27,7 @@ namespace InternshipApp.Api.DataObjects
 
         public double GPA { get; set; } = 0;
 
-        public Stat Stat { get; set; } = Stat.PENDING;
+        public Stat Stat { get; set; } = Stat.WAITING;
 
         public string CVUrl { get; set; } = string.Empty;
 
@@ -52,7 +52,7 @@ namespace InternshipApp.Api.DataObjects
 
         public double GPA { get; set; } = 0;
 
-        public Stat Stat { get; set; } = Stat.PENDING;
+        public Stat Stat { get; set; } = Stat.WAITING;
 
         public bool IsAccepted { get; set; } = false;
 

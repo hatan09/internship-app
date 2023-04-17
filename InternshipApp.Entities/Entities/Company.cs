@@ -9,8 +9,10 @@ namespace InternshipApp.Core.Entities
     public class Company : BaseEntity<int>
     {
         public string Title { get; set; } = string.Empty;
-        public string? CompanyWebsite { get; set; }
         public string Address { get; set; } = string.Empty;
+        public string? CompanyWebsite { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public string ImgUrl { get; set; } = string.Empty;
         public CompanyType Type { get; set; } = CompanyType.OTHER;
 
         public virtual ICollection<Job> Jobs { get; set; } = new HashSet<Job>();

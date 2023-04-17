@@ -50,7 +50,7 @@ namespace InternshipApp.Api.Controllers
             var group = await _internGroupRepository.FindByIdAsync(groupId, cancellationToken);
             if (group is null) return NotFound("No Intern Group Found");
 
-            var students = await _studentManager.FindAll().Where(stu => stu.InternGroupId == groupId && stu.Stat == Stat.PENDING).ToListAsync(cancellationToken);
+            var students = await _studentManager.FindAll().Where(stu => stu.InternGroupId == groupId && stu.Stat == Stat.WAITING).ToListAsync(cancellationToken);
             if (students is null) return NotFound("No Student Found");
 
             return Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));

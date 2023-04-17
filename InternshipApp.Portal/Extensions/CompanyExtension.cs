@@ -1,4 +1,5 @@
 ﻿using InternshipApp.Core.Entities;
+using Microsoft.Fast.Components.FluentUI.DesignTokens;
 
 namespace InternshipApp.Portal.Views;
 
@@ -62,6 +63,12 @@ public static class CompanyExtension
         {
             Id = entity.Id,
 
+            Title = entity.Title,
+            Address = entity.Address,
+            CompanyWebsite = entity.CompanyWebsite,
+            Description = entity.Description,
+            ImgUrl = entity.ImgUrl,
+            CompanyType = entity.Type.ToString() 
         };
     }
 
@@ -72,6 +79,12 @@ public static class CompanyExtension
         {
             Id = viewModel.Id,
 
+            Title = viewModel.Title,
+            Address = viewModel.Address,
+            CompanyWebsite = viewModel.CompanyWebsite,
+            Description = viewModel.Description,
+            ImgUrl = viewModel.ImgUrl,
+            Type = Enum.Parse<CompanyType>(viewModel.CompanyType)
         };
     }
     #endregion
