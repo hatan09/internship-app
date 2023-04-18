@@ -4,7 +4,6 @@ using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using RCode;
-using Syncfusion.Blazor.Schedule.Internal;
 using Wave5.UI.Forms;
 
 namespace InternshipApp.Portal.Views;
@@ -32,6 +31,9 @@ public partial class JobInfoView
 
     [Inject]
     public IJobRepository Jobs { get; set; }
+
+    [Inject]
+    public IMatchingService MatchingService { get; set; }
     #endregion
 
     #region [ Properties - Panel ]
@@ -82,7 +84,7 @@ public partial class JobInfoView
 
     private async Task<Student> GetStudentAsync()
     {
-        var student = await Students.FindAll().FirstOrDefaultAsync();
+        var student = await Students.FindAll().Include(x => x.StudentSkills).FirstOrDefaultAsync();
 
         return student;
     }
@@ -119,6 +121,9 @@ public partial class JobInfoView
             States.HasApplied = item.StudentJobs.Any();
             States.JobSkills = item.JobSkills.ToList();
             var skillIds = item.JobSkills.Select(x => x.SkillId).ToList();
+
+            var matching = MatchingService.GetMatchingPoint(student.StudentSkills?.ToList(), item.JobSkills?.ToList());
+            States.Matching = matching;
 
             skillIds.ForEach(async x =>
             {

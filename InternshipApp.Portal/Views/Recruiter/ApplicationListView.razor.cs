@@ -24,6 +24,9 @@ public partial class ApplicationListView : ComponentBase
 
     [Inject]
     public StudentManager Students { get; set; }
+
+    [Inject]
+    public IMatchingService MatchingService { get; set; }
     #endregion
 
     #region [ Properties - States - Contexts ]
@@ -118,6 +121,12 @@ public partial class ApplicationListView : ComponentBase
     #region [ Private Methods - Column ]
     private void InitializeColumn()
     {
+        var job = new DataGridColumnDefinition<ApplicationListRowViewStates>("Job Title", x => x.JobName)
+        {
+            ColumnDataKey = nameof(ApplicationListRowViewStates.JobName),
+            Width = "2fr"
+        };
+
         var name = new DataGridColumnDefinition<ApplicationListRowViewStates>("Student Name", x => x.StudentName)
         {
             ColumnDataKey = nameof(ApplicationListRowViewStates.StudentName),
@@ -127,7 +136,7 @@ public partial class ApplicationListView : ComponentBase
         var year = new DataGridColumnDefinition<ApplicationListRowViewStates>("Year", x => x.Year)
         {
             ColumnDataKey = nameof(ApplicationListRowViewStates.Year),
-            Width = "2fr"
+            Width = "1fr"
         };
 
         var gpa = new DataGridColumnDefinition<ApplicationListRowViewStates>("Gpa", x => x.Gpa)
@@ -139,9 +148,10 @@ public partial class ApplicationListView : ComponentBase
         var matching = new DataGridColumnDefinition<ApplicationListRowViewStates>("Matching point", x => x.Matching)
         {
             ColumnDataKey = nameof(ApplicationListRowViewStates.Matching),
-            Width = "2fr"
+            Width = "1fr"
         };
 
+        this.ListContext.Columns.Definitions.Add(job);
         this.ListContext.Columns.Definitions.Add(name);
         this.ListContext.Columns.Definitions.Add(year);
         this.ListContext.Columns.Definitions.Add(gpa);
@@ -170,26 +180,39 @@ public partial class ApplicationListView : ComponentBase
     #endregion
 
     #region [ Private Methods - Data ]
+
+
     private async Task LoadDataAsync()
     {
         try
         {
+            this.ListContainerContext.SetProcessingStates(true, false);
+            this.SearchContext.SetProcessingStates(true);
+            this.CommandBarContext.SetProcessingStates(true);
+            this.ListContext.SetProcessingStates(true);
             this.States.Items.Clear();
+            this.StateHasChanged();
 
-            var applicationList = new List<StudentJob>();
-            var job = await Jobs.FindAll().Include(x => x.StudentJobs).FirstOrDefaultAsync();
+            var job = await Jobs.FindAll().Include(x => x.StudentJobs).Include(x => x.JobSkills).FirstOrDefaultAsync();
             var studentJobs = job.StudentJobs.ToList();
 
             States.Items = studentJobs.ToListRowList();
-            States.Items.ForEach(async x => {
-                var student = await Students.FindByIdAsync(x.StudentId);
+            var allStudents = await Students.FindAll(x => States.Items.Select(y => y.StudentId).Contains(x.Id))
+                                        .Include(x => x.StudentSkills)
+                                        .ToListAsync();
+
+            States.Items.ForEach(x => {
+                var student = allStudents.FirstOrDefault(y => y.Id == x.StudentId);
+                var matching = MatchingService.GetMatchingPoint(student?.StudentSkills?.ToList(), job.JobSkills?.ToList());
 
                 x.StudentName = student == null ? "" : student.FullName;
                 x.Year = student == null ? 1 : student.Year;
                 x.Gpa = student == null ? 0 : student.GPA;
+                x.JobName = job.Title;
+                x.Matching = matching;
             });
 
-            this.ListContext.GetKey = (x => x.Id);
+            this.ListContext.GetKey = x => x.Id;
             this.ListContext.ItemsSource.AddRange(this.States.Items);
         }
         catch (Exception ex)
@@ -198,7 +221,10 @@ public partial class ApplicationListView : ComponentBase
         }
         finally
         {
-
+            this.ListContainerContext.SetProcessingStates(false, this.ListContext.ItemsSource.Any());
+            this.ListContext.SetProcessingStates(false);
+            this.SearchContext.SetProcessingStates(false);
+            this.CommandBarContext.SetProcessingStates(false);
             this.StateHasChanged();
         }
     }

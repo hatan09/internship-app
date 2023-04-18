@@ -10,12 +10,14 @@ public class BaseApplicationViewStates : BaseViewModel
     private string _studentName;
     private int _year;
     private double _gpa;
+    private string _jobName;
     private double _matching;
     #endregion
 
     #region [ CTor ]
     public BaseApplicationViewStates()
     {
+        _id = Guid.NewGuid().ToString();
     }
     #endregion
 
@@ -48,6 +50,12 @@ public class BaseApplicationViewStates : BaseViewModel
     {
         get { return this._gpa; }
         set { this.SetProperty(ref this._gpa, value); }
+    }
+
+    public string JobName
+    {
+        get { return this._jobName; }
+        set { this.SetProperty(ref this._jobName, value); }
     }
 
     public double Matching
