@@ -6,13 +6,14 @@ using Wave5.UI;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
 using Wave5.UI.Blazor;
+using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
 
-public partial class ManageJobView
+public partial class ManageInternView
 {
     #region [ CTor ]
-    public ManageJobView()
+    public ManageInternView()
     {
 
     }
@@ -34,6 +35,7 @@ public partial class ManageJobView
     #region [ Properties - Parameter ]
     [Parameter]
     public string JobId { get; set; }
+    public string StudentId { get; set; }
     #endregion
 
     #region [ Properties - Contexts ]
@@ -42,12 +44,8 @@ public partial class ManageJobView
     protected DetailsCardContainerContext DetailsContainerContext { get; private set; }
     #endregion
 
-    #region [ Properties - Panel ]
-    protected FormRequest<FormAction, Job> JobFormRequest { get; private set; }
-    #endregion
-
     #region [ Properties - Data ]
-    protected JobDetailsViewStates States { get; private set; }
+    protected ApplicationDetailsViewStates States { get; private set; }
     #endregion
 
     #region [ Protected Methods - Override ]
@@ -64,11 +62,13 @@ public partial class ManageJobView
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         var currentJobId = this.JobId;
-        var parameterJobId = parameters.GetValueOrDefault<string>(nameof(this.JobId));
+        var parameterJobId = parameters.GetValueOrDefault<string>(nameof(this.JobId)); 
+        var currentStudentId = this.StudentId;
+        var parameterStudentId = parameters.GetValueOrDefault<string>(nameof(this.StudentId));
 
         await base.SetParametersAsync(parameters);
 
-        if (currentJobId != parameterJobId)
+        if (currentJobId != parameterJobId || currentStudentId != parameterStudentId)
         {
             await this.LoadDataAsync();
         }
@@ -76,35 +76,9 @@ public partial class ManageJobView
     #endregion
 
     #region [ Event Handlers - CommandBar ]
-    protected void OnEditButtonClicked(EventArgs args)
-    {
-        this.JobFormRequest = FormRequestFactory.EditRequest(this.States.ToEntity());
-        this.StateHasChanged();
-    }
-
     protected async void OnRefreshButtonClicked(EventArgs args)
     {
         await LoadDataAsync();
-    }
-
-    protected void OnDetailsButtonClicked(EventArgs args)
-    {
-        this.JobFormRequest = FormRequestFactory.DetailsRequest(this.States.ToEntity());
-        this.StateHasChanged();
-    }
-    #endregion
-
-    #region [ Event Handlers - Panel ]
-    protected async Task OnFormResultReceived(FormResult<Job> result)
-    {
-        switch (result.State)
-        {
-            case FormResultState.Added:
-            case FormResultState.Updated:
-            case FormResultState.Deleted:
-                await this.LoadDataAsync();
-                break;
-        }
     }
     #endregion
 
@@ -112,7 +86,6 @@ public partial class ManageJobView
     private void InitializeCommandBars()
     {
         this.CommandBarContext.Items.AddRefreshButton(this.OnRefreshButtonClicked);
-        this.CommandBarContext.Items.AddEditButton(this.OnEditButtonClicked, true);
     }
     #endregion
 
@@ -120,15 +93,25 @@ public partial class ManageJobView
     private async Task LoadDataAsync()
     {
         Guard.ParamIsNullOrEmpty(this.JobId, nameof(this.JobId));
+        Guard.ParamIsNullOrEmpty(this.StudentId, nameof(this.StudentId));
 
         try
         {
             this.DetailsContainerContext.SetProcessingStates(true, false);
             this.CommandBarContext.SetProcessingStates(true);
 
-            var item = await Jobs.FindByIdAsync(int.Parse(JobId));
+            var job = await Jobs.FindAll(x => x.Id == int.Parse(JobId))
+                .Include(x => x.StudentJobs.Where(x => x.StudentId == StudentId))
+                .FirstOrDefaultAsync();
 
-            if (item is null)
+            if (job == null)
+            {
+
+            }
+
+            var item = job.StudentJobs.FirstOrDefault(x => x.StudentId == StudentId);
+
+            if (job == null || item == null)
             {
                 this.States = null;
                 return;

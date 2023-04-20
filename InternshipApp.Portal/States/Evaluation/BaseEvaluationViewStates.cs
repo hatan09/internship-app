@@ -2,29 +2,25 @@
 
 namespace InternshipApp.Portal.Views;
 
-public class BaseApplicationViewStates : BaseViewModel
+public class BaseEvaluationViewStates : BaseViewModel
 {
     #region [ Fields ]
-    private string _id;
+    private int _id;
     private string _studentId;
     private string _studentName;
-    private int _year;
-    private double _gpa;
-    private double _credits;
     private int _jobId;
     private string _jobName;
-    private double _matching;
     #endregion
 
     #region [ CTor ]
-    public BaseApplicationViewStates()
+    public BaseEvaluationViewStates()
     {
-        _id = Guid.NewGuid().ToString();
+        
     }
     #endregion
 
     #region [ Properties ]
-    public string Id
+    public int Id
     {
         get { return this._id; }
         set { this.SetProperty(ref this._id, value); }
@@ -42,22 +38,39 @@ public class BaseApplicationViewStates : BaseViewModel
         set { this.SetProperty(ref this._studentName, value); }
     }
 
-    public int Year
+    private string _comment;
+    public string Comment
     {
-        get { return this._year; }
-        set { this.SetProperty(ref this._year, value); }
+        get { return this._comment; }
+        set { this.SetProperty(ref this._comment, value); }
     }
 
-    public double Gpa
+    private string _projectName;
+    public string ProjectName
     {
-        get { return this._gpa; }
-        set { this.SetProperty(ref this._gpa, value); }
+        get { return this._projectName; }
+        set { this.SetProperty(ref this._projectName, value); }
     }
 
-    public double Credits
+    private int _score;
+    public int Score
     {
-        get { return this._credits; }
-        set { this.SetProperty(ref this._credits, value); }
+        get { return this._score; }
+        set { this.SetProperty(ref this._score, value); }
+    }
+
+    private string _performance;
+    public string Performance
+    {
+        get { return this._performance; }
+        set { this.SetProperty(ref this._performance, value); }
+    }
+
+    private DateTime _createdDate;
+    public DateTime CreatedDate
+    {
+        get { return this._createdDate; }
+        set { this.SetProperty(ref this._createdDate, value); }
     }
 
     public int JobId
@@ -70,12 +83,6 @@ public class BaseApplicationViewStates : BaseViewModel
     {
         get { return this._jobName; }
         set { this.SetProperty(ref this._jobName, value); }
-    }
-
-    public double Matching
-    {
-        get { return this._matching; }
-        set { this.SetProperty(ref this._matching, value); }
     }
     #endregion
 }

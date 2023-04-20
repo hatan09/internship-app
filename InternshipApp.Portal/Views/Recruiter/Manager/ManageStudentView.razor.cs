@@ -1,1 +1,0 @@
-﻿namespace InternshipApp.Portal.Views;
