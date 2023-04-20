@@ -12,5 +12,5 @@
         public int? Score { get; set; } = 0;
     }
 
-    public enum ApplyStatus { WAITING, ACCEPTED, HIRED, REJECTED, FINISHED }
+    public enum ApplyStatus { WAITING, ACCEPTED, MISSED, HIRED, REJECTED, FINISHED }
 }

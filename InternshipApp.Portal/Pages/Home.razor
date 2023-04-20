@@ -1,7 +1,49 @@
 ﻿@page "/"
 
+@namespace InternshipApp.Portal.Views
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Popups
+
 <PageTitle>Home</PageTitle>
 
-<h1>Hello</h1>
+@if (string.IsNullOrEmpty(LoginStudent?.FullName))
+{
+    <h1>
+        Hello Guest! Please Login!
+    </h1>
+}
+else
+{
+    <h1>
+        Hello @LoginStudent?.FullName
+    </h1>
+}
 
 Welcome to Internship App!
+
+<SfDialog Height="50%" Width="50%" Target="#target" ShowCloseIcon="true" @bind-Visible="Visible">
+        <DialogTemplates>
+            <Header>
+                <div>Login</div>
+            </Header>
+            <Content>
+                <Stack Style="width:100%;height:100%">
+                    <FluentTextField @bind-Value=@StudentId Placeholder="Your student id">
+                        <label>Student Id</label>
+                    </FluentTextField>
+
+                    <FluentTextField @bind-Value=@Password TextFieldType="TextFieldType.Password" Placeholder="Your password">
+                        <label>Password</label>
+                    </FluentTextField>
+
+                    <br />
+
+                    <SfButton Content="Login" OnClick="OnLoginButtonClicked"/>
+                </Stack>
+            </Content>
+            <FooterTemplate>
+                <div>International University - Internship App</div>
+            </FooterTemplate>
+        </DialogTemplates>
+        @*<DialogEvents OnOpen="@BeforeDialogOpen" Closed="@DialogClosed"></DialogEvents>*@
+    </SfDialog>

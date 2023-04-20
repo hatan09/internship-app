@@ -12,7 +12,8 @@
         OnDismissed=@OnPanelDismissed>
 
    <PanelContentTemplate>
-        <StudentInfoFormView />
+        <StudentInfoFormView FormRequest="@FormRequest" 
+            FormResultCallback="FormResultCallback"/>
    </PanelContentTemplate>
 
 </Panel>

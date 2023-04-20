@@ -158,6 +158,8 @@ public partial class StudentListView : ComponentBase
 
     private void OnAddButtonClicked(EventArgs e)
     {
+        var item = new Student();
+        StudentFormRequest = FormRequestFactory.AddRequest(item);
         this.StateHasChanged();
     }
 
@@ -206,6 +208,25 @@ public partial class StudentListView : ComponentBase
         catch (Exception ex)
         {
 
+        }
+    }
+    #endregion
+
+    #region [ Event Handlers - Panel ]
+    protected async Task OnFormResultReceived(FormResult<Student> result)
+    {
+        switch (result.State)
+        {
+            case FormResultState.Added:
+            case FormResultState.Updated:
+            case FormResultState.Deleted:
+                var tasks = new List<Task>
+                {
+                    this.LoadDataAsync()
+                };
+
+                await Task.WhenAll(tasks);
+                break;
         }
     }
     #endregion

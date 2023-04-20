@@ -11,8 +11,11 @@ public class BaseStudentViewStates : BaseViewModel
     private string _name;
     private int _year;
     private double _gpa;
-    private string _special;
+    private int _credits;
+    private string _bio;
     private string _status;
+    private string _username;
+    private string _password;
     #endregion
 
     #region [ CTor ]
@@ -52,16 +55,34 @@ public class BaseStudentViewStates : BaseViewModel
         set { this.SetProperty(ref this._gpa, value); }
     }
 
-    public string Special
+    public int Credits
     {
-        get { return this._special; }
-        set { this.SetProperty(ref this._special, value); }
+        get { return this._credits; }
+        set { this.SetProperty(ref this._credits, value); }
+    }
+
+    public string Bio
+    {
+        get { return this._bio; }
+        set { this.SetProperty(ref this._bio, value); }
     }
 
     public string Status
     {
         get { return this._status; }
         set { this.SetProperty(ref this._status, value); }
+    }
+
+    public string Username
+    {
+        get { return this._username; }
+        set { this.SetProperty(ref this._username, value); }
+    }
+
+    public string Password
+    {
+        get { return this._password; }
+        set { this.SetProperty(ref this._password, value); }
     }
     #endregion
 }

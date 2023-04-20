@@ -1,4 +1,5 @@
 ﻿using InternshipApp.Contracts;
+using InternshipApp.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Repository;
@@ -31,7 +32,7 @@ public class MatchingService : IMatchingService
     }
     #endregion
 
-    public async Task<int> GetMatchingPoint(string studentId, int jobId)
+    public async Task<int> GetMatchingPointById(string studentId, int jobId)
     {
         int score = 0;
         double k_factor = 0;
@@ -50,7 +51,7 @@ public class MatchingService : IMatchingService
 
         foreach (var jobSkill in jobSkills)
         {
-            if(jobSkill.Weight <= 0)    // additional soft skills
+            if (jobSkill.Weight <= 0)    // additional soft skills
             {
                 if (studentSkills.Where(x => x.SkillId == jobSkill.SkillId).Any())
                     score += (int)(100 * k_factor);
@@ -74,7 +75,53 @@ public class MatchingService : IMatchingService
                         continue;
                     }
 
-                    max = Math.Max(max, (int) (100 * jobSkill.Weight * GetSkillMatchPoint(matchingType)));
+                    max = Math.Max(max, (int)(100 * jobSkill.Weight * GetSkillMatchPoint(matchingType)));
+                }
+                score += max;
+            }
+        }
+
+        return score;
+    }
+
+    public int GetMatchingPoint(List<StudentSkill> studentSkills, List<JobSkill> jobSkills)
+    {
+        int score = 0;
+        double k_factor = 0;
+        if (studentSkills == null || studentSkills.Count == 0) return 0;
+        if (jobSkills == null || jobSkills.Count == 0) return 100;
+
+        if (jobSkills.Where(x => x.Weight <= 0).Any())
+            k_factor = (1 - jobSkills.Sum(x => x.Weight)) /
+                        jobSkills.Where(x => x.Weight <= 0).Count();
+
+        foreach (var jobSkill in jobSkills)
+        {
+            if (jobSkill.Weight <= 0)    // additional soft skills
+            {
+                if (studentSkills.Where(x => x.SkillId == jobSkill.SkillId).Any())
+                    score += (int)(100 * k_factor);
+                continue;
+            }
+
+            // primary skills
+            if (studentSkills.Where(x => x.SkillId == jobSkill.SkillId).Any())
+                score += (int)(100 * jobSkill.Weight);
+            else
+            {
+                var skillScore = ScoreMap[jobSkill.SkillId];
+                if (skillScore == null)
+                    continue;
+
+                int max = 0;
+                foreach (var studentSkill in studentSkills)
+                {
+                    if (!skillScore.TryGetValue((int)studentSkill.SkillId, out var matchingType))
+                    {
+                        continue;
+                    }
+
+                    max = Math.Max(max, (int)(100 * jobSkill.Weight * GetSkillMatchPoint(matchingType)));
                 }
                 score += max;
             }

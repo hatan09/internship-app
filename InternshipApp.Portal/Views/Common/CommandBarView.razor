@@ -1,1 +1,58 @@
 ﻿@namespace InternshipApp.Portal.Views
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Popups
+
+<Stack 
+    Horizontal 
+    ClassName="command-bar"
+    VerticalAlign="Wave5.UI.Alignment.Center" 
+    HorizontalAlign="Wave5.UI.Alignment.Center">
+
+    @if (IsAcceptButtonVisible)
+    {
+        <SfTooltip Content="Accept">
+            <SfButton IconCss="oi oi-check" CssClass="command-bar-button accept-button"/>
+        </SfTooltip>
+    }
+
+    @if (IsChatButtonVisible)
+    {
+        <SfTooltip Content="Chat with this student">
+            <SfButton IconCss="oi oi-chat" CssClass="command-bar-button"/>
+        </SfTooltip>
+    }
+</Stack>
+
+<style>
+    .command-bar{
+        padding:20px 100px;
+        border-radius: 6px; 
+        border: solid;
+        border-color:gray;
+        border-width:thin;
+    }
+
+    .accept-button{
+        color:forestgreen;
+    }
+
+    .e-btn-icon{
+        font-size: 30pt;
+        color:gray;
+    }
+
+    .command-bar-button{
+        background-color:transparent;
+        border:none;
+        width: 70px;
+        height: 40px;
+    }
+    .command-bar-button:hover{
+        background-color:transparent;
+        border:none;
+    }
+    .command-bar-button:focus{
+        background-color:transparent;
+        border:none;
+    }
+</style>

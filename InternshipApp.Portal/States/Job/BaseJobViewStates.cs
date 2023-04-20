@@ -15,12 +15,16 @@ public class BaseJobViewStates : BaseViewModel
     private string _companyName;
     private double _matching;
     private List<JobSkill> _jobSkills;
+    private List<Skill> _skills;
+    private bool _hasApplied;
+
     #endregion
 
     #region [ CTor ]
     public BaseJobViewStates()
     {
         _jobSkills = new();
+        _skills = new();
     }
     #endregion
 
@@ -77,6 +81,18 @@ public class BaseJobViewStates : BaseViewModel
     {
         get { return this._jobSkills; }
         set { this.SetProperty(ref this._jobSkills, value); }
+    }
+
+    public List<Skill> Skills
+    {
+        get { return this._skills; }
+        set { this.SetProperty(ref this._skills, value); }
+    }
+
+    public bool HasApplied
+    {
+        get { return this._hasApplied; }
+        set { this.SetProperty(ref this._hasApplied, value); }
     }
     #endregion
 }

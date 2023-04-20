@@ -1,4 +1,5 @@
 ﻿using InternshipApp.Core.Entities;
+using Microsoft.Fast.Components.FluentUI.DesignTokens;
 
 namespace InternshipApp.Portal.Views;
 
@@ -61,6 +62,7 @@ public static class ApplicationExtension
     {
         return new TBaseViewModel()
         {
+            StudentId = entity.StudentId,
 
 
         };
@@ -71,6 +73,7 @@ public static class ApplicationExtension
     {
         return new TEntity()
         {
+            StudentId = viewModel.StudentId,
 
 
         };

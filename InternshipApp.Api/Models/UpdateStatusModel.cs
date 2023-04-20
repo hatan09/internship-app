@@ -6,6 +6,6 @@ namespace InternshipApp.Api.Models
     {
         public string Id { get; set; } = string.Empty;
 
-        public Stat Stat { get; set; } = Stat.PENDING;
+        public Stat Stat { get; set; } = Stat.WAITING;
     }
 }
