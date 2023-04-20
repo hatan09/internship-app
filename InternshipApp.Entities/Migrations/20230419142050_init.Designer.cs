@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternshipApp.Core.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230415192831_add bio")]
-    partial class addbio
+    [Migration("20230419142050_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -123,6 +123,47 @@ namespace InternshipApp.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("InternshipApp.Core.Entities.Evaluation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("JobId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Performance")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProjectName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReportUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Evaluations");
                 });
 
             modelBuilder.Entity("InternshipApp.Core.Entities.InternGroup", b =>
@@ -554,7 +595,6 @@ namespace InternshipApp.Core.Migrations
                     b.HasBaseType("InternshipApp.Core.Entities.User");
 
                     b.Property<string>("Bio")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CVUrl")
@@ -569,6 +609,10 @@ namespace InternshipApp.Core.Migrations
 
                     b.Property<double>("GPA")
                         .HasColumnType("float");
+
+                    b.Property<string>("GitProfileUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("InternGroupId")
                         .HasColumnType("int");

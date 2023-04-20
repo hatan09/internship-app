@@ -143,7 +143,7 @@ namespace InternshipApp.Api.Controllers
         public async Task<IActionResult> Apply([FromBody] ApplyJobModel model)
         {
             var student = await _studentManager.FindByIdAsync(model.StudentId);
-            if (student is null || student.IsDeleted || student.Stat == Stat.DENIED)
+            if (student is null || student.IsDeleted || student.Stat == Stat.HIRED)
                 return NotFound("No Student Found");
 
             if (student.Stat == Stat.ACCEPTED)
@@ -164,7 +164,7 @@ namespace InternshipApp.Api.Controllers
         public async Task<IActionResult> Accept([FromBody] UpdateStudentJobModel model, CancellationToken cancellationToken = default)
         {
             var student = await _studentManager.FindAll(stu => stu.Id.Equals(model.StudentId)).Include(stu => stu.StudentJobs).FirstAsync(cancellationToken);
-            if (student is null || student.IsDeleted || student.Stat == Stat.DENIED)
+            if (student is null || student.IsDeleted || student.Stat == Stat.HIRED)
                 return NotFound("No Student Found");
 
             if (student.StudentJobs is null) return NotFound();
@@ -183,7 +183,7 @@ namespace InternshipApp.Api.Controllers
         public async Task<IActionResult> Hire([FromBody] UpdateStudentJobModel model, CancellationToken cancellationToken = default)
         {
             var student = await _studentManager.FindAll(stu => stu.Id.Equals(model.StudentId)).Include(stu => stu.StudentJobs).FirstAsync(cancellationToken);
-            if (student is null || student.IsDeleted || student.Stat == Stat.DENIED)
+            if (student is null || student.IsDeleted || student.Stat == Stat.HIRED)
                 return NotFound("No Student Found");
 
             if (student.StudentJobs is null) return NotFound();

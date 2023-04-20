@@ -63,7 +63,7 @@ builder.Services.AddSwaggerGen(c =>
 
 //Add database
 builder.Services
-    .AddDbContextPool<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("StandardConnection")));
+    .AddDbContextPool<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection")));
 
 //UserIdentity
 builder.Services.AddIdentity<User, Role>(options => {

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace InternshipApp.Core.Entities
+﻿namespace InternshipApp.Core.Entities
 {
     public class Student : User
     {
@@ -16,7 +9,7 @@ namespace InternshipApp.Core.Entities
         public string CVUrl { get; set; } = string.Empty;
         public int Year { get; set; } = 1;
         public string? Bio { get; set; } = string.Empty;
-
+        public string GitProfileUrl { get; set; } = string.Empty;
 
         public int Score { get; set; } = 0;
 
@@ -33,6 +26,6 @@ namespace InternshipApp.Core.Entities
 
     }
 
-    public enum Stat { WAITING, APPLIED, ACCEPTED, DENIED }
+    public enum Stat { WAITING, APPLIED, ACCEPTED, HIRED, FINISHED }
 
 }

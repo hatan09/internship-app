@@ -37,6 +37,7 @@ public partial class InfoView
     #region [ Protected Methods - Override ]
     protected override async Task OnInitializedAsync()
     {
+        States = new();
         await base.OnInitializedAsync();
     }
 
