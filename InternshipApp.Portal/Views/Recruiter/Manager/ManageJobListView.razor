@@ -1,1 +1,13 @@
 ﻿@namespace InternshipApp.Portal.Views
+@using Wave5.UI.DataGrids
+@using Wave5.UI
+
+<DetailsListContainer ContainerContext=@ListContainerContext
+                      CommandBarContext=@CommandBarContext
+                      SearchContext=@SearchContext
+                      TItem="JobListRowViewStates"
+                      Title="">
+
+    <DetailsList DetailsListContext=@ListContext />
+
+</DetailsListContainer>

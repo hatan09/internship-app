@@ -12,6 +12,11 @@ namespace InternshipApp.Portal.Views;
 
 public partial class ApplicationListView : ComponentBase
 {
+    #region [ Properties - Parameters ]
+    [Parameter]
+    public string? JobId { get; set; }
+    #endregion
+
     #region [ Properties - Inject ]
     [Inject]
     public ILogger<ApplicationListView> Logger { get; set; }
@@ -180,7 +185,10 @@ public partial class ApplicationListView : ComponentBase
     #endregion
 
     #region [ Private Methods - Data ]
-
+    private async Task<int> GetCompanyId()
+    {
+        return 1;
+    }
 
     private async Task LoadDataAsync()
     {
@@ -193,8 +201,31 @@ public partial class ApplicationListView : ComponentBase
             this.States.Items.Clear();
             this.StateHasChanged();
 
-            var job = await Jobs.FindAll().Include(x => x.StudentJobs).Include(x => x.JobSkills).FirstOrDefaultAsync();
-            var studentJobs = job.StudentJobs.ToList();
+            var companyId = await GetCompanyId();
+
+            var jobs = new List<Job>();
+
+            if(string.IsNullOrEmpty(JobId))
+            {
+                jobs = await Jobs.FindAll(x => x.CompanyId == companyId)
+                                .Include(x => x.StudentJobs.Where(x => x.Status != ApplyStatus.HIRED && x.Status != ApplyStatus.ACCEPTED))
+                                .Include(x => x.JobSkills)
+                                .ToListAsync();
+            }
+            else
+            {
+                jobs = await Jobs.FindAll(x => x.Id == int.Parse(JobId))
+                                .Include(x => x.StudentJobs.Where(x => x.Status != ApplyStatus.HIRED && x.Status != ApplyStatus.ACCEPTED))
+                                .Include(x => x.JobSkills)
+                                .ToListAsync();
+            }
+            
+            var studentJobs = new List<StudentJob>();
+            var allApplications = jobs.Select(x => x.StudentJobs);
+            foreach(var item in allApplications)
+            {
+                studentJobs.AddRange(item);
+            }
 
             States.Items = studentJobs.ToListRowList();
             var allStudents = await Students.FindAll(x => States.Items.Select(y => y.StudentId).Contains(x.Id))
@@ -203,11 +234,13 @@ public partial class ApplicationListView : ComponentBase
 
             States.Items.ForEach(x => {
                 var student = allStudents.FirstOrDefault(y => y.Id == x.StudentId);
-                var matching = MatchingService.GetMatchingPoint(student?.StudentSkills?.ToList(), job.JobSkills?.ToList());
+                var job = jobs.FirstOrDefault(y => y.Id == x.JobId);
+                var matching = MatchingService.GetMatchingPoint(student?.StudentSkills?.ToList(), job?.JobSkills?.ToList());
 
                 x.StudentName = student == null ? "" : student.FullName;
                 x.Year = student == null ? 1 : student.Year;
                 x.Gpa = student == null ? 0 : student.GPA;
+                x.Credits = student == null ? 0 : student.Credit;
                 x.JobName = job.Title;
                 x.Matching = matching;
             });

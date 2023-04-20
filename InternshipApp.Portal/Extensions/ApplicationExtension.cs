@@ -41,18 +41,18 @@ public static class ApplicationExtension
     #endregion
 
     #region [ Public Methods - DetailsViewModel ]
-    //public static ApplicationDetailsViewStates ToDetailsViewStates(this Application entity)
-    //{
+    public static ApplicationDetailsViewStates ToDetailsViewStates(this StudentJob entity)
+    {
 
-    //    var viewmodel = ToViewStates<ApplicationDetailsViewStates>(entity);
+        var viewmodel = ToViewStates<ApplicationDetailsViewStates>(entity);
 
-    //    return viewmodel;
-    //}
+        return viewmodel;
+    }
 
-    //public static Application ToEntity(this ApplicationDetailsViewStates viewStates)
-    //{
-    //    return ToEntity<Application>(viewStates);
-    //}
+    public static StudentJob ToEntity(this ApplicationDetailsViewStates viewStates)
+    {
+        return ToEntity<StudentJob>(viewStates);
+    }
     #endregion
 
     #region [ Private Methods - BaseViewModel ]
