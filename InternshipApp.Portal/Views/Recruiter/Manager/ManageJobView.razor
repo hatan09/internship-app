@@ -18,7 +18,9 @@
                Horizontal=@true
                Tokens=@(new StackTokens { Padding="15px 10px" })>
                 <Stack Style="width:100%" Horizontal=true>
+                        <FormDetailsField Label="Title" Value=@(States.Title) />
 
+                        <FormDetailsField Label="Total Slots" Value=@(States.Slots.ToString()) />
                 </Stack>
             </Stack>
         }

@@ -37,7 +37,13 @@ public partial class ManageJobView
     #endregion
 
     #region [ Properties - Contexts ]
+    protected DetailsListContainerContext ListContainerContext { get; private set; }
+
+    protected DataListSearchContext SearchContext { get; private set; }
+
     protected CommandBarContext CommandBarContext { get; private set; }
+
+    protected DetailsListContext<JobListRowViewStates> ListContext { get; private set; }
 
     protected DetailsCardContainerContext DetailsContainerContext { get; private set; }
     #endregion
@@ -53,8 +59,12 @@ public partial class ManageJobView
     #region [ Protected Methods - Override ]
     protected override async Task OnInitializedAsync()
     {
+        this.SearchContext = new DataListSearchContext();
         this.CommandBarContext = new CommandBarContext();
         this.DetailsContainerContext = new DetailsCardContainerContext();
+        this.ListContext = new DetailsListContext<JobListRowViewStates>();
+        this.ListContext.SelectionMode = SelectionMode.Single;
+        this.ListContext.OnItemInvoked += this.OnRowClicked;
 
         this.InitializeCommandBars();
 
@@ -105,6 +115,13 @@ public partial class ManageJobView
                 await this.LoadDataAsync();
                 break;
         }
+    }
+    #endregion
+
+    #region [ Event Handlers - DataList ]
+    private void OnRowClicked(JobListRowViewStates rowItem)
+    {
+        this.NavigationManager.NavigateTo($"/manage-job-info/{rowItem.Id}");
     }
     #endregion
 

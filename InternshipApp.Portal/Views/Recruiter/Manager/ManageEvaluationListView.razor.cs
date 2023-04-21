@@ -22,16 +22,10 @@ public partial class ManageEvaluationListView
 
     #region [ Properties - Inject ]
     [Inject]
-    public ILogger<EvaluationListView> Logger { get; set; }
-
-    [Inject]
     public NavigationManager NavigationManager { get; set; }
 
     [Inject]
-    public IJobRepository Jobs { get; set; }
-
-    [Inject]
-    public StudentManager Students { get; set; }
+    public IEvaluationRepository Evaluations { get; set; }
 
     [Inject]
     public IMatchingService MatchingService { get; set; }
@@ -74,7 +68,6 @@ public partial class ManageEvaluationListView
         }
         catch (Exception ex)
         {
-            this.Logger.LogError(ex.ToString());
         }
     }
 
@@ -94,7 +87,6 @@ public partial class ManageEvaluationListView
         var filtered = new List<EvaluationListRowViewStates>();
 
         var value = args?.Value.ToString();
-        double.TryParse(value, out var doubleValue);
         if (String.IsNullOrWhiteSpace(value))
         {
             filtered = this.States.Items;
@@ -104,7 +96,7 @@ public partial class ManageEvaluationListView
             // have to check the string is not null first
             // for some reasons, the data can be null or blank
             filtered = this.States.Items.Where(x =>
-                (x.Matching > 0 && x.Matching >= doubleValue)
+                (string.IsNullOrEmpty(x.JobName) && x.JobName.Contains(value))
             ).ToList();
         }
     }
@@ -170,11 +162,6 @@ public partial class ManageEvaluationListView
     #endregion
 
     #region [ Private Methods - Data ]
-    private async Task<int> GetCompanyId()
-    {
-        return 1;
-    }
-
     private async Task LoadDataAsync()
     {
         try
@@ -186,35 +173,8 @@ public partial class ManageEvaluationListView
             this.States.Items.Clear();
             this.StateHasChanged();
 
-            var companyId = await GetCompanyId();
-
-            var job = new Job();
-
-            if (string.IsNullOrEmpty(JobId))
-            {
-                job = await Jobs.FindAll(x => x.CompanyId == companyId)
-                                .Include(x => x.StudentJobs.Where(x => x.Status == ApplyStatus.HIRED))
-                                .FirstOrDefaultAsync();
-            }
-            else
-            {
-                job = await Jobs.FindAll(x => x.Id == int.Parse(JobId))
-                                .Include(x => x.StudentJobs.Where(x => x.Status == ApplyStatus.HIRED)) 
-                                .FirstOrDefaultAsync();
-            }
-
-            var studentJobs = job?.StudentJobs.ToList();
-
-            States.Items = studentJobs.ToListRowList();
-            var allStudents = await Students.FindAll(x => States.Items.Select(y => y.StudentId).Contains(x.Id))
-                                        .ToListAsync();
-
-            States.Items.ForEach(x => {
-                var student = allStudents.FirstOrDefault(y => y.Id == x.StudentId);
-
-                x.StudentName = student == null ? "" : student.FullName;
-                x.JobName = job.Title;
-            });
+            var evaluations = await Evaluations.FindAll(x => x.JobId == int.Parse(JobId) && x.StudentId == StudentId).ToListAsync();
+            States.Items = evaluations.ToListRowList();
 
             this.ListContext.GetKey = x => x.Id;
             this.ListContext.ItemsSource.AddRange(this.States.Items);

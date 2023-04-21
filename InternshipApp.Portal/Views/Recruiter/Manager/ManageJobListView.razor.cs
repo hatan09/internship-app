@@ -116,10 +116,10 @@ public partial class ManageJobListView : ComponentBase
         var title = new DataGridColumnDefinition<JobListRowViewStates>("Job Title", x => x.Title)
         {
             ColumnDataKey = nameof(JobListRowViewStates.Title),
-            Width = "2fr"
+            Width = "3fr"
         };
 
-        var slots = new DataGridColumnDefinition<JobListRowViewStates>("Status", x => x.Slots)
+        var slots = new DataGridColumnDefinition<JobListRowViewStates>("Slots", x => x.Slots)
         {
             ColumnDataKey = nameof(JobListRowViewStates.Slots),
             Width = "1fr"

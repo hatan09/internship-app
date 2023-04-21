@@ -80,6 +80,8 @@ public partial class JobInfoView
         };
 
         await OnUpdateApplicationAsync(studentJob);
+        await LoadDataAsync();
+
     }
 
     private async Task<Student> GetStudentAsync()

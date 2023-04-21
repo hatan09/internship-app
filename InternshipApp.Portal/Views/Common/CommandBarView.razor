@@ -29,14 +29,14 @@
         </SfTooltip>
     }
 
-    @if (IsEmailButtonVisible)
+    @if (IsSendEmailButtonVisible)
     {
         <SfTooltip Content="Send email to this student">
             <SfButton IconCss="oi oi-envelope-closed" CssClass="command-bar-button email"/>
         </SfTooltip>
     }
 
-    @if (IsEmailButtonVisible)
+    @if (IsRejectButtonVisible)
     {
         <SfTooltip Content="Reject this student">
             <SfButton IconCss="oi oi-x" CssClass="command-bar-button reject"/>
@@ -53,44 +53,29 @@
         border-width:thin;
     }
 
-    .e-input-group.e-control-wrapper.command-bar-button{
+    .e-btn .e-btn-icon, .e-css.e-btn .e-btn-icon{
         font-size: 30pt;
     }
 
-    .command-bar-button.edit.e-input-group.e-control-wrapper .e-input-group-icon, 
-    .command-bar-button.edit.e-input-group.e-control-wrapper .e-input-group-icon:hover, 
-    .command-bar-button.edit.e-input-group.e-control-wrapper .e-input-group-icon:active, 
-    .command-bar-button.edit.e-date-wrapper span.e-input-group-icon.e-date-icon.e-icons.e-active { 
-        color: gray;
-    } 
+    .oi-pencil.e-btn-icon{
+        color: gray; 
+    }
 
-    .command-bar-button.accept.e-input-group.e-control-wrapper .e-input-group-icon, 
-    .command-bar-button.accept.e-input-group.e-control-wrapper .e-input-group-icon:hover, 
-    .command-bar-button.accept.e-input-group.e-control-wrapper .e-input-group-icon:active, 
-    .command-bar-button.accept.e-date-wrapper span.e-input-group-icon.e-date-icon.e-icons.e-active { 
+    .oi-check.e-btn-icon{
         color: forestgreen; 
-    } 
+    }
 
-    .command-bar-button.email.e-input-group.e-control-wrapper .e-input-group-icon, 
-    .command-bar-button.email.e-input-group.e-control-wrapper .e-input-group-icon:hover, 
-    .command-bar-button.email.e-input-group.e-control-wrapper .e-input-group-icon:active, 
-    .command-bar-button.email.e-date-wrapper span.e-input-group-icon.e-date-icon.e-icons.e-active { 
-        color: gray;
-    } 
+    .oi-chat.e-btn-icon{
+        color: gray; 
+    }
 
-    .command-bar-button.chat.e-input-group.e-control-wrapper .e-input-group-icon, 
-    .command-bar-button.chat.e-input-group.e-control-wrapper .e-input-group-icon:hover, 
-    .command-bar-button.chat.e-input-group.e-control-wrapper .e-input-group-icon:active, 
-    .command-bar-button.chat.e-date-wrapper span.e-input-group-icon.e-date-icon.e-icons.e-active { 
-        color: blue;
-    } 
+    .oi-envelope-closed.e-btn-icon{
+        color: steelblue; 
+    }
 
-    .command-bar-button.reject.e-input-group.e-control-wrapper .e-input-group-icon, 
-    .command-bar-button.reject.e-input-group.e-control-wrapper .e-input-group-icon:hover, 
-    .command-bar-button.reject.e-input-group.e-control-wrapper .e-input-group-icon:active, 
-    .command-bar-button.reject.e-date-wrapper span.e-input-group-icon.e-date-icon.e-icons.e-active { 
-        color: red;
-    } 
+    .oi-x.e-btn-icon{
+        color: indianred; 
+    }
 
     .command-bar-button{
         background-color:transparent;
