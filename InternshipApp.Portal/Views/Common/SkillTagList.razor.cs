@@ -2,6 +2,7 @@
 using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 using Wave5.UI.Forms;
 
 namespace InternshipApp.Portal.Views;
@@ -84,7 +85,17 @@ public partial class SkillTagList
     {
         try
         {
-
+            var IsStudent = string.IsNullOrEmpty(StudentId);
+            var IsJob = JobId > 0;
+            
+            if(IsStudent && IsJob == true)
+            {
+                return;
+            }
+            else if (IsStudent)
+            {
+                var student = await Students.FindAll(x => x.Id == StudentId).Include(x => x.StudentSkills);
+            }
         }
         catch (Exception ex)
         {
