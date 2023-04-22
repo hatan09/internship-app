@@ -26,7 +26,7 @@ builder.Services.AddBlazoredLocalStorage();
 
 //Add database
 builder.Services
-    .AddDbContextPool<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection")));
+    .AddDbContextPool<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("StandardConnection")));
 
 //UserIdentity
 builder.Services.AddIdentity<User, Role>(options =>
@@ -91,12 +91,13 @@ builder.Services.AddAuthentication(options =>
 });
 
 //IServiceCollections
-builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
-builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-builder.Services.AddScoped<IInternGroupRepository, InternGroupRepository>();
-builder.Services.AddScoped<ISkillRepository, SkillRepository>();
-builder.Services.AddScoped<IJobRepository, JobRepository>();
-builder.Services.AddScoped<IMatchingService, MatchingService>();
+builder.Services.AddTransient<ICompanyRepository, CompanyRepository>();
+builder.Services.AddTransient<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddTransient<IInternGroupRepository, InternGroupRepository>();
+builder.Services.AddTransient<ISkillRepository, SkillRepository>();
+builder.Services.AddTransient<IJobRepository, JobRepository>();
+builder.Services.AddTransient<IMatchingService, MatchingService>();
+builder.Services.AddTransient<IEvaluationRepository, EvaluationRepository>();
 
 //Authorization
 

@@ -63,7 +63,8 @@ public static class ApplicationExtension
         return new TBaseViewModel()
         {
             StudentId = entity.StudentId,
-
+            JobId = (int) entity.JobId,
+            
 
         };
     }
@@ -74,7 +75,7 @@ public static class ApplicationExtension
         return new TEntity()
         {
             StudentId = viewModel.StudentId,
-
+            JobId = viewModel.JobId,
 
         };
     }

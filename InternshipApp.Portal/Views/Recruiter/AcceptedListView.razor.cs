@@ -7,11 +7,10 @@ using Wave5.UI.Blazor;
 using InternshipApp.Contracts;
 using InternshipApp.Repository;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace InternshipApp.Portal.Views;
 
-public partial class ApplicationListView : ComponentBase
+public partial class AcceptedListView : ComponentBase
 {
     #region [ Properties - Parameters ]
     [Parameter]
@@ -19,8 +18,6 @@ public partial class ApplicationListView : ComponentBase
     #endregion
 
     #region [ Properties - Inject ]
-    [Inject]
-    public ILogger<ApplicationListView> Logger { get; set; }
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
@@ -56,7 +53,7 @@ public partial class ApplicationListView : ComponentBase
     {
         try
         {
-            this.States = new ();
+            this.States = new();
 
             this.SearchContext = new DataListSearchContext();
             this.ListContainerContext = new DetailsListContainerContext();
@@ -72,7 +69,7 @@ public partial class ApplicationListView : ComponentBase
         }
         catch (Exception ex)
         {
-            this.Logger.LogError(ex.ToString());
+            
         }
     }
 
@@ -174,61 +171,6 @@ public partial class ApplicationListView : ComponentBase
         // Items
         this.CommandBarContext = new CommandBarContext();
         this.CommandBarContext.Items.AddRefreshButton(this.OnRefreshButtonClicked);
-
-        this.CommandBarContext.FarItems.AddFilterButton(new() {
-            CommandBarFactory.CreateMenuItem("All", "All Applications", "", OnAllFilterButtonClicked),
-            CommandBarFactory.CreateMenuItem("Waiting", "Waiting Applications", "", OnWaitingFilterButtonClicked),
-            CommandBarFactory.CreateMenuItem("Accepted", "Accepted Applications", "", OnAcceptedFilterButtonClicked),
-            CommandBarFactory.CreateMenuItem("Rejected", "Rejected Applications", "", OnRejectedFilterButtonClicked),
-            CommandBarFactory.CreateMenuItem("Missed", "Missed Applications", "", OnMissedFilterButtonClicked),
-        });
-    }
-    #endregion
-
-    #region [ Event Handlers - CommandBars - Filters ]
-    private void OnAllFilterButtonClicked(MouseEventArgs obj)
-    {
-        this.OnFilterDataList(this.States.Items, "All Applications");
-    }
-
-    private void OnWaitingFilterButtonClicked(MouseEventArgs obj)
-    {
-        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.WAITING).ToList();
-        this.OnFilterDataList(filtered, "Waiting Applications");
-    }
-
-    private void OnAcceptedFilterButtonClicked(MouseEventArgs obj)
-    {
-        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.ACCEPTED).ToList();
-        this.OnFilterDataList(filtered, "Accepted Applications");
-    }
-
-    private void OnRejectedFilterButtonClicked(MouseEventArgs obj)
-    {
-        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.REJECTED).ToList();
-        this.OnFilterDataList(filtered, "Rejected Applications");
-    }
-
-    private void OnMissedFilterButtonClicked(MouseEventArgs obj)
-    {
-        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.MISSED).ToList();
-        this.OnFilterDataList(filtered, "Missed Applications");
-    }
-
-    private void OnFilterDataList(IEnumerable<ApplicationListRowViewStates> filtered, string filterName = "")
-    {
-        this.ListContext.ClearSelectedItems();
-
-        this.ListContext.ItemsSource.Clear();
-        this.ListContext.ItemsSource.AddRange(filtered);
-        this.ListContext.Columns.Definitions.ForEach(x => x.IsSorted = false);
-        this.ListContainerContext.HasData = this.ListContext.ItemsSource.Any();
-
-        if (!string.IsNullOrEmpty(filterName))
-        {
-            this.CommandBarContext.FarItems.SetItemLabel(ButtonNames.FilterButton, filterName);
-        }
-        this.StateHasChanged();
     }
     #endregion
 
@@ -261,11 +203,11 @@ public partial class ApplicationListView : ComponentBase
 
             var jobs = new List<Job>();
 
-            if(string.IsNullOrEmpty(JobId))
+            if (string.IsNullOrEmpty(JobId))
             {
                 jobs = await Jobs.FindAll(x => x.CompanyId == companyId)
                                 .Include(x => x.StudentJobs
-                                    .Where(x => x.Status != ApplyStatus.HIRED))
+                                    .Where(x => x.Status == ApplyStatus.ACCEPTED))
                                 .Include(x => x.JobSkills)
                                 .ToListAsync();
             }
@@ -273,14 +215,14 @@ public partial class ApplicationListView : ComponentBase
             {
                 jobs = await Jobs.FindAll(x => x.Id == int.Parse(JobId))
                                 .Include(x => x.StudentJobs
-                                    .Where(x => x.Status != ApplyStatus.HIRED))
+                                    .Where(x => x.Status == ApplyStatus.ACCEPTED))
                                 .Include(x => x.JobSkills)
                                 .ToListAsync();
             }
-            
+
             var studentJobs = new List<StudentJob>();
             var allApplications = jobs.Select(x => x.StudentJobs);
-            foreach(var item in allApplications)
+            foreach (var item in allApplications)
             {
                 studentJobs.AddRange(item);
             }
@@ -305,7 +247,6 @@ public partial class ApplicationListView : ComponentBase
 
             this.ListContext.GetKey = x => x.Id;
             this.ListContext.ItemsSource.AddRange(this.States.Items);
-            this.OnFilterDataList(this.States.Items, "Waiting Applications");
         }
         catch (Exception ex)
         {

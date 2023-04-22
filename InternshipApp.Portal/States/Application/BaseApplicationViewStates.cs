@@ -1,4 +1,5 @@
-﻿using RCode.ViewModels;
+﻿using InternshipApp.Core.Entities;
+using RCode.ViewModels;
 
 namespace InternshipApp.Portal.Views;
 
@@ -76,6 +77,13 @@ public class BaseApplicationViewStates : BaseViewModel
     {
         get { return this._matching; }
         set { this.SetProperty(ref this._matching, value); }
+    }
+
+    private ApplyStatus _status;
+    public ApplyStatus Status
+    {
+        get { return this._status; }
+        set { this.SetProperty(ref this._status, value); }
     }
     #endregion
 }

@@ -55,6 +55,7 @@ public partial class StudentInfoFormPanel
     {
         this.SetIsOpenState(false);
         await Task.Delay(0);
+        StateHasChanged();
     }
     #endregion
 
