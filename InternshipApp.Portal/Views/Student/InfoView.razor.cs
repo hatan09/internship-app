@@ -27,7 +27,7 @@ public partial class InfoView
     #endregion
 
     #region [ Properties - Panel ]
-    protected FormRequest<FormAction, Student> LinkedServiceFormRequest { get; private set; }
+    protected FormRequest<FormAction, Student> ApplicationFormRequest { get; private set; }
     #endregion
 
     #region [ Properties - Data ]
@@ -43,12 +43,12 @@ public partial class InfoView
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        var currentLinkedServiceId = this.StudentId;
-        var parameterLinkedServiceId = parameters.GetValueOrDefault<string>(nameof(this.StudentId));
+        var currentApplicationId = this.StudentId;
+        var parameterApplicationId = parameters.GetValueOrDefault<string>(nameof(this.StudentId));
 
         await base.SetParametersAsync(parameters);
 
-        if (currentLinkedServiceId != parameterLinkedServiceId)
+        if (currentApplicationId != parameterApplicationId)
         {
             await this.LoadDataAsync();
         }

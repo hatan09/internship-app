@@ -132,9 +132,6 @@ public partial class JobListView
             });
 
             this.States.Items = jobList.ToListRowList();
-
-            //this.OnFilterDataList(this.States.Items, MenuItemNames.FilterAll);
-            // TODO: await this.AppLogicProvider.InvokeLoadDelayAsync();
         }
         catch (Exception ex)
         {

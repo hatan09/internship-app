@@ -21,6 +21,7 @@ public class BaseApplicationViewStates : BaseViewModel
     public BaseApplicationViewStates()
     {
         _id = Guid.NewGuid().ToString();
+        _skillIds = new();
     }
     #endregion
 
@@ -84,6 +85,13 @@ public class BaseApplicationViewStates : BaseViewModel
     {
         get { return this._status; }
         set { this.SetProperty(ref this._status, value); }
+    }
+
+    private List<int> _skillIds;
+    public List<int> SkillIds
+    {
+        get { return this._skillIds; }
+        set { this.SetProperty(ref this._skillIds, value); }
     }
     #endregion
 }
