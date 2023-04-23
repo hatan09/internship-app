@@ -87,7 +87,6 @@ public partial class ApplicationInfoView
 
             this.States = item.ToDetailsViewStates();
 
-            States.SkillIds.AddRange(skills.Select(x => (int) x.SkillId));
         }
         catch (Exception ex)
         {

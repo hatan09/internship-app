@@ -23,6 +23,9 @@ public partial class SkillTagList
     public StudentManager Students { get; set; }
 
     [Inject]
+    public ISkillRepository Skills { get; set; }
+
+    [Inject]
     public IJobRepository Jobs { get; set; }
     #endregion
 
@@ -94,7 +97,13 @@ public partial class SkillTagList
             }
             else if (IsStudent)
             {
-                var student = await Students.FindAll(x => x.Id == StudentId).Include(x => x.StudentSkills);
+                var student = await Students.FindAll(x => x.Id == StudentId).Include(x => x.StudentSkills).FirstOrDefaultAsync();
+                var skills = await Skills.FindAll(x => student.StudentSkills.Select(x => x.SkillId).Contains(x.Id)).ToListAsync();
+            }
+            else if (IsJob)
+            {
+                var job = await Jobs.FindAll(x => x.Id == (int) JobId).Include(x => x.JobSkills).FirstOrDefaultAsync();
+                var skills = await Skills.FindAll(x => job.JobSkills.Select(x => x.SkillId).Contains(x.Id)).ToListAsync();
             }
         }
         catch (Exception ex)

@@ -113,7 +113,7 @@ public partial class ApplicationListView : ComponentBase
     #region [ Event Handlers - DataList ]
     private void OnRowClicked(ApplicationListRowViewStates rowItem)
     {
-        this.NavigationManager.NavigateTo($"/student/{rowItem.StudentId}");
+        this.NavigationManager.NavigateTo($"/student/{rowItem.StudentId}/job/{rowItem.JobId}");
     }
 
     private void OnSelectionChanged()

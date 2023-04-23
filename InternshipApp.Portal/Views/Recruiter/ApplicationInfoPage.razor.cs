@@ -4,5 +4,8 @@ namespace InternshipApp.Portal.Views;
 public partial class ApplicationInfoPage 
 {
     [Parameter]
-    public string ApplicationId { get; set; }
+    public string StudentId { get; set; }
+
+    [Parameter]
+    public string JobId { get; set; }
 }
