@@ -43,17 +43,17 @@ public partial class ManageJobListView : ComponentBase
     {
         try
         {
-            this.States = new();
+            States = new();
 
-            this.SearchContext = new DataListSearchContext();
-            this.ListContainerContext = new DetailsListContainerContext();
-            this.ListContext = new DetailsListContext<JobListRowViewStates>();
-            this.ListContext.SelectionMode = SelectionMode.Single;
-            this.ListContext.OnItemInvoked += this.OnRowClicked;
-            this.ListContext.OnSelectionChanged += this.OnSelectionChanged;
+            SearchContext = new DataListSearchContext();
+            ListContainerContext = new DetailsListContainerContext();
+            ListContext = new DetailsListContext<JobListRowViewStates>();
+            ListContext.SelectionMode = SelectionMode.Single;
+            ListContext.OnItemInvoked += OnRowClicked;
+            ListContext.OnSelectionChanged += OnSelectionChanged;
 
-            this.InitializeCommandBar();
-            this.InitializeColumn();
+            InitializeCommandBar();
+            InitializeColumn();
 
             await base.OnInitializedAsync();
         }
@@ -67,7 +67,7 @@ public partial class ManageJobListView : ComponentBase
     {
         if (firstRender)
         {
-            await this.LoadDataAsync();
+            await LoadDataAsync();
         }
         await base.OnAfterRenderAsync(firstRender);
     }
@@ -78,18 +78,16 @@ public partial class ManageJobListView : ComponentBase
     {
         var filtered = new List<JobListRowViewStates>();
 
-        //await this.AppLogicProvider.InvokeSearchDelayAsync();
-
         var value = args?.Value.ToString();
         if (String.IsNullOrWhiteSpace(value))
         {
-            filtered = this.States.Items;
+            filtered = States.Items;
         }
         else
         {
             // have to check the string is not null first
             // for some reasons, the data can be null or blank
-            filtered = this.States.Items.Where(x =>
+            filtered = States.Items.Where(x =>
                 (!string.IsNullOrEmpty(x.Title) && x.Title.Contains(value, StringComparison.InvariantCultureIgnoreCase))
             ).ToList();
         }
@@ -99,14 +97,14 @@ public partial class ManageJobListView : ComponentBase
     #region [ Event Handlers - DataList ]
     private void OnRowClicked(JobListRowViewStates rowItem)
     {
-        this.NavigationManager.NavigateTo($"/manage-job-info/{rowItem.Id}");
+        NavigationManager.NavigateTo($"/manage-job-info/{rowItem.Id}");
     }
 
     private void OnSelectionChanged()
     {
-        var value = this.ListContext.GetSelectedItems().Any();
-        this.CommandBarContext.SetItemIsVisible(ButtonNames.DeleteButton, value);
-        this.StateHasChanged();
+        var value = ListContext.GetSelectedItems().Any();
+        CommandBarContext.SetItemIsVisible(ButtonNames.DeleteButton, value);
+        StateHasChanged();
     }
     #endregion
 
@@ -125,8 +123,8 @@ public partial class ManageJobListView : ComponentBase
             Width = "1fr"
         };
 
-        this.ListContext.Columns.Definitions.Add(title);
-        this.ListContext.Columns.Definitions.Add(slots);
+        ListContext.Columns.Definitions.Add(title);
+        ListContext.Columns.Definitions.Add(slots);
     }
     #endregion
 
@@ -134,56 +132,35 @@ public partial class ManageJobListView : ComponentBase
     private void InitializeCommandBar()
     {
         // Search
-        this.SearchContext.OnDatalistSearch = this.OnSearchDatalist;
+        SearchContext.OnDatalistSearch = OnSearchDatalist;
 
         // Items
-        this.CommandBarContext = new CommandBarContext();
-        this.CommandBarContext.Items.AddRefreshButton(this.OnRefreshButtonClicked);
-        this.CommandBarContext.Items.AddAddButton(this.OnAddButtonClicked);
-        this.CommandBarContext.Items.AddDeleteButton(this.OnDeleteButtonClicked, false);
+        CommandBarContext = new CommandBarContext();
+        CommandBarContext.Items.AddRefreshButton(OnRefreshButtonClicked);
+        CommandBarContext.Items.AddAddButton(OnAddButtonClicked);
+        CommandBarContext.Items.AddDeleteButton(OnDeleteButtonClicked, false);
     }
     #endregion
 
     #region [ Event Handlers - CommandBars - Buttons ]
     private async void OnRefreshButtonClicked(EventArgs e)
     {
-        this.SearchContext.SetDefafultSearchValue(string.Empty);
-        await this.LoadDataAsync();
+        SearchContext.SetDefafultSearchValue(string.Empty);
+        await LoadDataAsync();
     }
 
     private void OnAddButtonClicked(EventArgs e)
     {
         var item = new Job();
         JobFormRequest = FormRequestFactory.AddRequest(item);
-        this.StateHasChanged();
-    }
-
-    private void OnEditButtonClicked(EventArgs e)
-    {
-        try
-        {
-            var selectedItem = this.ListContext.GetSelectedItems();
-            if (selectedItem.Count == 0)
-            {
-                return;
-            }
-
-            var item = selectedItem.FirstOrDefault();
-            this.JobFormRequest = FormRequestFactory.EditRequest(item.ToEntity());
-
-            this.StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-
-        }
+        StateHasChanged();
     }
 
     private async void OnDeleteButtonClicked(EventArgs e)
     {
         try
         {
-            var selectedItem = this.ListContext.GetSelectedItems();
+            var selectedItem = ListContext.GetSelectedItems();
             if (selectedItem.Count == 0)
             {
                 return;
@@ -191,11 +168,15 @@ public partial class ManageJobListView : ComponentBase
 
             foreach (var item in selectedItem)
             {
-
+                Jobs.Delete(item.ToEntity());
+                
             }
-            var tasks = new List<Task>();
 
-            tasks.Add(this.LoadDataAsync());
+            await Jobs.SaveChangesAsync();
+            var tasks = new List<Task>
+            {
+                LoadDataAsync()
+            };
 
             await Task.WhenAll(tasks);
 
@@ -217,7 +198,7 @@ public partial class ManageJobListView : ComponentBase
             case FormResultState.Deleted:
                 var tasks = new List<Task>
                 {
-                    this.LoadDataAsync()
+                    LoadDataAsync()
                 };
 
                 await Task.WhenAll(tasks);
@@ -237,22 +218,23 @@ public partial class ManageJobListView : ComponentBase
     {
         try
         {
-            this.ListContainerContext.SetProcessingStates(true, false);
-            this.SearchContext.SetProcessingStates(true);
-            this.CommandBarContext.SetProcessingStates(true);
-            this.ListContext.SetProcessingStates(true);
-            this.States.Items.Clear();
+            ListContainerContext.SetProcessingStates(true, false);
+            SearchContext.SetProcessingStates(true);
+            CommandBarContext.SetProcessingStates(true);
+            ListContext.SetProcessingStates(true);
+            States.Items.Clear();
 
-            this.StateHasChanged();
+            StateHasChanged();
 
             var jobList = new List<Job>();
             var companyId = await GetCompanyId();
-            var students = await Jobs.FindByCompanyId(companyId).ToListAsync();
-            jobList.AddRange(students);
+            var jobs = await Jobs.FindAll(x => x.CompanyId == companyId).AsNoTracking().ToListAsync();
+            jobList.AddRange(jobs);
 
-            this.States.Items.AddRange(jobList.ToListRowList());
-            this.ListContext.GetKey = (x => x.Id);
-            this.ListContext.ItemsSource.AddRange(this.States.Items);
+            States.Items = jobList.ToListRowList();
+            ListContext.GetKey = (x => x.Id);
+            ListContext.ItemsSource.Clear();
+            ListContext.ItemsSource.AddRange(States.Items);
         }
         catch (Exception ex)
         {
@@ -260,11 +242,11 @@ public partial class ManageJobListView : ComponentBase
         }
         finally
         {
-            this.ListContainerContext.SetProcessingStates(false, this.ListContext.ItemsSource.Any());
-            this.ListContext.SetProcessingStates(false);
-            this.SearchContext.SetProcessingStates(false);
-            this.CommandBarContext.SetProcessingStates(false);
-            this.StateHasChanged();
+            ListContainerContext.SetProcessingStates(false, ListContext.ItemsSource.Any());
+            ListContext.SetProcessingStates(false);
+            SearchContext.SetProcessingStates(false);
+            CommandBarContext.SetProcessingStates(false);
+            StateHasChanged();
         }
     }
     #endregion

@@ -11,6 +11,7 @@ public class BaseJobViewStates : BaseViewModel
     private double _gpa;
     private int _slots;
     private string _title;
+    private int _year;
     private string _description;
     private string _companyName;
     private double _matching;
@@ -51,6 +52,12 @@ public class BaseJobViewStates : BaseViewModel
     {
         get { return this._slots; }
         set { this.SetProperty(ref this._slots, value); }
+    }
+
+    public int Year
+    {
+        get { return this._year; }
+        set { this.SetProperty(ref this._year, value); }
     }
 
     public string Title

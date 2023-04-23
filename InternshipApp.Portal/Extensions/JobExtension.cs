@@ -28,16 +28,18 @@ public static class JobExtension
     #endregion
 
     #region [ Public Methods - FormViewModel ]
-    //public static JobFormViewStates ToFormViewStates(this Job entity) {
+    public static JobFormViewStates ToFormViewStates(this Job entity)
+    {
 
-    //    var viewmodel = ToViewStates<JobFormViewStates>(entity);
+        var viewmodel = ToViewStates<JobFormViewStates>(entity);
 
-    //    return viewmodel;
-    //}
+        return viewmodel;
+    }
 
-    //public static Job ToEntity(this JobFormViewStates viewStates) {
-    //    return ToEntity<Job>(viewStates);
-    //}
+    public static Job ToEntity(this JobFormViewStates viewStates)
+    {
+        return ToEntity<Job>(viewStates);
+    }
     #endregion
 
     #region [ Public Methods - DetailsViewModel ]
@@ -69,6 +71,7 @@ public static class JobExtension
             Credit = entity.MinCredit,
             Gpa = entity.MinGPA,
             Slots = entity.Slots,
+            Year = entity.MinYear,
         };
     }
 
@@ -83,6 +86,7 @@ public static class JobExtension
             MinCredit = viewModel.Credit,
             MinGPA = viewModel.Gpa,
             Slots = viewModel.Slots,
+            MinYear = viewModel.Year,
         };
     }
     #endregion

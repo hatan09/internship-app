@@ -12,6 +12,7 @@ namespace InternshipApp.Core.Entities
         public double MinGPA { get; set; }
         public int Slots { get; set; }
         public string Title { get; set; } = string.Empty;
+        public int MinYear { get; set; }
         public string? Description { get; set; }
 
         public Company Company { get; set; }

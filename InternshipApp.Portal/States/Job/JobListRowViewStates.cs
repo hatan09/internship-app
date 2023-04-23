@@ -1,8 +1,8 @@
 ﻿namespace InternshipApp.Portal.Views;
 
-public class JobListRowViewStates : BaseJobViewStates
+public class JobFormViewStates : BaseJobViewStates
 {
-	public JobListRowViewStates()
+	public JobFormViewStates()
 	{
 
 	}

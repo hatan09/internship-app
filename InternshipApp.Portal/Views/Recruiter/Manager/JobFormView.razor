@@ -1,5 +1,58 @@
-﻿<h3>JobFormView</h3>
+﻿@namespace InternshipApp.Portal.Views
+@using Wave5.UI.Forms;
 
-@code {
+<Stack ClassName="formContainer">
 
-}
+    <EditForm EditContext="Context"
+              OnValidSubmit="OnFormSubmit">
+
+        <FormFieldsContainer>
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@States.Title>
+                    <label>Title</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentNumberField @bind-Value=@States.Slots>
+                    <label>Number of slots</label>
+                </FluentNumberField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentNumberField @bind-Value=@States.Year>
+                    <label>Student Year</label>
+                </FluentNumberField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentNumberField @bind-Value=@this.States.Credit>
+                    <label>Acchieved Credits</label>
+                </FluentNumberField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentNumberField @bind-Value=@this.States.Gpa>
+                    <label>Gpa</label>
+                </FluentNumberField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentTextArea @bind-Value=@States.Description>
+                    <label>Description</label>
+                </FluentTextArea>
+            </Stack>
+        </FormFieldsContainer>
+
+        <FormButtonsContainer>
+            <FluentButton Appearance=@FormStyles.SaveButtonAppearance
+                        style=@FormStyles.SaveButtonStyle
+                          type="submit"> <label>Save</label> </FluentButton>
+
+            <FluentButton Appearance=@FormStyles.CancelButtonAppearance    
+                    style=@FormStyles.CancelButtonStyle
+                          @onclick="@OnCancel"> <label>Cancel</label> </FluentButton>
+
+        </FormButtonsContainer>
+    </EditForm>
+</Stack>
