@@ -1,33 +1,16 @@
-﻿using Microsoft.AspNetCore.Components;
-using RCode;
-using Wave5.UI.Forms;
-using Wave5.UI.Navigation;
-using Wave5.UI;
-using InternshipApp.Contracts;
+﻿using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
+using Microsoft.AspNetCore.Components;
+using RCode;
+using Wave5.UI;
 using Wave5.UI.Blazor;
+using Wave5.UI.Forms;
 
 namespace InternshipApp.Portal.Views;
 
 public partial class ManageJobView
 {
-    #region [ CTor ]
-    public ManageJobView()
-    {
-
-    }
-    #endregion
-
-    #region [ Properties - Inject ]
-
-    [Inject]
-    public IJobRepository Jobs { get; set; }
-
-    [Inject]
-    public INavigationMenuProvider MainMenuProvider { get; set; }
-
-    [Inject]
-    public NavigationManager NavigationManager { get; set; }
+    #region [ Fields ]
 
     #endregion
 
@@ -36,20 +19,20 @@ public partial class ManageJobView
     public string JobId { get; set; }
     #endregion
 
-    #region [ Properties - Contexts ]
-    protected DetailsListContainerContext ListContainerContext { get; private set; }
+    #region [ Properties ]
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
 
-    protected DataListSearchContext SearchContext { get; private set; }
-
-    protected CommandBarContext CommandBarContext { get; private set; }
-
-    protected DetailsListContext<JobListRowViewStates> ListContext { get; private set; }
-
-    protected DetailsCardContainerContext DetailsContainerContext { get; private set; }
+    [Inject]
+    public IJobRepository Jobs { get; set; }
     #endregion
 
     #region [ Properties - Panel ]
-    protected FormRequest<FormAction, Job> JobFormRequest { get; private set; }
+    protected FormRequest<FormAction, Job> ApplicationFormRequest { get; private set; }
+
+    protected CommandBarContext CommandBarContext { get; private set; }
+
+    protected DetailsCardContainerContext DetailsContainerContext { get; private set; }
     #endregion
 
     #region [ Properties - Data ]
@@ -59,13 +42,9 @@ public partial class ManageJobView
     #region [ Protected Methods - Override ]
     protected override async Task OnInitializedAsync()
     {
-        this.SearchContext = new DataListSearchContext();
         this.CommandBarContext = new CommandBarContext();
         this.DetailsContainerContext = new DetailsCardContainerContext();
-        this.ListContext = new DetailsListContext<JobListRowViewStates>();
-        this.ListContext.SelectionMode = SelectionMode.Single;
-        this.ListContext.OnItemInvoked += this.OnRowClicked;
-
+        States = new();
         this.InitializeCommandBars();
 
         await base.OnInitializedAsync();
@@ -73,34 +52,22 @@ public partial class ManageJobView
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        var currentJobId = this.JobId;
-        var parameterJobId = parameters.GetValueOrDefault<string>(nameof(this.JobId));
+        var currentApplicationId = this.JobId;
+        var parameterApplicationId = parameters.GetValueOrDefault<string>(nameof(this.JobId));
 
         await base.SetParametersAsync(parameters);
 
-        if (currentJobId != parameterJobId)
+        if (currentApplicationId != parameterApplicationId)
         {
             await this.LoadDataAsync();
         }
     }
     #endregion
 
-    #region [ Event Handlers - CommandBar ]
-    protected void OnEditButtonClicked(EventArgs args)
+    #region [ Private Methods - CommandBars ]
+    private void InitializeCommandBars()
     {
-        this.JobFormRequest = FormRequestFactory.EditRequest(this.States.ToEntity());
-        this.StateHasChanged();
-    }
-
-    protected async void OnRefreshButtonClicked(EventArgs args)
-    {
-        await LoadDataAsync();
-    }
-
-    protected void OnDetailsButtonClicked(EventArgs args)
-    {
-        this.JobFormRequest = FormRequestFactory.DetailsRequest(this.States.ToEntity());
-        this.StateHasChanged();
+        this.CommandBarContext.Items.AddEditButton(null, true);
     }
     #endregion
 
@@ -118,21 +85,6 @@ public partial class ManageJobView
     }
     #endregion
 
-    #region [ Event Handlers - DataList ]
-    private void OnRowClicked(JobListRowViewStates rowItem)
-    {
-        this.NavigationManager.NavigateTo($"/manage-job-info/{rowItem.Id}");
-    }
-    #endregion
-
-    #region [ Private Methods - CommandBars ]
-    private void InitializeCommandBars()
-    {
-        this.CommandBarContext.Items.AddRefreshButton(this.OnRefreshButtonClicked);
-        this.CommandBarContext.Items.AddEditButton(this.OnEditButtonClicked, true);
-    }
-    #endregion
-
     #region [ Private Methods - Data ]
     private async Task LoadDataAsync()
     {
@@ -143,7 +95,7 @@ public partial class ManageJobView
             this.DetailsContainerContext.SetProcessingStates(true, false);
             this.CommandBarContext.SetProcessingStates(true);
 
-            var item = await Jobs.FindByIdAsync(int.Parse(JobId));
+            var item = await this.Jobs.FindByIdAsync(int.Parse(this.JobId));
 
             if (item is null)
             {
@@ -161,9 +113,48 @@ public partial class ManageJobView
         {
             this.DetailsContainerContext.SetProcessingStates(false, this.States != null);
             this.CommandBarContext.SetProcessingStates(false, this.States != null);
-
             this.StateHasChanged();
         }
+    }
+
+    public string GetOrderFromInt(int order)
+    {
+        switch (order)
+        {
+            case 1:
+                {
+                    return "First";
+                }
+            case 2:
+                {
+                    return "Second";
+                }
+            case 3:
+                {
+                    return "Third";
+                }
+            case 4:
+                {
+                    return "Fourth";
+                }
+            case 5:
+                {
+                    return "Fifth";
+                }
+            case 6:
+                {
+                    return "Sixth";
+                }
+            default:
+                {
+                    return "";
+                }
+        }
+    }
+
+    public async void OnChat()
+    {
+
     }
     #endregion
 }
