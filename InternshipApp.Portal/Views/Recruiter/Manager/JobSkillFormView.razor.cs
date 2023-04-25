@@ -5,11 +5,18 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Wave5.UI.Forms;
 using InternshipApp.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
 
 public partial class JobSkillFormView
 {
+    [Parameter]
+    public int JobId { get; set; }
+
+    [Parameter]
+    public int SkillId { get; set; }
+
     #region [ Properties - Inject ]
     [Inject]
     public IJobRepository Jobs { get; private set; }
@@ -97,7 +104,6 @@ public partial class JobSkillFormView
     {
         try
         {
-
             this.States = this.FormRequest.Data.ToFormViewStates();
 
             switch (this.FormRequest.Action)
@@ -143,9 +149,12 @@ public partial class JobSkillFormView
         try
         {
             this.FormRequest.Data = this.States.ToEntity();
-            FormRequest.Data.CompanyId = GetCompanyId();
-            this.JobSkills.Add(this.FormRequest.Data);
-            await JobSkills.SaveChangesAsync();
+
+            var job = await Jobs.FindAll(x => x.Id == FormRequest.Data.JobId)
+                .Include(x => x.JobSkills
+                    .Where(x => x.SkillId == FormRequest.Data.SkillId))
+                .FirstOrDefaultAsync();
+
 
             await this.InvokeFormResultCallbackAsync(FormResultState.Added);
         }
