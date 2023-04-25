@@ -7,23 +7,20 @@ public class BaseJobSkillViewStates : BaseViewModel
 {
     #region [ Fields ]
     private int _id;
-    private int _credit;
-    private double _gpa;
-    private int _slots;
-    private string _title;
-    private int _year;
+    private int _jobId;
+    private int _skillId;
+    private string _level;
+    private string _skillName;
+    private double _weight;
     private string _description;
-    private string _companyName;
-    private double _matching;
-    private List<Skill> _skills;
-    private bool _hasApplied;
 
     #endregion
 
     #region [ CTor ]
     public BaseJobSkillViewStates()
     {
-        _skills = new();
+        var ran = new Random();
+        _id = ran.Next(1, 99999);
     }
     #endregion
 
@@ -34,64 +31,40 @@ public class BaseJobSkillViewStates : BaseViewModel
         set { this.SetProperty(ref this._id, value); }
     }
 
-    public int Credit
+    public int JobId
     {
-        get { return this._credit; }
-        set { this.SetProperty(ref this._credit, value); }
+        get { return this._jobId; }
+        set { this.SetProperty(ref this._jobId, value); }
     }
 
-    public double Gpa
+    public int SkillId
     {
-        get { return this._gpa; }
-        set { this.SetProperty(ref this._gpa, value); }
+        get { return this._skillId; }
+        set { this.SetProperty(ref this._skillId, value); }
     }
 
-    public int Slots
+    public string Level
     {
-        get { return this._slots; }
-        set { this.SetProperty(ref this._slots, value); }
+        get { return this._level; }
+        set { this.SetProperty(ref this._level, value); }
     }
 
-    public int Year
+    public string SkillName
     {
-        get { return this._year; }
-        set { this.SetProperty(ref this._year, value); }
+        get { return this._skillName; }
+        set { this.SetProperty(ref this._skillName, value); }
     }
 
-    public string Title
+    public double Weight
     {
-        get { return this._title; }
-        set { this.SetProperty(ref this._title, value); }
+        get { return this._weight; }
+        set { this.SetProperty(ref this._weight, value); }
     }
 
     public string Description
     {
         get { return this._description; }
         set { this.SetProperty(ref this._description, value); }
-    }
-
-    public string CompanyName
-    {
-        get { return this._companyName; }
-        set { this.SetProperty(ref this._companyName, value); }
-    }
-
-    public double Matching
-    {
-        get { return this._matching; }
-        set { this.SetProperty(ref this._matching, value); }
-    }
-
-    public List<Skill> Skills
-    {
-        get { return this._skills; }
-        set { this.SetProperty(ref this._skills, value); }
-    }
-
-    public bool HasApplied
-    {
-        get { return this._hasApplied; }
-        set { this.SetProperty(ref this._hasApplied, value); }
     }
     #endregion
 }

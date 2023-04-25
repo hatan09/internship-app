@@ -1,5 +1,4 @@
 ﻿using InternshipApp.Core.Entities;
-using Microsoft.Fast.Components.FluentUI.DesignTokens;
 
 namespace InternshipApp.Portal.Views;
 

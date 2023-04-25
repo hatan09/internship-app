@@ -2,6 +2,14 @@
 
 @namespace InternshipApp.Portal.Views
 
-<ManageJobView JobId=@JobId>
+<Stack>
+    <ManageJobView JobId=@JobId>
 
-</ManageJobView>
+    </ManageJobView>
+</Stack>
+
+<Stack>
+    <JobSkillListView JobId="@JobId">
+
+    </JobSkillListView>
+</Stack>

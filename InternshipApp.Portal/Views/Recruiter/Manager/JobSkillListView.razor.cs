@@ -4,11 +4,16 @@ using Microsoft.AspNetCore.Components;
 using Wave5.UI.DataGrids;
 using Wave5.UI.Forms;
 using Wave5.UI;
+using Wave5.UI.Blazor;
+using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
 
 public partial class JobSkillListView
 {
+    [Parameter]
+    public string JobId { get; set; }
+
     #region [ Properties - Inject ]
     [Inject]
     public IJobRepository Jobs { get; set; }
@@ -89,7 +94,7 @@ public partial class JobSkillListView
             // have to check the string is not null first
             // for some reasons, the data can be null or blank
             filtered = States.Items.Where(x =>
-                (!string.IsNullOrEmpty(x.Title) && x.Title.Contains(value, StringComparison.InvariantCultureIgnoreCase))
+                (!string.IsNullOrEmpty(x.SkillName) && x.SkillName.Contains(value, StringComparison.InvariantCultureIgnoreCase))
             ).ToList();
         }
     }
@@ -112,20 +117,34 @@ public partial class JobSkillListView
     #region [ Private Methods - Column ]
     private void InitializeColumn()
     {
-        var title = new DataGridColumnDefinition<JobSkillListRowViewStates>("JobSkill Title", x => x.Title)
+        var title = new DataGridColumnDefinition<JobSkillListRowViewStates>("Skill Title", x => x.SkillName)
         {
-            ColumnDataKey = nameof(JobSkillListRowViewStates.Title),
-            Width = "3fr"
+            ColumnDataKey = nameof(JobSkillListRowViewStates.SkillName),
+            Width = "2fr"
         };
 
-        var slots = new DataGridColumnDefinition<JobSkillListRowViewStates>("Slots", x => x.Slots)
+        var level = new DataGridColumnDefinition<JobSkillListRowViewStates>("Level", x => x.Level)
         {
-            ColumnDataKey = nameof(JobSkillListRowViewStates.Slots),
+            ColumnDataKey = nameof(JobSkillListRowViewStates.Level),
             Width = "1fr"
         };
 
+        var weight = new DataGridColumnDefinition<JobSkillListRowViewStates>("Weight", x => x.Weight)
+        {
+            ColumnDataKey = nameof(JobSkillListRowViewStates.Weight),
+            Width = "1fr"
+        };
+
+        var description = new DataGridColumnDefinition<JobSkillListRowViewStates>("Description", x => x.Description)
+        {
+            ColumnDataKey = nameof(JobSkillListRowViewStates.Description),
+            Width = "3fr"
+        };
+
         ListContext.Columns.Definitions.Add(title);
-        ListContext.Columns.Definitions.Add(slots);
+        ListContext.Columns.Definitions.Add(level);
+        ListContext.Columns.Definitions.Add(weight);
+        ListContext.Columns.Definitions.Add(description);
     }
     #endregion
 
@@ -169,11 +188,15 @@ public partial class JobSkillListView
 
             foreach (var item in selectedItem)
             {
-                JobSkills.Delete(item.ToEntity());
-
+                var job = await Jobs.FindAll(x => x.Id == item.JobId).Include(x => x.JobSkills).FirstOrDefaultAsync();
+                if(job == null)
+                {
+                    continue;
+                }
+                job.JobSkills.Remove(job.JobSkills.FirstOrDefault(x => x.SkillId == item.SkillId));
             }
 
-            await JobSkills.SaveChangesAsync();
+            await Jobs.SaveChangesAsync();
             var tasks = new List<Task>
             {
                 LoadDataAsync()
@@ -227,12 +250,16 @@ public partial class JobSkillListView
 
             StateHasChanged();
 
-            var jobList = new List<JobSkill>();
-            var companyId = await GetCompanyId();
-            var jobs = await JobSkills.FindAll(x => x.CompanyId == companyId).AsNoTracking().ToListAsync();
-            jobList.AddRange(jobs);
+            var items = new List<JobSkill>();
+            if(!string.IsNullOrEmpty(JobId)) {
+                var job = await Jobs.FindAll(x => x.Id == int.Parse(JobId)).Include(x => x.JobSkills).FirstOrDefaultAsync();
+                if(job != null)
+                {
+                    items = job.JobSkills.ToList();
+                }
+            }
 
-            States.Items = jobList.ToListRowList();
+            States.Items = items.ToListRowList();
             ListContext.GetKey = (x => x.Id);
             ListContext.ItemsSource.Clear();
             ListContext.ItemsSource.AddRange(States.Items);
