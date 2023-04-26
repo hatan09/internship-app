@@ -27,3 +27,30 @@
 
     </DetailsCardContainer>
 </Stack>
+
+<br />
+
+<FluentTabs>
+    <FluentTab id="skill">Job Skills</FluentTab>
+    <FluentTab id="intern">Interns</FluentTab>
+
+    <FluentTabPanel>
+        <Stack>
+            <JobSkillListView JobId="@JobId">
+
+            </JobSkillListView>
+        </Stack>
+    </FluentTabPanel>
+
+    <FluentTabPanel>
+        <Stack>
+            <ManageInternListView Data="@Data">
+
+            </ManageInternListView>
+        </Stack>
+    </FluentTabPanel>
+</FluentTabs>
+
+<JobFormViewPanel FormRequest="ApplicationFormRequest" FormResultCallback="OnFormResultReceived">
+
+</JobFormViewPanel>

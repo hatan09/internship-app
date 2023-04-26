@@ -1,6 +1,9 @@
 ﻿using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
+using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using RCode;
 using Wave5.UI;
 using Wave5.UI.Blazor;
@@ -25,6 +28,9 @@ public partial class ManageJobView
 
     [Inject]
     public IJobRepository Jobs { get; set; }
+
+    [Inject]
+    public StudentManager Students { get; set; }
     #endregion
 
     #region [ Properties - Panel ]
@@ -37,6 +43,8 @@ public partial class ManageJobView
 
     #region [ Properties - Data ]
     protected JobDetailsViewStates States { get; private set; }
+
+    protected List<ApplicationListRowViewStates> Data { get; private set; }
     #endregion
 
     #region [ Protected Methods - Override ]
@@ -67,7 +75,7 @@ public partial class ManageJobView
     #region [ Private Methods - CommandBars ]
     private void InitializeCommandBars()
     {
-        this.CommandBarContext.Items.AddEditButton(null, true);
+        this.CommandBarContext.Items.AddEditButton(OnEditButtonClicked, true);
     }
     #endregion
 
@@ -83,6 +91,12 @@ public partial class ManageJobView
                 break;
         }
     }
+
+    protected void OnEditButtonClicked(EventArgs args)
+    {
+        ApplicationFormRequest = FormRequestFactory.EditRequest(States.ToEntity());
+        StateHasChanged();
+    }
     #endregion
 
     #region [ Private Methods - Data ]
@@ -95,13 +109,25 @@ public partial class ManageJobView
             this.DetailsContainerContext.SetProcessingStates(true, false);
             this.CommandBarContext.SetProcessingStates(true);
 
-            var item = await this.Jobs.FindByIdAsync(int.Parse(this.JobId));
+            var item = await this.Jobs
+                .FindAll(x => x.Id == int.Parse(JobId))
+                .Include(x => x.StudentJobs
+                    .Where(x => x.Status == ApplyStatus.HIRED))
+                .FirstOrDefaultAsync();
 
             if (item is null)
             {
                 this.States = null;
                 return;
             }
+
+            var interns = item.StudentJobs.ToList();
+
+            var allStudents = await Students.FindAll(x => interns.Select(x => x.StudentId).Contains(x.Id)).ToListAsync();
+            Data = interns.ToListRowList();
+            Data.ForEach(x => {
+                x.StudentName = allStudents.FirstOrDefault(y => y.Id == x.StudentId)?.FullName;
+            });
 
             this.States = item.ToDetailsViewStates();
         }
@@ -115,46 +141,6 @@ public partial class ManageJobView
             this.CommandBarContext.SetProcessingStates(false, this.States != null);
             this.StateHasChanged();
         }
-    }
-
-    public string GetOrderFromInt(int order)
-    {
-        switch (order)
-        {
-            case 1:
-                {
-                    return "First";
-                }
-            case 2:
-                {
-                    return "Second";
-                }
-            case 3:
-                {
-                    return "Third";
-                }
-            case 4:
-                {
-                    return "Fourth";
-                }
-            case 5:
-                {
-                    return "Fifth";
-                }
-            case 6:
-                {
-                    return "Sixth";
-                }
-            default:
-                {
-                    return "";
-                }
-        }
-    }
-
-    public async void OnChat()
-    {
-
     }
     #endregion
 }

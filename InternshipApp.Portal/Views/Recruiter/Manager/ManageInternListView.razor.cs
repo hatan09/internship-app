@@ -6,7 +6,6 @@ using Wave5.UI;
 using Wave5.UI.Blazor;
 using InternshipApp.Contracts;
 using InternshipApp.Repository;
-using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
 
@@ -15,6 +14,9 @@ public partial class ManageInternListView
     #region [ Properties - Parameters ]
     [Parameter]
     public string? JobId { get; set; }
+
+    [Parameter]
+    public List<ApplicationListRowViewStates>? Data { get; set; }
     #endregion
 
     #region [ Properties - Inject ]
@@ -23,12 +25,6 @@ public partial class ManageInternListView
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
-
-    [Inject]
-    public IJobRepository Jobs { get; set; }
-
-    [Inject]
-    public StudentManager Students { get; set; }
     #endregion
 
     #region [ Properties - States - Contexts ]
@@ -183,20 +179,12 @@ public partial class ManageInternListView
             this.States.Items.Clear();
             this.StateHasChanged();
 
-            var job = await Jobs.FindAll(x => x.Id == int.Parse(JobId)).Include(x => x.StudentJobs).FirstOrDefaultAsync();
+            if(Data == null)
+            {
+                return;
+            }
 
-            var studentJobs = job?.StudentJobs.ToList();
-
-            States.Items = studentJobs.ToListRowList();
-            var allStudents = await Students.FindAll(x => States.Items.Select(y => y.StudentId).Contains(x.Id))
-                                        .ToListAsync();
-
-            States.Items.ForEach(x => {
-                var student = allStudents.FirstOrDefault(y => y.Id == x.StudentId);
-
-                x.StudentName = student == null ? "" : student.FullName;
-                x.JobName = job.Title;
-            });
+            States.Items.AddRange(Data);
 
             this.ListContext.GetKey = x => x.Id;
             this.ListContext.ItemsSource.AddRange(this.States.Items);
