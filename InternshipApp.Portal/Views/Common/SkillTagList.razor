@@ -1,7 +1,20 @@
 ﻿@namespace InternshipApp.Portal.Views
 
 <Stack Horizontal>
-    <SkillTag />
-    <SkillTag />
-    <SkillTag />
+    @if (IsStudentSkills)
+    {
+        foreach (var item in StudentSkills)
+        {
+            var skill = AllSkills.FirstOrDefault(x => x.Id == item.SkillId);
+            <SkillTag Name="@(skill?.Name)" Description="@(item.Description)"/>
+        }
+    }
+    else
+    {
+        foreach (var item in JobSkills)
+        {
+            var skill = AllSkills.FirstOrDefault(x => x.Id == item.SkillId);
+            <SkillTag Name="@(skill?.Name)" Description="@(item.Description)" />
+        }
+    }
 </Stack>
