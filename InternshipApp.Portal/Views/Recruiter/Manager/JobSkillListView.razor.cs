@@ -97,18 +97,33 @@ public partial class JobSkillListView
                 (!string.IsNullOrEmpty(x.SkillName) && x.SkillName.Contains(value, StringComparison.InvariantCultureIgnoreCase))
             ).ToList();
         }
+
+        this.OnFilterDataList(filtered);
+    }
+
+    private void OnFilterDataList(IEnumerable<JobSkillListRowViewStates> filtered)
+    {
+        this.ListContext.ClearSelectedItems();
+
+        this.ListContext.ItemsSource.Clear();
+        this.ListContext.ItemsSource.AddRange(filtered);
+        this.ListContext.Columns.Definitions.ForEach(x => x.IsSorted = false);
+        this.ListContainerContext.HasData = this.ListContext.ItemsSource.Any();
+        this.StateHasChanged();
     }
     #endregion
 
     #region [ Event Handlers - DataList ]
     private void OnRowClicked(JobSkillListRowViewStates rowItem)
     {
-        NavigationManager.NavigateTo($"/manage-job-info/{rowItem.Id}");
+        JobSkillFormRequest = FormRequestFactory.EditRequest(rowItem.ToEntity());
+        StateHasChanged();
     }
 
     private void OnSelectionChanged()
     {
         var value = ListContext.GetSelectedItems().Any();
+        CommandBarContext.SetItemIsVisible(ButtonNames.EditButton, value);
         CommandBarContext.SetItemIsVisible(ButtonNames.DeleteButton, value);
         StateHasChanged();
     }
@@ -141,9 +156,9 @@ public partial class JobSkillListView
             Width = "3fr"
         };
 
+        ListContext.Columns.Definitions.Add(weight);
         ListContext.Columns.Definitions.Add(title);
         ListContext.Columns.Definitions.Add(level);
-        ListContext.Columns.Definitions.Add(weight);
         ListContext.Columns.Definitions.Add(description);
     }
     #endregion
@@ -158,6 +173,7 @@ public partial class JobSkillListView
         CommandBarContext = new CommandBarContext();
         CommandBarContext.Items.AddRefreshButton(OnRefreshButtonClicked);
         CommandBarContext.Items.AddAddButton(OnAddButtonClicked);
+        CommandBarContext.Items.AddEditButton(OnEditdButtonClicked, false);
         CommandBarContext.Items.AddDeleteButton(OnDeleteButtonClicked, false);
     }
     #endregion
@@ -172,7 +188,17 @@ public partial class JobSkillListView
     private void OnAddButtonClicked(EventArgs e)
     {
         var item = new JobSkill();
+        item.JobId = string.IsNullOrEmpty(JobId) ? 0 : int.Parse(JobId);
         JobSkillFormRequest = FormRequestFactory.AddRequest(item);
+        StateHasChanged();
+    }
+
+    private void OnEditdButtonClicked(EventArgs e)
+    {
+        var item = ListContext.GetSelectedItems().FirstOrDefault();
+        if (item == null) return;
+
+        JobSkillFormRequest = FormRequestFactory.EditRequest(item.ToEntity());
         StateHasChanged();
     }
 
@@ -232,12 +258,6 @@ public partial class JobSkillListView
     #endregion
 
     #region [ Private Methods - Data ]
-    private async Task<int> GetCompanyId()
-    {
-        var company = await Companies.FindAll().FirstOrDefaultAsync();
-        return company == null ? 1 : company.Id;
-    }
-
     private async Task LoadDataAsync()
     {
         try
@@ -259,7 +279,13 @@ public partial class JobSkillListView
                 }
             }
 
+            var skills = await Skills.FindAll(x => items.Select(x => x.SkillId).Contains(x.Id)).ToListAsync();
+            
             States.Items = items.ToListRowList();
+            States.Items.ForEach(x =>
+            {
+                x.SkillName = skills.FirstOrDefault(y => y.Id == x.SkillId)?.Name;
+            });
             ListContext.GetKey = (x => x.Id);
             ListContext.ItemsSource.Clear();
             ListContext.ItemsSource.AddRange(States.Items);

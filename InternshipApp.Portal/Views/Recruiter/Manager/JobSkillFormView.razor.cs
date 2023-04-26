@@ -6,17 +6,12 @@ using Microsoft.AspNetCore.Identity;
 using Wave5.UI.Forms;
 using InternshipApp.Contracts;
 using Microsoft.EntityFrameworkCore;
+using RCode.UI.ViewModels;
 
 namespace InternshipApp.Portal.Views;
 
 public partial class JobSkillFormView
 {
-    [Parameter]
-    public int JobId { get; set; }
-
-    [Parameter]
-    public int SkillId { get; set; }
-
     #region [ Properties - Inject ]
     [Inject]
     public IJobRepository Jobs { get; private set; }
@@ -90,6 +85,9 @@ public partial class JobSkillFormView
             case FormAction.Add:
                 await this.AddedAsync();
                 break;
+            case FormAction.Edit:
+                await this.UpdatedAsync();
+                break;
         }
     }
 
@@ -110,12 +108,15 @@ public partial class JobSkillFormView
             {
                 case FormAction.Add:
                     {
-                        // Add action logic
+                        var skills = await Skills.FindAll().ToListAsync();
+                        States.Skills = skills.ToObservableCollection();
                         break;
                     }
                 case FormAction.Edit:
                     {
-                        // Edit action logic
+                        var skill = await Skills.FindByIdAsync(FormRequest.Data.SkillId);
+                        States.SelectedLevel = FormRequest.Data.Level.ToString();
+                        States.SelectedSkill = skill.Name;
                         break;
                     }
                 case FormAction.Delete:
@@ -139,24 +140,89 @@ public partial class JobSkillFormView
     #endregion
 
     #region [ Private Methods - CRUD ]
-    private int GetCompanyId()
-    {
-        return 1;
-    }
-
     private async Task AddedAsync()
     {
         try
         {
             this.FormRequest.Data = this.States.ToEntity();
+            if(double.TryParse(States.WeightText, out var weight))
+            {
+                FormRequest.Data.Weight = weight;
+            }
+            else
+            {
+                return;
+            }
 
             var job = await Jobs.FindAll(x => x.Id == FormRequest.Data.JobId)
-                .Include(x => x.JobSkills
-                    .Where(x => x.SkillId == FormRequest.Data.SkillId))
+                .Include(x => x.JobSkills)
                 .FirstOrDefaultAsync();
 
+            if (job == null)
+            {
+                return;
+            }
 
+            if (    (FormRequest.Data.Weight > 1.0 && FormRequest.Data.Weight < 0.0) ||
+                    job.JobSkills.Sum(x => x.Weight) == 1.0 ||
+                    job.JobSkills.Sum(x => x.Weight) + FormRequest.Data.Weight > 1.0)
+            {
+                FormRequest.Data.Weight = 0.0;
+            }
+
+            FormRequest.Data.JobId = job.Id;
+            FormRequest.Data.SkillId = int.Parse(States.GetSelectedSkillId());
+            FormRequest.Data.Level = Enum.Parse<SkillLevel>(States.SelectedLevel);
+            job.JobSkills.Add(FormRequest.Data);
+            await Jobs.SaveChangesAsync();
             await this.InvokeFormResultCallbackAsync(FormResultState.Added);
+        }
+        catch (Exception ex)
+        {
+
+        }
+        finally
+        {
+        }
+    }
+
+
+    private async Task UpdatedAsync()
+    {
+        try
+        {
+            this.FormRequest.Data = this.States.ToEntity();
+            if (double.TryParse(States.WeightText, out var weight))
+            {
+                FormRequest.Data.Weight = weight;
+            }
+            else
+            {
+                return;
+            }
+
+            var job = await Jobs.FindAll(x => x.Id == FormRequest.Data.JobId)
+                .Include(x => x.JobSkills)
+                .FirstOrDefaultAsync();
+
+            if (job == null)
+            {
+                return;
+            }
+
+            if ((FormRequest.Data.Weight > 1.0 && FormRequest.Data.Weight < 0.0) ||
+                    job.JobSkills.Sum(x => x.Weight) == 1.0 ||
+                    job.JobSkills.Sum(x => x.Weight) + FormRequest.Data.Weight > 1.0)
+            {
+                FormRequest.Data.Weight = 0.0;
+            }
+
+            FormRequest.Data.JobId = job.Id;
+            FormRequest.Data.Level = Enum.Parse<SkillLevel>(States.SelectedLevel);
+            job.JobSkills.Remove(job.JobSkills.Where(x => x.SkillId == FormRequest.Data.SkillId).First());
+            job.JobSkills.Add(FormRequest.Data);
+            await Jobs.SaveChangesAsync();
+            await this.InvokeFormResultCallbackAsync(FormResultState.Updated);
         }
         catch (Exception ex)
         {

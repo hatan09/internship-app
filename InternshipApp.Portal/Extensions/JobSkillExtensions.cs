@@ -1,5 +1,6 @@
 ﻿using InternshipApp.Core.Entities;
-using Microsoft.Fast.Components.FluentUI.DesignTokens;
+using Microsoft.Fast.Components.FluentUI;
+
 
 namespace InternshipApp.Portal.Views;
 
@@ -68,7 +69,8 @@ public static class JobSkillExtensions
             SkillId = entity.SkillId,
             Level = entity.Level.ToString(),
             Weight = entity.Weight,
-            Description= entity.Description,
+            WeightText = entity.Weight.ToString(),
+            Description = entity.Description,
         };
     }
 
@@ -83,6 +85,44 @@ public static class JobSkillExtensions
             Weight = viewModel.Weight,
             Description = viewModel.Description,
         };
+    }
+    #endregion
+
+    #region [ Public Methods - Options ]
+    // Skills
+    public static List<Option<string>> SkillOptions(this JobSkillFormViewStates states)
+    {
+        return states.Skills.ToOptionList(x => x.Id.ToString(), x => x.Name, null);
+    }
+
+    public static string GetSelectedSkillId(this JobSkillFormViewStates states)
+    {
+        // Somehow the SelectedProjectOption and ProjectOptions.Value (DisplayedName) might be different due to spaces 
+        // ex: SelectedProjectOption: 'Roo - Koppeling DM'
+        //     ProjectOptions.Value : 'Roo  - Koppeling DM'
+        // solution: ProjectOptions.Value: replace multiple spaces by single spaces before doing comparision
+
+        var result = states.SkillOptions()
+                           .FirstOrDefault(x => x.Value.Trim().Equals(states.SelectedSkill, StringComparison.InvariantCultureIgnoreCase))?.Key;
+        return result;
+    }
+
+    // Level
+    public static List<Option<string>> LevelOptions(this JobSkillFormViewStates states)
+    {
+        return states.Levels.ToOptionList(x => x, x => x, null);
+    }
+
+    public static string GetSelectedLevelName(this JobSkillFormViewStates states)
+    {
+        // Somehow the SelectedProjectOption and ProjectOptions.Value (DisplayedName) might be different due to spaces 
+        // ex: SelectedProjectOption: 'Roo - Koppeling DM'
+        //     ProjectOptions.Value : 'Roo  - Koppeling DM'
+        // solution: ProjectOptions.Value: replace multiple spaces by single spaces before doing comparision
+
+        var result = states.LevelOptions()
+                           .FirstOrDefault(x => x.Value.Trim().Equals(states.SelectedLevel, StringComparison.InvariantCultureIgnoreCase))?.Key;
+        return result;
     }
     #endregion
 }

@@ -8,9 +8,27 @@
 
         <FormFieldsContainer>
             <Stack ClassName="formFieldContainer">
-                <FluentTextArea @bind-Value=@States.Description>
-                    <label>Description</label>
-                </FluentTextArea>
+                <Stack ClassName="formFieldContainer">
+                    <label for="skillCombobox">Skill Name</label>
+                    <FluentCombobox id="skillCombobox" @bind-Value=@States.SelectedSkill Options="@States.SkillOptions()" Autocomplete=ComboboxAutocomplete.List/>
+                </Stack>
+
+                <Stack ClassName="formFieldContainer">
+                    <label for="levelCombobox">Skill Level</label>
+                    <FluentCombobox id ="levelCombobox" @bind-Value=@States.SelectedLevel Options="@States.LevelOptions()" Autocomplete=ComboboxAutocomplete.List/>
+                </Stack>
+
+                <Stack ClassName="formFieldContainer">
+                    <FluentTextField  @bind-Value="@States.WeightText">
+                        <label >Weight</label>
+                    </FluentTextField>
+                </Stack>
+
+                <Stack ClassName="formFieldContainer">
+                    <FluentTextArea @bind-Value=@States.Description>
+                        <label>Description</label>
+                    </FluentTextArea>
+                </Stack>
             </Stack>
         </FormFieldsContainer>
 

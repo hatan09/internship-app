@@ -23,7 +23,7 @@
                 <h3><b> @((context as JobListRowViewStates).Title) </b></h3>
                 <lable> @((context as JobListRowViewStates).CompanyName) </lable>
                 <lable> @((context as JobListRowViewStates).Description) </lable>
-                <SkillTagList JobSkills=@((context as JobListRowViewStates).JobSkills)/>
+                <SkillTagList JobId=@((context as JobListRowViewStates).Id)/>
             </Stack>
         </Template>
     </ListViewTemplates>
