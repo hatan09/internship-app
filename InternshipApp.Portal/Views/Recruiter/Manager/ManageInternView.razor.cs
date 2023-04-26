@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
-using RCode;
-using Wave5.UI.Forms;
-using Wave5.UI.Navigation;
-using Wave5.UI;
-using InternshipApp.Contracts;
-using InternshipApp.Core.Entities;
-using Wave5.UI.Blazor;
+﻿using InternshipApp.Contracts;
+using InternshipApp.Repository;
+using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using RCode;
+using Wave5.UI;
+using Wave5.UI.Blazor;
+using Wave5.UI.Navigation;
 
 namespace InternshipApp.Portal.Views;
 
@@ -20,6 +19,8 @@ public partial class ManageInternView
     #endregion
 
     #region [ Properties - Inject ]
+    [Inject]
+    public StudentManager Students { get; set; }
 
     [Inject]
     public IJobRepository Jobs { get; set; }
@@ -35,6 +36,8 @@ public partial class ManageInternView
     #region [ Properties - Parameter ]
     [Parameter]
     public string JobId { get; set; }
+
+    [Parameter]
     public string StudentId { get; set; }
     #endregion
 
@@ -62,7 +65,7 @@ public partial class ManageInternView
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         var currentJobId = this.JobId;
-        var parameterJobId = parameters.GetValueOrDefault<string>(nameof(this.JobId)); 
+        var parameterJobId = parameters.GetValueOrDefault<string>(nameof(this.JobId));
         var currentStudentId = this.StudentId;
         var parameterStudentId = parameters.GetValueOrDefault<string>(nameof(this.StudentId));
 
@@ -106,12 +109,13 @@ public partial class ManageInternView
 
             if (job == null)
             {
-
+                this.States = null;
+                return;
             }
 
             var item = job.StudentJobs.FirstOrDefault(x => x.StudentId == StudentId);
 
-            if (job == null || item == null)
+            if (item == null)
             {
                 this.States = null;
                 return;

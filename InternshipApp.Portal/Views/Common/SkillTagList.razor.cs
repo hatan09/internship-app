@@ -3,6 +3,7 @@ using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using RCode;
 using Wave5.UI.Forms;
 
 namespace InternshipApp.Portal.Views;
@@ -15,9 +16,6 @@ public partial class SkillTagList
     [Parameter]
     public int? JobId { get; set; }
 
-    [Parameter]
-    public List<int> SkillIds { get; set; }
-
     #region [ Properties - Inject ]
     [Inject]
     public StudentManager Students { get; set; }
@@ -29,13 +27,21 @@ public partial class SkillTagList
     public IJobRepository Jobs { get; set; }
     #endregion
 
+    #region [ Properties ]
+    public List<StudentSkill> StudentSkills { get; set; }
+    public List<JobSkill> JobSkills { get; set; }
+    public List<Skill> AllSkills { get; set; }
+
+    public bool IsStudentSkills { get; set; }
+    #endregion
+
     #region [ Protected Override Methods - Page ]
     protected override async Task OnInitializedAsync()
     {
         try
         {
-
-
+            StudentSkills = new();
+            JobSkills = new();
             await base.OnInitializedAsync();
         }
         catch (Exception ex)
@@ -88,22 +94,30 @@ public partial class SkillTagList
     {
         try
         {
-            var IsStudent = string.IsNullOrEmpty(StudentId);
+            var IsStudent = !string.IsNullOrEmpty(StudentId);
             var IsJob = JobId > 0;
             
-            if(IsStudent && IsJob == true)
+            if(IsStudent && IsJob == true || !IsStudent && !IsJob == true)
             {
                 return;
             }
             else if (IsStudent)
             {
+                IsStudentSkills = true;
+
                 var student = await Students.FindAll(x => x.Id == StudentId).Include(x => x.StudentSkills).FirstOrDefaultAsync();
+                StudentSkills = student.StudentSkills.ToList();
                 var skills = await Skills.FindAll(x => student.StudentSkills.Select(x => x.SkillId).Contains(x.Id)).ToListAsync();
+                AllSkills = skills;
             }
             else if (IsJob)
             {
+                IsStudentSkills = false;
+
                 var job = await Jobs.FindAll(x => x.Id == (int) JobId).Include(x => x.JobSkills).FirstOrDefaultAsync();
+                JobSkills = job.JobSkills.ToList();
                 var skills = await Skills.FindAll(x => job.JobSkills.Select(x => x.SkillId).Contains(x.Id)).ToListAsync();
+                AllSkills = skills;
             }
         }
         catch (Exception ex)

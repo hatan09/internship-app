@@ -13,7 +13,7 @@
             @States.Name
         </h1>
     </Stack>
-    <CommandBarView EditCallback="OnChat" AcceptCallback="OnChat" ChatCallback="OnChat" SendEmailCallback="OnChat" RejectCallback="OnChat"/>
+    <CommandBarView EditCallback="OnChat" />
 </Stack>
 
 <Stack Style="margin:10px">
@@ -45,7 +45,7 @@
         <h2>
             Skills
         </h2>
-        <SkillTagList>
+        <SkillTagList StudentId="@States.Id">
 
         </SkillTagList>
     </Stack>

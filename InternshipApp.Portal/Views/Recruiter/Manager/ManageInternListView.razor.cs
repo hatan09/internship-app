@@ -29,9 +29,6 @@ public partial class ManageInternListView
 
     [Inject]
     public StudentManager Students { get; set; }
-
-    [Inject]
-    public IMatchingService MatchingService { get; set; }
     #endregion
 
     #region [ Properties - States - Contexts ]
@@ -91,7 +88,7 @@ public partial class ManageInternListView
         var filtered = new List<ApplicationListRowViewStates>();
 
         var value = args?.Value.ToString();
-        double.TryParse(value, out var doubleValue);
+        var isNumber = double.TryParse(value, out var doubleValue);
         if (String.IsNullOrWhiteSpace(value))
         {
             filtered = this.States.Items;
@@ -101,7 +98,9 @@ public partial class ManageInternListView
             // have to check the string is not null first
             // for some reasons, the data can be null or blank
             filtered = this.States.Items.Where(x =>
-                (x.Matching > 0 && x.Matching >= doubleValue)
+                (isNumber && x.Matching >= doubleValue) ||
+                (string.IsNullOrEmpty(x.StudentName) && x.StudentName.Contains(value)) ||
+                (string.IsNullOrEmpty(x.JobName) && x.JobName.Contains(value))
             ).ToList();
         }
     }
@@ -110,13 +109,13 @@ public partial class ManageInternListView
     #region [ Event Handlers - DataList ]
     private void OnRowClicked(ApplicationListRowViewStates rowItem)
     {
-        this.NavigationManager.NavigateTo($"/manage-itern/{rowItem.StudentId}");
+        this.NavigationManager.NavigateTo($"/job/{rowItem.JobId}/student/{rowItem.StudentId}");
     }
 
     private void OnSelectionChanged()
     {
         var value = this.ListContext.GetSelectedItems().Any();
-        this.CommandBarContext.SetItemIsVisible(ButtonNames.DeleteButton, value);
+        CommandBarContext.SetItemIsVisible("Details", value);
         this.StateHasChanged();
     }
     #endregion
@@ -150,6 +149,7 @@ public partial class ManageInternListView
         // Items
         this.CommandBarContext = new CommandBarContext();
         this.CommandBarContext.Items.AddRefreshButton(this.OnRefreshButtonClicked);
+        this.CommandBarContext.Items.AddButton("Details", "Details", "Info", this.OnDetailsButtonClicked);
     }
     #endregion
 
@@ -159,14 +159,19 @@ public partial class ManageInternListView
         this.SearchContext.SetDefafultSearchValue(string.Empty);
         await this.LoadDataAsync();
     }
+
+    private void OnDetailsButtonClicked(EventArgs e)
+    {
+        var item = ListContext.GetSelectedItems().FirstOrDefault();
+        if(item != null)
+        {
+            ApplicationFormRequest = FormRequestFactory.DetailsRequest(item.ToEntity());
+            StateHasChanged();
+        }
+    }
     #endregion
 
     #region [ Private Methods - Data ]
-    private async Task<int> GetCompanyId()
-    {
-        return 1;
-    }
-
     private async Task LoadDataAsync()
     {
         try
@@ -178,22 +183,7 @@ public partial class ManageInternListView
             this.States.Items.Clear();
             this.StateHasChanged();
 
-            var companyId = await GetCompanyId();
-
-            var job = new Job();
-
-            if (string.IsNullOrEmpty(JobId))
-            {
-                job = await Jobs.FindAll(x => x.CompanyId == companyId)
-                                .Include(x => x.StudentJobs.Where(x => x.Status == ApplyStatus.HIRED))
-                                .FirstOrDefaultAsync();
-            }
-            else
-            {
-                job = await Jobs.FindAll(x => x.Id == int.Parse(JobId))
-                                .Include(x => x.StudentJobs.Where(x => x.Status == ApplyStatus.HIRED)) 
-                                .FirstOrDefaultAsync();
-            }
+            var job = await Jobs.FindAll(x => x.Id == int.Parse(JobId)).Include(x => x.StudentJobs).FirstOrDefaultAsync();
 
             var studentJobs = job?.StudentJobs.ToList();
 
