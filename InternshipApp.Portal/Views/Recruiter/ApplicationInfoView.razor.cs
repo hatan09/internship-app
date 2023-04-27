@@ -29,7 +29,10 @@ public partial class ApplicationInfoView
     public StudentManager Students { get; set; }
 
     [Inject]
-    public ISkillRepository Skills { get; set; }
+    public IJobRepository Jobs { get; set; }
+
+    [Inject]
+    public IMatchingService MatchingService { get; set; }
     #endregion
 
     #region [ Properties - Panel ]
@@ -71,22 +74,29 @@ public partial class ApplicationInfoView
 
         try
         {
+            var job = await Jobs.FindByIdAsync(int.Parse(this.JobId));
+
             var student = await this.Students
                 .FindAll(x => x.Id == StudentId)
                 .Include(x => x.StudentSkills)
                 .Include(x => x.StudentJobs.Where(x => x.JobId == int.Parse(JobId)))
                 .FirstOrDefaultAsync();
             var item = student.StudentJobs.FirstOrDefault();
-            if (student == null || item == null)
+            if (job == null || student == null || item == null)
             {
                 this.States = null;
                 return;
             }
-            
-            var skills = student.StudentSkills.ToList();
 
             this.States = item.ToDetailsViewStates();
-
+            States.StudentName = student.FullName;
+            States.Year = student.Year;
+            States.Credits = student.Credit;
+            States.Gpa = student.GPA;
+            States.Bio = student.Bio;
+            States.Matching = await MatchingService.GetMatchingPointById(StudentId, int.Parse(JobId));
+            States.JobName = job.Title;
+            
         }
         catch (Exception ex)
         {

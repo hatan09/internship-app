@@ -64,7 +64,7 @@ public static class ApplicationExtension
         {
             StudentId = entity.StudentId,
             JobId = (int) entity.JobId,
-            
+            Status = entity.Status,
 
         };
     }
@@ -76,7 +76,7 @@ public static class ApplicationExtension
         {
             StudentId = viewModel.StudentId,
             JobId = viewModel.JobId,
-
+            Status = viewModel.Status,
         };
     }
     #endregion

@@ -93,5 +93,12 @@ public class BaseApplicationViewStates : BaseViewModel
         get { return this._skillIds; }
         set { this.SetProperty(ref this._skillIds, value); }
     }
+
+    private string _bio;
+    public string Bio
+    {
+        get { return this._bio; }
+        set { this.SetProperty(ref this._bio, value); }
+    }
     #endregion
 }

@@ -1,41 +1,53 @@
 ﻿@namespace InternshipApp.Portal.Views
+@using Syncfusion.Blazor.Popups
 
-<Stack Horizontal="false" Style="width:100%;margin:20px 40px">
+<Stack Horizontal="false" Style="width:auto;margin:20px 40px">
     <Stack Horizontal Style="width:100%" Wrap=false>
-        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.End">
-            <label class="matching-point">64.5</label><b class="matching-sub">Matching</b>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.End" ClassName="matching-pane">
+            <SfTooltip Content="@States.Matching.ToString()">
+                <label class="matching-point">@States.Matching</label><b class="matching-sub">Matching</b>
+            </SfTooltip>
         </Stack>
-        <Stack Horizontal="false" Style="width:100%" HorizontalAlign="Wave5.UI.Alignment.Center">
+        <Stack Horizontal="false" Style="width:100%" HorizontalAlign="Wave5.UI.Alignment.Center" ClassName="info">
             <div class="e-avatar e-avatar-xlarge e-avatar-circle image"></div>
             <h1>
                 <b>
                     @States.StudentName
                 </b>
             </h1>
-            <CommandBar></CommandBar>
+
+            <h2>
+                Has applied to 
+                <b>
+                    @States.JobName
+                </b>
+            </h2>
+            <CommandBarView AcceptCallback="OnChat" ChatCallback="OnChat" SendEmailCallback="OnChat" RejectCallback="OnChat"></CommandBarView>
         </Stack>
     </Stack>
 
     <Stack>
         <Stack Style="margin-bottom:10px">
             <h1>Introduction</h1>
-            <label>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </label>
+            <Stack Style="margin:10px">
+                <label>
+                    @States.Bio
+                </label>
+            </Stack>
         </Stack>
 
-        <Stack Style="margin-bottom:10px">
+        <Stack Style="margin:10px">
             <h2>
                 Education
             </h2>
             <label>
-                lorem ipsum
+                International University, HCM National University
             </label>
             <label>
-                lorem ipsum
+                @GetOrderFromInt(States.Year) year, CSE student
             </label>
             <label>
-                lorem ipsum
+                GPA: @States.Gpa. Credits acchieved: @States.Credits
             </label>
         </Stack>
 
@@ -43,7 +55,7 @@
         <h2>
             Skills
         </h2>
-        <SkillTagList>
+        <SkillTagList StudentId="@StudentId">
 
         </SkillTagList>
     </Stack>
@@ -52,11 +64,20 @@
 
 
 <style>
+    .matching-pane{
+        flex: 1;
+    }
+
+    .info {
+        flex: 3;
+    }
+
     .matching-point{
         font-size:100pt
     }
 
     .matching-sub{
+        font-size:12pt;
         margin: 0px 10px 45px 10px;
     }
 
@@ -70,5 +91,6 @@
         width:100px;
         border:2px;
         border-color: gold;
+        margin-bottom: 10px;
     }
 </style>
