@@ -142,12 +142,18 @@ public partial class ApplicationListView : ComponentBase
         var year = new DataGridColumnDefinition<ApplicationListRowViewStates>("Year", x => x.Year)
         {
             ColumnDataKey = nameof(ApplicationListRowViewStates.Year),
-            Width = "1fr"
+            Width = "0.7fr"
         };
 
         var gpa = new DataGridColumnDefinition<ApplicationListRowViewStates>("Gpa", x => x.Gpa)
         {
             ColumnDataKey = nameof(ApplicationListRowViewStates.Gpa),
+            Width = "0.7fr"
+        };
+
+        var stat = new DataGridColumnDefinition<ApplicationListRowViewStates>("Status", x => x.Status)
+        {
+            ColumnDataKey = nameof(ApplicationListRowViewStates.Status),
             Width = "1fr"
         };
 
@@ -161,6 +167,7 @@ public partial class ApplicationListView : ComponentBase
         this.ListContext.Columns.Definitions.Add(name);
         this.ListContext.Columns.Definitions.Add(year);
         this.ListContext.Columns.Definitions.Add(gpa);
+        this.ListContext.Columns.Definitions.Add(stat);
         this.ListContext.Columns.Definitions.Add(matching);
     }
     #endregion
@@ -193,25 +200,25 @@ public partial class ApplicationListView : ComponentBase
 
     private void OnWaitingFilterButtonClicked(MouseEventArgs obj)
     {
-        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.WAITING).ToList();
+        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.WAITING);
         this.OnFilterDataList(filtered, "Waiting Applications");
     }
 
     private void OnAcceptedFilterButtonClicked(MouseEventArgs obj)
     {
-        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.ACCEPTED).ToList();
+        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.ACCEPTED);
         this.OnFilterDataList(filtered, "Accepted Applications");
     }
 
     private void OnRejectedFilterButtonClicked(MouseEventArgs obj)
     {
-        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.REJECTED).ToList();
+        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.REJECTED);
         this.OnFilterDataList(filtered, "Rejected Applications");
     }
 
     private void OnMissedFilterButtonClicked(MouseEventArgs obj)
     {
-        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.MISSED).ToList();
+        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.MISSED);
         this.OnFilterDataList(filtered, "Missed Applications");
     }
 
@@ -305,7 +312,7 @@ public partial class ApplicationListView : ComponentBase
 
             this.ListContext.GetKey = x => x.Id;
             this.ListContext.ItemsSource.AddRange(this.States.Items);
-            this.OnFilterDataList(this.States.Items, "Waiting Applications");
+            this.OnFilterDataList(this.States.Items.Where(x => x.Status == ApplyStatus.WAITING), "Waiting Applications");
         }
         catch (Exception ex)
         {

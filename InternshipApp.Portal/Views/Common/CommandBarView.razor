@@ -11,35 +11,35 @@
     @if (IsEditButtonVisible)
     {
         <SfTooltip Content="Edit profile">
-            <SfButton IconCss="oi oi-pencil" CssClass="command-bar-button edit"/>
+            <SfButton IconCss="oi oi-pencil" CssClass="command-bar-button edit" OnClick="@EditCallback"/>
         </SfTooltip>
     }
 
     @if (IsAcceptButtonVisible)
     {
         <SfTooltip Content="Accept">
-            <SfButton IconCss="oi oi-check" CssClass="command-bar-button accept"/>
+            <SfButton IconCss="oi oi-check" CssClass="command-bar-button accept" OnClick="@AcceptCallback"/>
         </SfTooltip>
     }
 
     @if (IsChatButtonVisible)
     {
         <SfTooltip Content="Chat with this student">
-            <SfButton IconCss="oi oi-chat" CssClass="command-bar-button chat"/>
+            <SfButton IconCss="oi oi-chat" CssClass="command-bar-button chat" OnClick="@ChatCallback"/>
         </SfTooltip>
     }
 
     @if (IsSendEmailButtonVisible)
     {
         <SfTooltip Content="Send email to this student">
-            <SfButton IconCss="oi oi-envelope-closed" CssClass="command-bar-button email"/>
+            <SfButton IconCss="oi oi-envelope-closed" CssClass="command-bar-button email" OnClick="@SendEmailCallback"/>
         </SfTooltip>
     }
 
     @if (IsRejectButtonVisible)
     {
         <SfTooltip Content="Reject this student">
-            <SfButton IconCss="oi oi-x" CssClass="command-bar-button reject"/>
+            <SfButton IconCss="oi oi-x" CssClass="command-bar-button reject" OnClick="@RejectCallback"/>
         </SfTooltip>
     }
 </Stack>

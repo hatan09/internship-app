@@ -210,7 +210,7 @@ public partial class ManageJobListView : ComponentBase
     #region [ Private Methods - Data ]
     private async Task<int> GetCompanyId()
     {
-        var company = await Companies.FindAll().FirstOrDefaultAsync();
+        var company = await Companies.FindAll().AsNoTracking().FirstOrDefaultAsync();
         return company == null ? 1 : company.Id;
     }
 

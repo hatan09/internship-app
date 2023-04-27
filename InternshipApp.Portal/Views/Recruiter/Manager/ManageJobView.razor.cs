@@ -126,6 +126,7 @@ public partial class ManageJobView
             var allStudents = await Students.FindAll(x => interns.Select(x => x.StudentId).Contains(x.Id)).ToListAsync();
             Data = interns.ToListRowList();
             Data.ForEach(x => {
+                x.JobName = item.Title;
                 x.StudentName = allStudents.FirstOrDefault(y => y.Id == x.StudentId)?.FullName;
             });
 

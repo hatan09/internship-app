@@ -348,19 +348,28 @@ public class MatchingService : IMatchingService
 
         var student = await _studentManager.FindAll(x => x.Id == studentId).Include(x => x.StudentSkills).FirstOrDefaultAsync();
         var studentSkills = student?.StudentSkills;
-        if (studentSkills == null || studentSkills.Count == 0) return 0;
+        if (studentSkills == null || studentSkills.Count == 0) return 0;    // student has no skill? => no points
 
         var job = await _jobRepository.FindAll(x => x.Id == jobId).Include(x => x.JobSkills).FirstOrDefaultAsync();
         var jobSkills = job?.JobSkills;
-        if (jobSkills == null || jobSkills.Count == 0) return 100;
+        if (jobSkills == null || jobSkills.Count == 0) return 100;  // job has no skill? => free points
 
         if (jobSkills.Where(x => x.Weight <= 0).Any())
+        {
+            // k_factor is used to find score of skill with weight 0 when job's total weight does not sum up to 1
             k_factor = (1 - jobSkills.Sum(x => x.Weight)) /
                         jobSkills.Where(x => x.Weight <= 0).Count();
-
+        }
+        else if(jobSkills.Sum(x => x.Weight) < 1)
+        {
+            // no soft skills => all job's weight that missing will be free!
+            score += (int) (100 * (1 - jobSkills.Sum(x => x.Weight)));
+        }
+            
+        // loop through all job's skills, for each of them => find student's match skill or best alternative skill
         foreach (var jobSkill in jobSkills)
         {
-            if (jobSkill.Weight <= 0)    // additional soft skills
+            if (jobSkill.Weight <= 0)    // additional soft skills => multiply by k_factor
             {
                 if (studentSkills.Where(x => x.SkillId == jobSkill.SkillId).Any())
                     score += (int)(100 * k_factor);
@@ -368,29 +377,31 @@ public class MatchingService : IMatchingService
             }
 
             // primary skills
-            if (studentSkills.Where(x => x.SkillId == jobSkill.SkillId).Any())
+            if (studentSkills.Where(x => x.SkillId == jobSkill.SkillId).Any())  // match exact required skill
                 score += (int)(100 * jobSkill.Weight);
-            else
+            else    // find alternative skills
             {
-                var skillScore = ScoreMap[jobSkill.SkillId];
-                if (skillScore == null)
+                var skillScore = ScoreMap[jobSkill.SkillId];    // get all alternatives
+                if (skillScore == null) // ==> no alternative
                     continue;
 
                 int max = 0;
-                foreach (var studentSkill in studentSkills)
+                foreach (var studentSkill in studentSkills) // find all student's skills that can be alternative for that job's skill
                 {
-                    if (!skillScore.TryGetValue((int)studentSkill.SkillId, out var matchingType))
+                    if (!skillScore.TryGetValue((int)studentSkill.SkillId, out var matchingType))   // ==> not alternative, next
                     {
                         continue;
                     }
 
+                    // ==> alternative, get points. alternative with highest point (best matched) will be taken to add to matching points
                     max = Math.Max(max, (int)(100 * jobSkill.Weight * GetSkillMatchPoint(matchingType)));
+                    if (matchingType == MatchingType.FIT) break;    // ==> if a skill is marked as fit => consider it as 100% matched skill. stop
                 }
-                score += max;
+                score += max;   // add score of alternative skill
             }
         }
 
-        return score;
+        return score > 100 ? 100 : score;
     }
 
     public int GetMatchingPoint(List<StudentSkill> studentSkills, List<JobSkill> jobSkills)

@@ -22,11 +22,24 @@
                     @States.JobName
                 </b>
             </h2>
-            <CommandBarView AcceptCallback="OnChat" ChatCallback="OnChat" SendEmailCallback="OnChat" RejectCallback="OnChat"></CommandBarView>
+            <CommandBarView 
+                AcceptCallback="@OnAccept" 
+                ChatCallback="OnChat" 
+                SendEmailCallback="OnSendEmail" 
+                RejectCallback="@OnReject" />
         </Stack>
     </Stack>
 
     <Stack>
+        <Stack Style="margin-bottom:10px">
+            <h1>Current Status</h1>
+            <Stack Style="margin:10px">
+                <label>
+                    @States.Status.ToString()
+                </label>
+            </Stack>
+        </Stack>
+
         <Stack Style="margin-bottom:10px">
             <h1>Introduction</h1>
             <Stack Style="margin:10px">

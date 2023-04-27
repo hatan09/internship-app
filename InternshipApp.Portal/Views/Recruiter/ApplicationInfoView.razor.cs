@@ -9,10 +9,6 @@ using Wave5.UI.Forms;
 namespace InternshipApp.Portal.Views; 
 public partial class ApplicationInfoView 
 {
-    #region [ Fields ]
-
-    #endregion
-
     #region [ Properties - Parameter ]
     [Parameter]
     public string StudentId { get; set; }
@@ -143,9 +139,71 @@ public partial class ApplicationInfoView
         }
     }
 
+
+    #endregion
+
+    #region [ Protected Methods - CommandBar ]
+    public async void OnAccept()
+    {
+        var job = await Jobs.FindAll(x => x.Id == int.Parse(JobId))
+                            .Include(x => x.StudentJobs.Where(x => x.StudentId == StudentId))
+                            .FirstOrDefaultAsync();
+
+        if (job == null)
+        {
+            return;
+        }
+
+        if(job.StudentJobs.Count < 1)
+        {
+            return;
+        }
+
+        if(job.StudentJobs.First().Status == ApplyStatus.WAITING)
+        {
+            job.StudentJobs.First().Status = ApplyStatus.ACCEPTED;
+
+        }
+        else if(job.StudentJobs.First().Status == ApplyStatus.ACCEPTED)
+        {
+            job.StudentJobs.First().Status = ApplyStatus.HIRED;
+
+        }
+        Jobs.Update(job);
+        await Jobs.SaveChangesAsync();
+        await LoadDataAsync();
+    }
+
     public async void OnChat()
     {
 
+    }
+
+    public async void OnSendEmail()
+    {
+
+    }
+
+    public async void OnReject()
+    {
+        var job = await Jobs.FindAll(x => x.Id == int.Parse(JobId))
+                            .Include(x => x.StudentJobs.Where(x => x.StudentId == StudentId))
+                            .FirstOrDefaultAsync();
+
+        if (job == null)
+        {
+            return;
+        }
+
+        if (job.StudentJobs.Count < 1)
+        {
+            return;
+        }
+
+        job.StudentJobs.First().Status = ApplyStatus.REJECTED;
+        Jobs.Update(job);
+        await Jobs.SaveChangesAsync();
+        await LoadDataAsync();
     }
     #endregion
 }
