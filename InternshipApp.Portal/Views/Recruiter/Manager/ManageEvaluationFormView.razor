@@ -1,5 +1,64 @@
-﻿<h3>ManageEvaluationForm</h3>
+﻿@namespace InternshipApp.Portal.Views
+@using Wave5.UI.Forms;
 
-@code {
+<Stack ClassName="formContainer">
 
-}
+    <EditForm EditContext="Context"
+              OnValidSubmit="OnFormSubmit">
+
+        <FormFieldsContainer>
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@States.JobName Readonly>
+                    <label>Job</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@States.StudentName Readonly> 
+                    <label>Student</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@States.ProjectName>
+                    <label>Project Title</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@States.Title>
+                    <label>Report Title</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <label for="performanceCombobox">Performance</label>
+                <FluentCombobox Id="performanceCombobox" @bind-Value=@States.Performance Options="@States.PerformanceOptions()" Autocomplete="ComboboxAutocomplete.Both">
+                </FluentCombobox>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentNumberField @bind-Value=@States.Score Max="100" Min="0">
+                    <label>Score</label>
+                </FluentNumberField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentTextArea @bind-Value=@States.Comment>
+                    <label>Comments</label>
+                </FluentTextArea>
+            </Stack>
+        </FormFieldsContainer>
+
+        <FormButtonsContainer>
+            <FluentButton Appearance=@FormStyles.SaveButtonAppearance
+                          style=@FormStyles.SaveButtonStyle
+                          type="submit"> <label>Save</label> </FluentButton>
+
+            <FluentButton Appearance=@FormStyles.CancelButtonAppearance
+                          style=@FormStyles.CancelButtonStyle
+                          @onclick="@OnCancel"> <label>Cancel</label> </FluentButton>
+
+        </FormButtonsContainer>
+    </EditForm>
+</Stack>

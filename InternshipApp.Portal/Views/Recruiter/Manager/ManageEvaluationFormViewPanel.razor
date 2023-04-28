@@ -1,7 +1,19 @@
 ﻿@namespace InternshipApp.Portal.Views
 
-<h3>ManageEvaluationForm</h3>
+@using Wave5.UI.DataGrids
+@using Wave5.UI
+@using Wave5.UI.Forms;
 
-@code {
+<Panel IsOpen=@(IsOpen)
+       ShowCloseButton=@true
+       HeaderText="Form"
+       IsLightDismiss=@true
+       PanelType=PanelType.Medium
+       OnDismissed=@OnPanelDismissed>
 
-}
+    <PanelContentTemplate>
+        <ManageEvaluationFormView FormRequest="@FormRequest"
+                          FormResultCallback="OnFormResultReceived" />
+    </PanelContentTemplate>
+
+</Panel>

@@ -4,7 +4,7 @@ public class Evaluation : BaseEntity<int>
 {
     public string? StudentId { get; set; }
     public int? JobId { get; set; }
-    public string Title { get; set; } = "Evaluation";
+    public string Title { get; set; } = $"{DateTime.Now.ToLongDateString()}_Report";
     public int Score { get; set; } = 0;
     public PerformanceRank Performance { get; set; } = PerformanceRank.AVERAGE;
     public string? ProjectName { get; set; } = string.Empty;

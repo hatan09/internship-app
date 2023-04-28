@@ -32,7 +32,7 @@ public partial class ManageEvaluationListView
     #endregion
 
     #region [ Properties - States - Contexts ]
-    public FormRequest<FormAction, StudentJob> EvaluationFormRequest { get; private set; }
+    public FormRequest<FormAction, Evaluation> EvaluationFormRequest { get; private set; }
 
     protected DetailsListContainerContext ListContainerContext { get; private set; }
 
@@ -105,39 +105,52 @@ public partial class ManageEvaluationListView
     #region [ Event Handlers - DataList ]
     private void OnRowClicked(EvaluationListRowViewStates rowItem)
     {
-        this.NavigationManager.NavigateTo($"/manage-itern/{rowItem.StudentId}");
+        EvaluationFormRequest = FormRequestFactory.EditRequest(rowItem.ToEntity());
+        this.StateHasChanged();
     }
 
     private void OnSelectionChanged()
     {
         var value = this.ListContext.GetSelectedItems().Any();
+        this.CommandBarContext.SetItemIsVisible(ButtonNames.EditButton, value);
         this.CommandBarContext.SetItemIsVisible(ButtonNames.DeleteButton, value);
         this.StateHasChanged();
     }
+
+
     #endregion
 
     #region [ Private Methods - Column ]
     private void InitializeColumn()
     {
-        var job = new DataGridColumnDefinition<EvaluationListRowViewStates>("Job Title", x => x.JobName)
+        var project = new DataGridColumnDefinition<EvaluationListRowViewStates>("Project Title", x => x.ProjectName)
         {
-            ColumnDataKey = nameof(EvaluationListRowViewStates.JobName),
+            ColumnDataKey = nameof(EvaluationListRowViewStates.ProjectName),
             Width = "2fr"
         };
 
-        var name = new DataGridColumnDefinition<EvaluationListRowViewStates>("Student Name", x => x.StudentName)
+        var title = new DataGridColumnDefinition<EvaluationListRowViewStates>("Report Title", x => x.Title)
         {
-            ColumnDataKey = nameof(EvaluationListRowViewStates.StudentName),
-            Width = "2fr"
+            ColumnDataKey = nameof(EvaluationListRowViewStates.Title),
+            Width = "3fr"
         };
 
-        var title = new DataGridColumnDefinition<EvaluationListRowViewStates>("Title", x => x.StudentName)
+        var performance = new DataGridColumnDefinition<EvaluationListRowViewStates>("Performance", x => x.Performance)
         {
-            ColumnDataKey = nameof(EvaluationListRowViewStates.StudentName),
-            Width = "2fr"
+            ColumnDataKey = nameof(EvaluationListRowViewStates.Performance),
+            Width = "1fr"
         };
-        this.ListContext.Columns.Definitions.Add(job);
-        this.ListContext.Columns.Definitions.Add(name);
+
+        var created = new DataGridColumnDefinition<EvaluationListRowViewStates>("Created Date", x => x.CreatedDate)
+        {
+            ColumnDataKey = nameof(EvaluationListRowViewStates.CreatedDate),
+            Width = "1fr"
+        };
+
+        this.ListContext.Columns.Definitions.Add(project);
+        this.ListContext.Columns.Definitions.Add(title);
+        this.ListContext.Columns.Definitions.Add(performance);
+        this.ListContext.Columns.Definitions.Add(created);
     }
     #endregion
 
@@ -150,6 +163,9 @@ public partial class ManageEvaluationListView
         // Items
         this.CommandBarContext = new CommandBarContext();
         this.CommandBarContext.Items.AddRefreshButton(this.OnRefreshButtonClicked);
+        this.CommandBarContext.Items.AddAddButton(this.OnAddButtonClicked);
+        this.CommandBarContext.Items.AddEditButton(this.OnEditButtonClicked, false);
+        this.CommandBarContext.Items.AddDeleteButton(this.OnDeleteButtonClicked, false);
     }
     #endregion
 
@@ -158,6 +174,78 @@ public partial class ManageEvaluationListView
     {
         this.SearchContext.SetDefafultSearchValue(string.Empty);
         await this.LoadDataAsync();
+    }
+
+    private void OnAddButtonClicked(EventArgs e)
+    {
+        var item = new Evaluation
+        {
+            StudentId = this.StudentId,
+            JobId = int.Parse(this.JobId),
+        };
+        EvaluationFormRequest = FormRequestFactory.AddRequest(item);
+        StateHasChanged();
+    }
+
+    private void OnEditButtonClicked(EventArgs e)
+    {
+        var selectedItem = ListContext.GetSelectedItems().FirstOrDefault();
+        if(selectedItem == null)
+        {
+            return;
+        }
+        this.EvaluationFormRequest = FormRequestFactory.AddRequest(selectedItem.ToEntity());
+        StateHasChanged();
+    }
+
+    private async void OnDeleteButtonClicked(EventArgs e)
+    {
+        try
+        {
+            var selectedItem = ListContext.GetSelectedItems();
+            if (selectedItem.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var item in selectedItem)
+            {
+                Evaluations.Delete(item.ToEntity());
+
+            }
+
+            await Evaluations.SaveChangesAsync();
+            var tasks = new List<Task>
+            {
+                LoadDataAsync()
+            };
+
+            await Task.WhenAll(tasks);
+
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    #endregion
+
+    #region [ Event Handlers - Panel ]
+    protected async Task OnFormResultReceived(FormResult<Evaluation> result)
+    {
+        switch (result.State)
+        {
+            case FormResultState.Added:
+            case FormResultState.Updated:
+            case FormResultState.Deleted:
+                var tasks = new List<Task>
+                {
+                    LoadDataAsync()
+                };
+
+                await Task.WhenAll(tasks);
+                break;
+        }
     }
     #endregion
 
@@ -173,10 +261,11 @@ public partial class ManageEvaluationListView
             this.States.Items.Clear();
             this.StateHasChanged();
 
-            var evaluations = await Evaluations.FindAll(x => x.JobId == int.Parse(JobId) && x.StudentId == StudentId).ToListAsync();
+            var evaluations = await Evaluations.FindAll(x => x.JobId == int.Parse(JobId) && x.StudentId == StudentId).AsNoTracking().ToListAsync();
             States.Items = evaluations.ToListRowList();
 
             this.ListContext.GetKey = x => x.Id;
+            this.ListContext.ItemsSource.Clear();
             this.ListContext.ItemsSource.AddRange(this.States.Items);
         }
         catch (Exception ex)

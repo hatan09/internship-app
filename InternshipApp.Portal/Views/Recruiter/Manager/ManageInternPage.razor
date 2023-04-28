@@ -2,10 +2,17 @@
 
 @namespace InternshipApp.Portal.Views
 
-<ManageInternView JobId="@JobId" StudentId="@StudentId">
+<Stack>
+    <ManageInternView JobId="@JobId" StudentId="@StudentId">
 
-</ManageInternView>
+    </ManageInternView>
 
-<ManageEvaluationListView JobId="@JobId" StudentId="@StudentId">
+</Stack>
 
-</ManageEvaluationListView>
+<br />
+
+<Stack>
+    <ManageEvaluationListView JobId="@JobId" StudentId="@StudentId">
+
+    </ManageEvaluationListView>
+</Stack>

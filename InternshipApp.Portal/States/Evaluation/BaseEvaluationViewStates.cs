@@ -1,4 +1,7 @@
-﻿using RCode.ViewModels;
+﻿using System.Collections.ObjectModel;
+using InternshipApp.Core.Entities;
+using RCode.UI.ViewModels;
+using RCode.ViewModels;
 
 namespace InternshipApp.Portal.Views;
 
@@ -10,12 +13,14 @@ public class BaseEvaluationViewStates : BaseViewModel
     private string _studentName;
     private int _jobId;
     private string _jobName;
+    private string _title;
+    private ObservableCollection<string> _performanceList;
     #endregion
 
     #region [ CTor ]
     public BaseEvaluationViewStates()
     {
-        
+        _performanceList = Enum.GetValues(typeof(PerformanceRank)).Cast<PerformanceRank>().Select(x => x.ToString()).ToList().ToObservableCollection();
     }
     #endregion
 
@@ -59,6 +64,12 @@ public class BaseEvaluationViewStates : BaseViewModel
         set { this.SetProperty(ref this._score, value); }
     }
 
+    public ObservableCollection<string> PerformanceList
+    {
+        get { return this._performanceList; }
+        set { this.SetProperty(ref this._performanceList, value); }
+    }
+
     private string _performance;
     public string Performance
     {
@@ -71,6 +82,12 @@ public class BaseEvaluationViewStates : BaseViewModel
     {
         get { return this._createdDate; }
         set { this.SetProperty(ref this._createdDate, value); }
+    }
+
+    public string Title
+    {
+        get { return this._title; }
+        set { this.SetProperty(ref this._title, value); }
     }
 
     public int JobId

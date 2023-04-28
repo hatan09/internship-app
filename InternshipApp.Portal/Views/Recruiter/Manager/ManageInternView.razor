@@ -15,11 +15,11 @@
         else
         {
             <Stack Style="font-family: var(--body-font);"
-               Horizontal=@true
+               Horizontal
                Tokens=@(new StackTokens { Padding="15px 10px" })>
-                <Stack Style="width:100%" Horizontal=true>
-                    <FormDetailsField Label="Title" Value=@(States.StudentName) />
-                    <FormDetailsField Label="Title" Value=@(States.JobName) />
+                <Stack Style="width:100%" Horizontal=false>
+                    <FormDetailsField Label="Job's Title" Value=@(States.JobName) />
+                    <FormDetailsField Label="Student's Fullname" Value=@(States.StudentName) />
                 </Stack>
             </Stack>
         }

@@ -25,12 +25,6 @@ public partial class ManageInternView
     [Inject]
     public IJobRepository Jobs { get; set; }
 
-    [Inject]
-    public INavigationMenuProvider MainMenuProvider { get; set; }
-
-    [Inject]
-    public NavigationManager NavigationManager { get; set; }
-
     #endregion
 
     #region [ Properties - Parameter ]
@@ -103,17 +97,23 @@ public partial class ManageInternView
             this.DetailsContainerContext.SetProcessingStates(true, false);
             this.CommandBarContext.SetProcessingStates(true);
 
-            var job = await Jobs.FindAll(x => x.Id == int.Parse(JobId))
-                .Include(x => x.StudentJobs.Where(x => x.StudentId == StudentId))
-                .FirstOrDefaultAsync();
+            this.StateHasChanged();
 
-            if (job == null)
+            var job = await Jobs.FindByIdAsync(int.Parse(JobId));
+            var student = await Students.FindByIdAsync(StudentId);
+            if (job == null || student == null)
             {
                 this.States = null;
                 return;
             }
 
-            var item = job.StudentJobs.FirstOrDefault(x => x.StudentId == StudentId);
+            var item = new ApplicationDetailsViewStates()
+            {
+                StudentId = student.Id,
+                JobId = job.Id,
+                StudentName = student.FullName,
+                JobName = job.Title
+            };
 
             if (item == null)
             {
@@ -121,7 +121,7 @@ public partial class ManageInternView
                 return;
             }
 
-            this.States = item.ToDetailsViewStates();
+            this.States = item;
         }
         catch (Exception ex)
         {
