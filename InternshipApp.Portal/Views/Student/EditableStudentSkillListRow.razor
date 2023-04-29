@@ -1,0 +1,57 @@
+﻿@namespace InternshipApp.Portal.Views
+@using Wave5.UI
+@using Wave5.UI.Forms;
+
+<FluentDataGridRow TItem=StudentSkillListRowViewStates
+                           RowType="DataGridRowType.Default">
+
+    <Stack VerticalAlign="Alignment.Center">
+        <FluentDataGridCell GridColumn=0>
+            <EditForm EditContext="Context">
+                <Stack>
+                    <FluentTextField @bind-Value=@States.Value />
+                </Stack>
+            </EditForm>
+        </FluentDataGridCell>
+    </Stack>
+
+    <Stack VerticalAlign="Alignment.Center">
+        <FluentDataGridCell GridColumn=1>
+            <EditForm EditContext="Context">
+                <Stack>
+                    <FluentTextField @bind-Value=@States.Title />
+                </Stack>
+            </EditForm>
+        </FluentDataGridCell>
+    </Stack>
+
+    <Stack VerticalAlign="Alignment.Center">
+        <FluentDataGridCell GridColumn=2>
+            <EditForm EditContext="Context">
+                <Stack HorizontalAlign="Alignment.Center">
+                    <FluentCheckbox @bind-Value=@IsCorrectAnswer 
+                                    @onclick=@OnModifyCorrectAnswer 
+                                    Disabled=@(this.FormRequest?.Action == FormAction.Add) />
+                </Stack>
+            </EditForm>
+        </FluentDataGridCell>
+    </Stack>
+
+    <Stack VerticalAlign="Alignment.Center" HorizontalAlign="Alignment.Center">
+        <FluentDataGridCell GridColumn=3>
+            <EditForm EditContext="Context">
+                <Stack>
+                    <FluentSwitch @bind-Value=@States.IsActive />
+                </Stack>
+            </EditForm>
+        </FluentDataGridCell>
+    </Stack>
+
+    <Stack VerticalAlign="Alignment.Center">
+        <FluentDataGridCell GridColumn=4>
+            <FluentButton @onclick=@(this.FormRequest?.Action == FormAction.Add?  OnAdd : OnDelete)>
+                @(this.FormRequest?.Action == FormAction.Add ? "Add" : "Delete")
+            </FluentButton>
+        </FluentDataGridCell>
+    </Stack>
+</FluentDataGridRow>

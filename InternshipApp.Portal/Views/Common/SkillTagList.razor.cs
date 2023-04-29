@@ -16,6 +16,12 @@ public partial class SkillTagList
     [Parameter]
     public int? JobId { get; set; }
 
+    [Parameter]
+    public bool IsEditable { get; set; } = false;
+
+    [Parameter]
+    public EventCallback OnEditButtonClicked { get; set; }
+
     #region [ Properties - Inject ]
     [Inject]
     public StudentManager Students { get; set; }
@@ -65,16 +71,6 @@ public partial class SkillTagList
     #endregion
 
     #region [ Event Handlers - DataList ]
-    #endregion
-
-
-
-    #region [ Event Handlers - CommandBars - Buttons ]
-
-    private void OnAddButtonClicked(EventArgs e)
-    {
-        this.StateHasChanged();
-    }
     #endregion
 
     #region [ Event Handlers - Panel ]

@@ -1,0 +1,84 @@
+﻿@namespace InternshipApp.Portal.Views
+@using InternshipApp.Core.Entities;
+@using Wave5.UI
+@using Wave5.UI.Forms;
+
+<h3> Answers </h3>
+
+<FluentDataGrid TItem="StudentSkillListRowViewStates" id="testGrid"
+                    GenerateHeader=GenerateHeaderOption.None
+                    GridTemplateColumns=@(ListContext.Columns.GetGridTemplateColumns()+" 0.5fr")>
+    <FluentDataGridRow TItem=StudentSkillListRowViewStates
+                        RowType="DataGridRowType.Header">
+            
+        @foreach (var column in Columns)
+        {
+            <Stack>
+                <FluentDataGridCell GridColumn=@Columns.IndexOf(column) CellType="DataGridCellType.ColumnHeader">
+                    @column.Title
+                </FluentDataGridCell>
+            </Stack>
+        }
+        <Stack ClassName="formFieldContainer" Style="width:60px">
+            <FluentDataGridCell GridColumn=@(Columns.Count+1) CellType="DataGridCellType.ColumnHeader"/>
+        </Stack>
+    </FluentDataGridRow>
+
+    @if (Items.Any())
+    {
+        @foreach (var item in Items)
+        {
+            <EditableStudentSkillListRow 
+                    FormRequest=@(new FormRequest<FormAction, StudentSkill>(FormAction.Edit, item))
+                    CorrectAnswerId=@CorrectAnswerId
+                    UpdateCallback=@OnUpdate
+                    ModifyCorrectAnswerCallback=@OnModifyCorrectAnswer
+                    DeleteCallback=@OnDelete />
+        }
+    }
+    else
+    {
+        <Stack HorizontalAlign="Alignment.Center" Style="padding: 10px 0px">
+            <i> Nothing to display. Please add more answers for this question! </i>
+        </Stack>
+    }
+
+    <br />
+
+    <FluentButton @onclick=@OnToggleAdd 
+                  Appearance=@FormStyles.SaveButtonAppearance
+                  style=@FormStyles.SaveButtonStyle
+                  Disabled=@IsAddDisable> <label> Add New Answer </label> </FluentButton>
+
+    @{
+        if (IsAddRowShowed)
+        {
+            <br />
+            <FluentDivider />
+
+            <h4>
+                New Answer
+            </h4>
+
+            <FluentDataGridRow TItem=StudentSkillListRowViewStates
+                       RowType="DataGridRowType.Header">
+
+                @foreach (var column in Columns)
+                {
+                    <Stack>
+                        <FluentDataGridCell GridColumn=@Columns.IndexOf(column) CellType="DataGridCellType.ColumnHeader">
+                            @column.Title
+                        </FluentDataGridCell>
+                    </Stack>
+                }
+                <Stack>
+                    <FluentDataGridCell GridColumn=@Columns.Count CellType="DataGridCellType.ColumnHeader" />
+                </Stack>
+            </FluentDataGridRow>
+
+            <EditableStudentSkillListRow 
+                FormRequest=@(new FormRequest<FormAction, StudentSkill>(FormAction.Add, new StudentSkill()))
+                AddCallback=@OnAdd />
+        }
+    }
+</FluentDataGrid>

@@ -2,12 +2,11 @@
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using RCode;
-using Wave5.UI;
 using Wave5.UI.Forms;
 
 namespace InternshipApp.Portal.Views;
 
-public partial class InfoView
+public partial class ManageInfoView
 {
     #region [ Fields ]
 
@@ -30,7 +29,7 @@ public partial class InfoView
     #endregion
 
     #region [ Properties - Panel ]
-    protected FormRequest<FormAction, Student> ApplicationFormRequest { get; private set; }
+    protected FormRequest<FormAction, Student> StudentFormRequest { get; private set; }
     #endregion
 
     #region [ Properties - Data ]
@@ -54,6 +53,24 @@ public partial class InfoView
         if (currentApplicationId != parameterApplicationId)
         {
             await this.LoadDataAsync();
+        }
+    }
+    #endregion
+
+    #region [ Event Handlers - Panel ]
+    protected async Task OnFormResultReceived(FormResult<Student> result)
+    {
+        switch (result.State)
+        {
+            case FormResultState.Updated:
+            case FormResultState.Deleted:
+                var tasks = new List<Task>
+                {
+                    this.LoadDataAsync()
+                };
+
+                await Task.WhenAll(tasks);
+                break;
         }
     }
     #endregion
@@ -87,7 +104,7 @@ public partial class InfoView
 
     public string GetOrderFromInt(int order)
     {
-        switch(order)
+        switch (order)
         {
             case 1:
                 {
@@ -120,15 +137,6 @@ public partial class InfoView
         }
     }
 
-    public async void OnChat()
-    {
-
-    }
-
-    public async void OnSendEmail()
-    {
-
-    }
 
     public async void OnEdit()
     {

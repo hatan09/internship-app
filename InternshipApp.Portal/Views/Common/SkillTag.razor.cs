@@ -8,4 +8,15 @@ public partial class SkillTag
 
     [Parameter]
     public string Description { get; set; } = "";
+
+    [Parameter]
+    public bool IsEditButton { get; set; } = false;
+
+    [Parameter]
+    public EventCallback OnClickEventCallBack { get; set; }
+
+    private async void OnClicked()
+    {
+        await OnClickEventCallBack.InvokeAsync();
+    }
 }

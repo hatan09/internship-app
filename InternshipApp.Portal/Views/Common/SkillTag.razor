@@ -2,9 +2,18 @@
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Popups
 
-<SfTooltip ID="skill-tag-tooltip" Content="@Description">
-    <SfButton Content="@Name" CssClass="skill"/>
-</SfTooltip>
+@if (IsEditButton)
+{
+    <SfTooltip ID="skill-tag-tooltip" Content="@Description">
+        <SfButton CssClass="skill" IconCss="@Name"/>
+    </SfTooltip>
+}
+else
+{
+    <SfTooltip ID="skill-tag-tooltip" Content="@Description">
+        <SfButton Content="@Name" CssClass="skill" OnClick="OnClicked"/>
+    </SfTooltip>
+}
 
  <style>
     .e-btn.skill{

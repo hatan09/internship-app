@@ -17,4 +17,9 @@
             <SkillTag Name="@(skill?.Name)" Description="@(item.Description)" />
         }
     }
+
+    @if (IsEditable)
+    {
+        <SkillTag Name="oi oi-wrench" Description="Edit Skills" IsEditButton=true OnClickEventCallBack="@OnEditButtonClicked" />
+    }
 </Stack>

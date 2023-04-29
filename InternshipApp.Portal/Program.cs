@@ -1,5 +1,6 @@
 using System.Text;
 using Blazored.LocalStorage;
+using BlogApi.Services;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Database;
 using InternshipApp.Core.Entities;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Services;
 using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -98,6 +100,9 @@ builder.Services.AddTransient<ISkillRepository, SkillRepository>();
 builder.Services.AddTransient<IJobRepository, JobRepository>();
 builder.Services.AddTransient<IMatchingService, MatchingService>();
 builder.Services.AddTransient<IEvaluationRepository, EvaluationRepository>();
+
+//Services
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 //Authorization
 

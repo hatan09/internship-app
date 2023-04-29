@@ -10,14 +10,14 @@
 
     @if (IsEditButtonVisible)
     {
-        <SfTooltip Content="Edit profile">
+        <SfTooltip Content="Edit profile basic info">
             <SfButton IconCss="oi oi-pencil" CssClass="command-bar-button edit" OnClick="@EditCallback"/>
         </SfTooltip>
     }
 
     @if (IsAcceptButtonVisible)
     {
-        <SfTooltip Content="Accept">
+        <SfTooltip Content="Accept this student">
             <SfButton IconCss="oi oi-check" CssClass="command-bar-button accept" OnClick="@AcceptCallback"/>
         </SfTooltip>
     }

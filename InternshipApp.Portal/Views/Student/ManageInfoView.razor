@@ -1,0 +1,68 @@
+﻿@namespace InternshipApp.Portal.Views
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Buttons
+@using Wave5.UI
+
+<Stack HorizontalAlign="Wave5.UI.Alignment.Center">
+    <div class="e-avatar e-avatar-xlarge e-avatar-circle image"></div>
+
+    <br />
+
+    <Stack>
+        <h1>
+            @States.Name
+        </h1>
+    </Stack>
+    <CommandBarView EditCallback="OnEdit" />
+</Stack>
+
+<Stack Style="margin:10px">
+    <Stack Style="margin:10px">
+        <h2>
+            Introduction
+        </h2>
+        <label>
+            @States.Bio
+        </label>
+    </Stack>
+
+    <Stack Style="margin:10px">
+        <h2>
+            Education
+        </h2>
+        <label>
+            International University, HCM National University
+        </label>
+        <label>
+            @GetOrderFromInt(States.Year) year, CSE student
+        </label>
+        <label>
+            GPA: @States.Gpa. Credits acchieved: @States.Credits
+        </label>
+    </Stack>
+
+    <Stack Style="margin:10px">
+        <h2>
+            Skills
+        </h2>
+        <SkillTagList StudentId="@States.Id" IsEditable=true>
+
+        </SkillTagList>
+    </Stack>
+</Stack>
+
+<StudentInfoFormPanel FormRequest="StudentFormRequest" FormResultCallback="OnFormResultReceived"/>
+
+<style>
+    .e-avatar.image {
+        background-image: url("@States.ImgUrl");
+    }
+
+    .e-avatar.e-avatar-xlarge {
+        border-radius: 50%;
+        height: 100px;
+        width: 100px;
+        border: 2px;
+        border-color: gold;
+    }
+</style>

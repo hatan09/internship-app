@@ -41,6 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\InternshipApp.Api\InternshipApp.Api.csproj" />
     <ProjectReference Include="..\InternshipApp.Repository\InternshipApp.Repository.csproj" />
   </ItemGroup>
 
