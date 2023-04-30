@@ -8,6 +8,11 @@
             var skill = AllSkills.FirstOrDefault(x => x.Id == item.SkillId);
             <SkillTag Name="@(skill?.Name)" Description="@(item.Description)"/>
         }
+
+        @if (IsEditable)
+        {
+            <SkillTag Name="oi oi-wrench" Description="Edit Skills" IsEditButton=true OnClickEventCallBack="@OnEditButtonClicked" />
+        }
     }
     else
     {
@@ -18,8 +23,5 @@
         }
     }
 
-    @if (IsEditable)
-    {
-        <SkillTag Name="oi oi-wrench" Description="Edit Skills" IsEditButton=true OnClickEventCallBack="@OnEditButtonClicked" />
-    }
+    
 </Stack>

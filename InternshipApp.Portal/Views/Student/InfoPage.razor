@@ -1,6 +1,15 @@
 ﻿@page "/student/{StudentId}"
 @namespace InternshipApp.Portal.Views
 
-<InfoView StudentId=@StudentId>
+@if (!IsStudent)
+{
+    <ManageInfoView StudentId="@StudentId">
 
-</InfoView>
+    </ManageInfoView>
+}
+else
+{
+    <InfoView StudentId=@StudentId>
+
+    </InfoView>
+}

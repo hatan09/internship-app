@@ -5,6 +5,7 @@ using Wave5.UI;
 using InternshipApp.Repository;
 using InternshipApp.Core.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
 
@@ -112,7 +113,7 @@ public partial class StudentInfoFormView
         try
         {
 
-            this.States = this.FormRequest.Data.ToFormViewStates();
+            this.States = (await Students.FindAll(x => x.Id == FormRequest.Data.Id).AsNoTracking().FirstOrDefaultAsync())?.ToFormViewStates();
 
             switch (this.FormRequest.Action)
             {
@@ -151,18 +152,6 @@ public partial class StudentInfoFormView
     {
         try
         {
-            this.FormRequest.Data = this.States.ToEntity();
-            await this.Students.CreateAsync(this.FormRequest.Data);
-
-            var role = await Roles.FindByNameAsync("student");
-
-            if (role != null)
-            {
-                await Students.AddToRoleAsync(FormRequest.Data, role.Name);
-            }
-
-            await Students.AddPasswordAsync(FormRequest.Data, States.Password?? $"password{FormRequest.Data.StudentId}");
-
             await this.InvokeFormResultCallbackAsync(FormResultState.Added);
         }
         catch (Exception ex)
@@ -178,9 +167,15 @@ public partial class StudentInfoFormView
     {
         try
         {
-            this.FormRequest.Data = this.States.ToEntity();
-
-            await this.Students.UpdateAsync(this.FormRequest.Data);
+            var student = await Students.FindByIdAsync(FormRequest.Data.Id);
+            
+            if (student != null)
+            {
+                student.Credit = States.Credits;
+                student.GPA = States.Gpa;
+                student.Bio = States.Bio;
+            }
+            await this.Students.UpdateAsync(student);
 
             await this.InvokeFormResultCallbackAsync(FormResultState.Updated);
         }

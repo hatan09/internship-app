@@ -16,6 +16,7 @@ public class BaseStudentViewStates : BaseViewModel
     private string _status;
     private string _username;
     private string _password;
+    private string _oldPassword;
     private string _imgUrl;
     #endregion
 
@@ -84,6 +85,12 @@ public class BaseStudentViewStates : BaseViewModel
     {
         get { return this._password; }
         set { this.SetProperty(ref this._password, value); }
+    }
+
+    public string OldPassword
+    {
+        get { return this._oldPassword; }
+        set { this.SetProperty(ref this._oldPassword, value); }
     }
 
     public string ImgUrl

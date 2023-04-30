@@ -110,7 +110,7 @@ public partial class ManageJobView
             this.CommandBarContext.SetProcessingStates(true);
 
             var item = await this.Jobs
-                .FindAll(x => x.Id == int.Parse(JobId))
+                .FindAll(x => x.Id == int.Parse(JobId)).AsNoTracking()
                 .Include(x => x.StudentJobs
                     .Where(x => x.Status == ApplyStatus.HIRED))
                 .FirstOrDefaultAsync();

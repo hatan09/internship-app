@@ -101,18 +101,18 @@ public partial class SkillTagList
             {
                 IsStudentSkills = true;
 
-                var student = await Students.FindAll(x => x.Id == StudentId).Include(x => x.StudentSkills).FirstOrDefaultAsync();
+                var student = await Students.FindAll(x => x.Id == StudentId).AsNoTracking().Include(x => x.StudentSkills).FirstOrDefaultAsync();
                 StudentSkills = student.StudentSkills.ToList();
-                var skills = await Skills.FindAll(x => student.StudentSkills.Select(x => x.SkillId).Contains(x.Id)).ToListAsync();
+                var skills = await Skills.FindAll(x => student.StudentSkills.Select(x => x.SkillId).Contains(x.Id)).AsNoTracking().ToListAsync();
                 AllSkills = skills;
             }
             else if (IsJob)
             {
                 IsStudentSkills = false;
 
-                var job = await Jobs.FindAll(x => x.Id == (int) JobId).Include(x => x.JobSkills).FirstOrDefaultAsync();
+                var job = await Jobs.FindAll(x => x.Id == (int) JobId).AsNoTracking().Include(x => x.JobSkills).FirstOrDefaultAsync();
                 JobSkills = job.JobSkills.ToList();
-                var skills = await Skills.FindAll(x => job.JobSkills.Select(x => x.SkillId).Contains(x.Id)).ToListAsync();
+                var skills = await Skills.FindAll(x => job.JobSkills.Select(x => x.SkillId).Contains(x.Id)).AsNoTracking().ToListAsync();
                 AllSkills = skills;
             }
         }

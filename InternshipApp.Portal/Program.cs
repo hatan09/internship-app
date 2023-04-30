@@ -28,7 +28,10 @@ builder.Services.AddBlazoredLocalStorage();
 
 //Add database
 builder.Services
-    .AddDbContextPool<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("StandardConnection")));
+    .AddDbContextPool<AppDbContext>(options => options.UseSqlServer(builder.Configuration
+                                                        .GetConnectionString("StandardConnection"))
+                                                        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                                                        .EnableSensitiveDataLogging(true));
 
 //UserIdentity
 builder.Services.AddIdentity<User, Role>(options =>
@@ -102,7 +105,7 @@ builder.Services.AddTransient<IMatchingService, MatchingService>();
 builder.Services.AddTransient<IEvaluationRepository, EvaluationRepository>();
 
 //Services
-builder.Services.AddTransient<IEmailService, EmailService>();
+//builder.Services.AddTransient<IEmailService, EmailService>();
 
 //Authorization
 

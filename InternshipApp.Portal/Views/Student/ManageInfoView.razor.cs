@@ -1,6 +1,7 @@
 ﻿using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 using RCode;
 using Wave5.UI.Forms;
 
@@ -15,9 +16,6 @@ public partial class ManageInfoView
     #region [ Properties - Parameter ]
     [Parameter]
     public string StudentId { get; set; }
-
-    [Parameter]
-    public bool IsStudent { get; set; } = false;
     #endregion
 
     #region [ Properties ]
@@ -82,7 +80,7 @@ public partial class ManageInfoView
 
         try
         {
-            var item = await this.Students.FindByIdAsync(this.StudentId);
+            var item = await this.Students.FindAll().AsNoTracking().Where(x => x.Id == this.StudentId).FirstOrDefaultAsync();
 
             if (item is null)
             {
@@ -138,9 +136,10 @@ public partial class ManageInfoView
     }
 
 
-    public async void OnEdit()
+    public void OnEdit()
     {
-
+        this.StudentFormRequest = FormRequestFactory.EditRequest(States.ToEntity());
+        StateHasChanged();
     }
     #endregion
 }

@@ -30,15 +30,13 @@
         {
             <EditableStudentSkillListRow 
                     FormRequest=@(new FormRequest<FormAction, StudentSkill>(FormAction.Edit, item))
-                    CorrectAnswerId=@CorrectAnswerId
                     UpdateCallback=@OnUpdate
-                    ModifyCorrectAnswerCallback=@OnModifyCorrectAnswer
                     DeleteCallback=@OnDelete />
         }
     }
     else
     {
-        <Stack HorizontalAlign="Alignment.Center" Style="padding: 10px 0px">
+        <Stack HorizontalAlign="Wave5.UI.Alignment.Center" Style="padding: 10px 0px">
             <i> Nothing to display. Please add more answers for this question! </i>
         </Stack>
     }

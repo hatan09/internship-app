@@ -71,7 +71,9 @@ public static class StudentExtension
             Year = entity.Year,
             Credits = entity.Credit,
             Status = entity.Stat.ToString(),
-            StudentId = entity.StudentId
+            StudentId = entity.StudentId,
+
+            Username = entity.UserName
         };
     }
 

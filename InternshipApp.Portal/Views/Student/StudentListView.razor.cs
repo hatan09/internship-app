@@ -244,11 +244,11 @@ public partial class StudentListView : ComponentBase
 
             this.StateHasChanged();
 
-            var certificationList = new List<Student>();
-            var students = await Students.FindAll().ToListAsync();
-            certificationList.AddRange(students);
+            var studentList = new List<Student>();
+            var students = await Students.FindAll().AsNoTracking().ToListAsync();
+            studentList.AddRange(students);
 
-            this.States.Items.AddRange(certificationList.ToListRowList());
+            this.States.Items.AddRange(studentList.ToListRowList());
             this.ListContext.GetKey = (x => x.Id);
             this.ListContext.ItemsSource.AddRange(this.States.Items);
         }

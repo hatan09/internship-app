@@ -37,8 +37,6 @@ public partial class EditableStudentSkillListView
 
     protected List<StudentSkill> Items { get; private set; }
 
-    protected string CorrectAnswerId { get; private set; }
-
     protected bool IsAddRowShowed { get; private set; }
 
     protected bool IsAddDisable { get; private set; }
@@ -98,11 +96,6 @@ public partial class EditableStudentSkillListView
         await UpdateAsync(entity);
     }
 
-    public async Task OnModifyCorrectAnswer(string answerId)
-    {
-        await this.LoadDataAsync();
-    }
-
     public async Task OnAdd(StudentSkillListRowViewStates viewStates)
     {
         Guard.ParamIsNull(viewStates, nameof(viewStates));
@@ -113,9 +106,9 @@ public partial class EditableStudentSkillListView
         OnToggleAdd(null);
     }
 
-    public async Task OnDelete(string answerId)
+    public async Task OnDelete(int answerId)
     {
-        Guard.ParamIsNullOrEmpty(answerId, nameof(answerId));
+        Guard.ParamIsNull(answerId, nameof(answerId));
         await DeleteAsync(answerId);
         await this.LoadDataAsync();
     }
@@ -168,7 +161,7 @@ public partial class EditableStudentSkillListView
         //await this.LogicContext.StudentSkills.AddAsync(StudentSkill);
     }
 
-    private async Task DeleteAsync(string answerId)
+    private async Task DeleteAsync(int answerId)
     {
         Console.WriteLine($"{answerId} is deleted!");
         //await this.LogicContext.StudentSkills.DeleteAsync(answerId);

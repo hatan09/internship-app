@@ -22,9 +22,6 @@ public partial class EditableStudentSkillListRow
     [Parameter]
     public FormRequest<FormAction, StudentSkill> FormRequest { get; set; }
 
-    [Parameter]
-    public string CorrectAnswerId { get; set; }
-
     //[Parameter]
     //public List<DataGridColumnDefinition<StudentSkillListRowViewStates>> Columns { get; set; }
 
@@ -35,9 +32,6 @@ public partial class EditableStudentSkillListRow
     public EventCallback<StudentSkillListRowViewStates> AddCallback { get; set; }
 
     [Parameter]
-    public EventCallback<int> ModifyCorrectAnswerCallback { get; set; }
-
-    [Parameter]
     public EventCallback<int> DeleteCallback { get; set; }
     #endregion
 
@@ -45,8 +39,6 @@ public partial class EditableStudentSkillListRow
     public StudentSkillListRowViewStates States { get; set; }
 
     protected EditContext Context { get; private set; }
-
-    protected bool IsCorrectAnswer { get; private set; } = false;
     #endregion
 
     #region [ Properties - Elements ]
@@ -59,20 +51,11 @@ public partial class EditableStudentSkillListRow
         var newFormRequest = parameters.GetValueOrDefault<FormRequest<FormAction, StudentSkill>>(nameof(this.FormRequest));
         var currentFormRequest = this.FormRequest;
 
-        //refresh when update correct answer
-        var currentCorrectAnswerId = this.CorrectAnswerId;
-        var newCorrectAnswerId = parameters.GetValueOrDefault<string>(nameof(this.CorrectAnswerId));
-
         await base.SetParametersAsync(parameters);
         if (newFormRequest.Action != FormAction.Add)
         {
             if (newFormRequest != null &&
             !newFormRequest.Data.StudentId.Equals(currentFormRequest?.Data.StudentId))
-            {
-                await this.LoadDataAsync();
-                return;
-            }
-            else if (newCorrectAnswerId is not null && !newCorrectAnswerId.Equals(currentCorrectAnswerId))
             {
                 await this.LoadDataAsync();
                 return;
@@ -117,18 +100,6 @@ public partial class EditableStudentSkillListRow
         await UpdateCallback.InvokeAsync(States);
     }
 
-    public async Task OnModifyCorrectAnswer()
-    {
-        if (!IsCorrectAnswer)
-        {
-            await ModifyCorrectAnswerCallback.InvokeAsync(string.Empty);
-        }
-        else
-        {
-            await ModifyCorrectAnswerCallback.InvokeAsync(States.Id);
-        }
-    }
-
     public async Task OnDelete()
     {
         await DeleteCallback.InvokeAsync(States.Id);
@@ -160,7 +131,6 @@ public partial class EditableStudentSkillListRow
             this.States = this.FormRequest.Data.ToListRow();
 
             this.Context = new EditContext(this.States);
-            this.IsCorrectAnswer = this.States.Id.Equals(this.CorrectAnswerId);
             this.Context.OnFieldChanged += this.OnFieldChanged;
         }
         catch (Exception ex)

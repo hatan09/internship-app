@@ -8,24 +8,6 @@
 
         <FormFieldsContainer>
             <Stack ClassName="formFieldContainer">
-                <FluentTextField @bind-Value=@States.StudentId>
-                    <label>Student Id</label>
-                </FluentTextField>
-            </Stack>
-
-            <Stack ClassName="formFieldContainer">
-                <FluentTextField @bind-Value=@States.Name>
-                    <label>Name</label>
-                </FluentTextField>
-            </Stack>
-
-            <Stack ClassName="formFieldContainer">
-                <FluentNumberField @bind-Value=@States.Year>
-                    <label>Year</label>
-                </FluentNumberField>
-            </Stack>
-
-            <Stack ClassName="formFieldContainer">
                 <FluentNumberField @bind-Value=@this.States.Credits>
                     <label>Acchieved Credits</label>
                 </FluentNumberField>
@@ -38,15 +20,9 @@
             </Stack>
 
             <Stack ClassName="formFieldContainer">
-                <FluentTextField @bind-Value=@States.Username>
-                    <label>Username</label>
-                </FluentTextField>
-            </Stack>
-
-            <Stack ClassName="formFieldContainer">
-                <FluentTextField @bind-Value=@States.Password>
-                    <label>Password</label>
-                </FluentTextField>
+                <FluentTextArea @bind-Value=@this.States.Bio>
+                    <label>Introduction</label>
+                </FluentTextArea>
             </Stack>
         </FormFieldsContainer>
 
