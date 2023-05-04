@@ -1,5 +1,13 @@
-﻿<h3>ApplyListView</h3>
+﻿@namespace InternshipApp.Portal.Views
+@using Wave5.UI.DataGrids
+@using Wave5.UI
 
-@code {
+<DetailsListContainer ContainerContext=@ListContainerContext
+                      CommandBarContext=@CommandBarContext
+                      SearchContext=@SearchContext
+                      TItem="ApplicationListRowViewStates"
+                      Title="Apply History">
 
-}
+    <DetailsList DetailsListContext=@ListContext />
+
+</DetailsListContainer>

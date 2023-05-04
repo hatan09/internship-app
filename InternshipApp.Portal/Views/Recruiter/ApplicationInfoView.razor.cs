@@ -17,7 +17,7 @@ public partial class ApplicationInfoView
     public string JobId { get; set; }
     #endregion
 
-    #region [ Properties ]
+    #region [ Properties - Inject]
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
@@ -26,6 +26,9 @@ public partial class ApplicationInfoView
 
     [Inject]
     public IJobRepository Jobs { get; set; }
+
+    [Inject]
+    public ISkillRepository Skills { get; set; }
 
     [Inject]
     public IMatchingService MatchingService { get; set; }
@@ -37,6 +40,8 @@ public partial class ApplicationInfoView
 
     #region [ Properties - Data ]
     protected ApplicationDetailsViewStates States { get; private set; }
+
+    protected List<Skill> AllSkills { get; private set; }
     #endregion
 
     #region [ Protected Methods - Override ]
@@ -83,6 +88,8 @@ public partial class ApplicationInfoView
                 this.States = null;
                 return;
             }
+
+            //AllSkills = await Skills.FindAll().AsNoTracking().ToListAsync();
 
             this.States = item.ToDetailsViewStates();
             States.StudentName = student.FullName;

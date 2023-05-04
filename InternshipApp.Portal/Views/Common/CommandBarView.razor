@@ -42,6 +42,13 @@
             <SfButton IconCss="oi oi-x" CssClass="command-bar-button reject" OnClick="@RejectCallback"/>
         </SfTooltip>
     }
+
+    @if (IsApplyListButtonVisible)
+    {
+        <SfTooltip Content="See apply status">
+            <SfButton IconCss="oi oi-script" CssClass="command-bar-button apply" OnClick="@ApplyListCallback" />
+        </SfTooltip>
+    }
 </Stack>
 
 <style>
@@ -76,6 +83,10 @@
 
     .oi-x.e-btn-icon{
         color: indianred; 
+    }
+
+    .oi-script.e-btn-icon {
+        color: gray;
     }
 
     .command-bar-button{

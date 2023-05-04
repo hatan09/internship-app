@@ -18,10 +18,17 @@ public partial class InfoPage
     #region [ Methods -  ]
     protected override async Task OnInitializedAsync()
     {
-        var role = await StorageService.GetItemAsync<string>("role");
-        if (role == "student") IsStudent = true;
-
         await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            var role = await StorageService.GetItemAsync<string>("role");
+            if (role == "student") IsStudent = true;
+        }
+        await base.OnAfterRenderAsync(firstRender);
     }
     #endregion
 }

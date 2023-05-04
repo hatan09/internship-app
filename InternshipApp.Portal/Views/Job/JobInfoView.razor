@@ -5,8 +5,8 @@
 
 <Stack Horizontal Style="width:100%; padding-right:30px" Wrap=false>
     <Stack Style="height:200px">
-        <SfTooltip ID="gauge-tooltip" Content=@($"Matching point: {States.Matching}. C#, Java are matched") MouseTrail>
-        <SfCircularGauge Width= "400px" Height= "400px" Title="Matching">
+        <SfTooltip ID="gauge-tooltip" Content=@($"Matching point: {States.Matching}") MouseTrail>
+        <SfCircularGauge Width= "400px" Height= "400px" Title="Matching" Background="#f2f2f2">
             <CircularGaugeTitleStyle Color="blue" FontWeight="bold" Size="25" ></CircularGaugeTitleStyle>
             <CircularGaugeTooltipSettings Enable="true"></CircularGaugeTooltipSettings>
             <CircularGaugeAxes>

@@ -48,6 +48,7 @@ public partial class SkillTagList
         {
             StudentSkills = new();
             JobSkills = new();
+            AllSkills = new();
             await base.OnInitializedAsync();
         }
         catch (Exception ex)

@@ -153,5 +153,10 @@ public partial class ManageInfoView
         this.StudentFormRequest = FormRequestFactory.EditRequest(States.ToEntity());
         StateHasChanged();
     }
+
+    public void OnOpenApplyList()
+    {
+        this.NavigationManager.NavigateTo($"apply-status/{States.Id}");
+    }
     #endregion
 }

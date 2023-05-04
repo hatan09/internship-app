@@ -15,6 +15,8 @@ public class BaseApplicationViewStates : BaseViewModel
     private int _jobId;
     private string _jobName;
     private double _matching;
+    private string _companyName;
+
     #endregion
 
     #region [ CTor ]
@@ -99,6 +101,12 @@ public class BaseApplicationViewStates : BaseViewModel
     {
         get { return this._bio; }
         set { this.SetProperty(ref this._bio, value); }
+    }
+
+    public string CompanyName
+    {
+        get { return this._companyName; }
+        set { this.SetProperty(ref this._companyName, value); }
     }
     #endregion
 }
