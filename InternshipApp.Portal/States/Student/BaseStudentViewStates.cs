@@ -14,6 +14,7 @@ public class BaseStudentViewStates : BaseViewModel
     private int _credits;
     private string _bio;
     private string _status;
+    private string _email;
     private string _username;
     private string _password;
     private string _oldPassword;
@@ -75,6 +76,12 @@ public class BaseStudentViewStates : BaseViewModel
     {
         get { return this._status; }
         set { this.SetProperty(ref this._status, value); }
+    }
+
+    public string Email
+    {
+        get { return this._email; }
+        set { this.SetProperty(ref this._email, value); }
     }
 
     public string Username

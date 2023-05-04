@@ -7,6 +7,39 @@
               OnValidSubmit="OnFormSubmit">
 
         <FormFieldsContainer>
+            <h2> Basic Info </h2>
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@this.States.Name>
+                    <label>Full Name</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@this.States.StudentId>
+                    <label>Student Id</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@this.States.Email>
+                    <label>Email Address</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@this.States.Username Disabled=@(FormRequest?.Action == FormAction.Edit)>
+                    <label>Username</label>
+                </FluentTextField>
+            </Stack>
+            
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@this.States.Password TextFieldType="TextFieldType.Password" Disabled=@(FormRequest?.Action == FormAction.Edit)>
+                    <label>Password</label>
+                </FluentTextField>
+            </Stack>
+
+
+            <h2> Detailed Info </h2>
             <Stack ClassName="formFieldContainer">
                 <FluentNumberField @bind-Value=@this.States.Credits>
                     <label>Acchieved Credits</label>
