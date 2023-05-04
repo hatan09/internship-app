@@ -5,13 +5,13 @@
 @if (IsEditButton)
 {
     <SfTooltip ID="skill-tag-tooltip" Content="@Description">
-        <SfButton CssClass="skill" IconCss="@Name"/>
+        <SfButton CssClass="skill" IconCss="@Name" OnClick="OnClicked" />
     </SfTooltip>
 }
 else
 {
     <SfTooltip ID="skill-tag-tooltip" Content="@Description">
-        <SfButton Content="@Name" CssClass="skill" OnClick="OnClicked"/>
+        <SfButton Content="@Name" CssClass="skill" />
     </SfTooltip>
 }
 

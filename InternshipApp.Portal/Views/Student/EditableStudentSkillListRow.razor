@@ -2,47 +2,43 @@
 @using Wave5.UI
 @using Wave5.UI.Forms;
 
+
 <FluentDataGridRow TItem=StudentSkillListRowViewStates
                            RowType="DataGridRowType.Default">
 
-    <Stack VerticalAlign="Wave5.UI.Alignment.Center">
-        <FluentDataGridCell GridColumn=0>
+    
+
+    <Stack VerticalAlign="Wave5.UI.Alignment.Start" Style="margin:5px">
+        <FluentCombobox Id="skillCombobox"
+                        style="min-width: 0px"
+                        Options=States.SkillOptions()
+                        @bind-Value=@States.SelectedSkill
+                        Placeholder="Select Skill" />
+    </Stack>
+
+    <EditForm EditContext="Context">
+        <Stack HorizontalAlign="Wave5.UI.Alignment.Center" Style="margin:5px">
+            <FluentCombobox Id="levelCombobox"
+                            style="min-width: 0px"
+                            Options="@States.LevelOptions()"
+                            @bind-Value="@States.SelectedLevel"
+                            Placeholder="Select Level" />
+        </Stack>
+    </EditForm>
+
+    <Stack VerticalAlign="Wave5.UI.Alignment.Start">
+        <FluentDataGridCell GridColumn=2>
             <EditForm EditContext="Context">
                 <Stack>
-                    <FluentTextField @bind-Value=@States.Description />
+                    <FluentTextArea @bind-Value=@States.Description />
                 </Stack>
             </EditForm>
         </FluentDataGridCell>
     </Stack>
 
-    <Stack VerticalAlign="Wave5.UI.Alignment.Center">
-        <FluentDataGridCell GridColumn=2>
-            <EditForm EditContext="Context">
-                <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
-                    <label for="skillCombobox"> Selected Skill </label>
-                    <FluentCombobox Id="skillCombobox" Options="@States.SkillOptions()" @bind-Value="@States.SkillName">
-
-                    </FluentCombobox>
-                </Stack>
-            </EditForm>
-        </FluentDataGridCell>
-    </Stack>
 
     <Stack VerticalAlign="Wave5.UI.Alignment.Center">
-        <FluentDataGridCell GridColumn=2>
-            <EditForm EditContext="Context">
-                <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
-                    <label for="levelCombobox"> Selected Skill </label>
-                    <FluentCombobox Id="levelCombobox" Options="@States.LevelOptions()" @bind-Value="@States.SelectedLevel">
-
-                    </FluentCombobox>
-                </Stack>
-            </EditForm>
-        </FluentDataGridCell>
-    </Stack>
-
-    <Stack VerticalAlign="Wave5.UI.Alignment.Center">
-        <FluentDataGridCell GridColumn=4>
+        <FluentDataGridCell GridColumn=3>
             <FluentButton @onclick=@(this.FormRequest?.Action == FormAction.Add?  OnAdd : OnDelete)>
                 @(this.FormRequest?.Action == FormAction.Add ? "Add" : "Delete")
             </FluentButton>

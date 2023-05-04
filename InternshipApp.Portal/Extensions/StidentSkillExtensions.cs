@@ -66,7 +66,7 @@ public static class StudentSkillExtensions
         return new TBaseViewModel()
         {
             StudentId = entity.StudentId,
-            SkillId = (int) entity.SkillId,
+            SkillId = (int) (entity.SkillId?? 0),
             Level = entity.Level.ToString(),
             Description = entity.Description,
         };

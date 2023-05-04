@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Components;
 using Wave5.UI.Forms;
 using Wave5.UI;
 using InternshipApp.Core.Entities;
+using InternshipApp.Contracts;
+using InternshipApp.Repository;
+using Microsoft.EntityFrameworkCore;
+using RCode.UI.ViewModels;
 
 namespace InternshipApp.Portal.Views;
 
@@ -16,14 +20,17 @@ public partial class EditableStudentSkillListRow
     #endregion
 
     [Inject]
-    public ILogger<EditableStudentSkillListRow> Logger { get; set; }
+    public StudentManager Students { get; set; }
+
+    [Inject]
+    public ISkillRepository Skills { get; set; }
 
     #region [ Properties - Parameter ]
     [Parameter]
     public FormRequest<FormAction, StudentSkill> FormRequest { get; set; }
 
-    //[Parameter]
-    //public List<DataGridColumnDefinition<StudentSkillListRowViewStates>> Columns { get; set; }
+    [Parameter]
+    public List<Skill> AllSkills { get; set; }
 
     [Parameter]
     public EventCallback<StudentSkillListRowViewStates> UpdateCallback { get; set; }
@@ -39,10 +46,6 @@ public partial class EditableStudentSkillListRow
     public StudentSkillListRowViewStates States { get; set; }
 
     protected EditContext Context { get; private set; }
-    #endregion
-
-    #region [ Properties - Elements ]
-    protected MessageBarContainer Messages { get; private set; }
     #endregion
 
     #region [ Event Handlers - Override ]
@@ -78,8 +81,6 @@ public partial class EditableStudentSkillListRow
         }
         catch (Exception ex)
         {
-            this.Logger.LogError(ex.ToString());
-            // TODO: this.MessageProvider.AddExceptionMessage(this, ex);
         }
     }
 
@@ -97,16 +98,20 @@ public partial class EditableStudentSkillListRow
     #region [ Event Handlers - Answers ]
     public async Task OnUpdate()
     {
+        States.SkillId = int.Parse(States.GetSelectedSkillId());
+        States.Level = States.GetSelectedLevelName();
         await UpdateCallback.InvokeAsync(States);
     }
 
     public async Task OnDelete()
     {
-        await DeleteCallback.InvokeAsync(States.Id);
+        await DeleteCallback.InvokeAsync(States.SkillId);
     }
 
     public async Task OnAdd()
     {
+        States.SkillId = int.Parse(States.GetSelectedSkillId());
+        States.Level = States.GetSelectedLevelName();
         await AddCallback.InvokeAsync(States);
         await Reset();
     }
@@ -130,12 +135,24 @@ public partial class EditableStudentSkillListRow
         {
             this.States = this.FormRequest.Data.ToListRow();
 
+            if (AllSkills != null)
+            {
+                States.Skills = AllSkills.ToObservableCollection();
+
+            }
+            else
+            {
+                var allSkills = await Skills.FindAll().AsNoTracking().ToListAsync();
+                States.Skills = allSkills.ToObservableCollection();
+            }
+
+            States.SelectedSkill = AllSkills.FirstOrDefault(x => x.Id == States.SkillId)?.Name;
+            States.SelectedLevel = States.Level.ToString();
             this.Context = new EditContext(this.States);
             this.Context.OnFieldChanged += this.OnFieldChanged;
         }
         catch (Exception ex)
         {
-            this.Messages.AddErrorMessage(ex.Message, false);
         }
         finally
         {

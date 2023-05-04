@@ -32,6 +32,8 @@ public partial class ManageInfoView
 
     #region [ Properties - Data ]
     protected StudentDetailsViewStates States { get; private set; }
+
+    public PopupContext PopupContext { get; set; }
     #endregion
 
     #region [ Protected Methods - Override ]
@@ -135,6 +137,16 @@ public partial class ManageInfoView
         }
     }
 
+    public async void OnEditSkillCallback()
+    {
+        await LoadDataAsync();
+    }
+
+    public void OnEditSkill()
+    {
+        this.PopupContext = new() { IsOpen= true };
+        //StateHasChanged();
+    }
 
     public void OnEdit()
     {

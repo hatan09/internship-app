@@ -4,6 +4,9 @@ using Wave5.UI.DataGrids;
 using Wave5.UI;
 using InternshipApp.Core.Entities;
 using Wave5.UI.Blazor;
+using InternshipApp.Repository;
+using InternshipApp.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
 
@@ -17,11 +20,16 @@ public partial class EditableStudentSkillListView
     #endregion
 
     #region [ Properties - Inject ]
+    [Inject]
+    public StudentManager Students { get; set; }
+
+    [Inject]
+    public ISkillRepository Skills { get; set; }
     #endregion
 
     #region [ Parameters ]
     [Parameter]
-    public string QuestionId { get; set; }
+    public string StudentId { get; set; }
     #endregion
 
     #region [ Properties - States - Contexts ]
@@ -30,6 +38,8 @@ public partial class EditableStudentSkillListView
     protected DetailsListContext<StudentSkillListRowViewStates> ListContext { get; private set; }
 
     protected List<DataGridColumnDefinition<StudentSkillListRowViewStates>> Columns { get; private set; }
+
+    protected List<Skill> AllSkills { get; set; }
     #endregion
 
     #region [ Properties - States - DataList ]
@@ -37,7 +47,7 @@ public partial class EditableStudentSkillListView
 
     protected List<StudentSkill> Items { get; private set; }
 
-    protected bool IsAddRowShowed { get; private set; }
+    protected bool IsAddRowShown { get; private set; }
 
     protected bool IsAddDisable { get; private set; }
     #endregion
@@ -51,7 +61,7 @@ public partial class EditableStudentSkillListView
             {
                 Items = new List<StudentSkillListRowViewStates>()
             };
-            IsAddRowShowed = false;
+            IsAddRowShown = false;
             Items = new List<StudentSkill>();
             this.ListContainerContext = new DetailsListContainerContext();
             this.ListContext = new DetailsListContext<StudentSkillListRowViewStates>();
@@ -71,15 +81,15 @@ public partial class EditableStudentSkillListView
     {
         if (firstRender)
         {
-            await this.LoadDataAsync();
+            //await this.LoadDataAsync();
         }
         await base.OnAfterRenderAsync(firstRender);
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        IsAddRowShowed = false;
-        if (!string.IsNullOrEmpty(QuestionId))
+        IsAddRowShown = false;
+        if (!string.IsNullOrEmpty(StudentId))
         {
             await LoadDataAsync();
         }
@@ -117,6 +127,14 @@ public partial class EditableStudentSkillListView
     #region [ Private Methods - Column ]
     private void InitializeColumn()
     {
+        var name = new DataGridColumnDefinition<StudentSkillListRowViewStates>("Description", x => x.Description)
+        {
+            ColumnDataKey = nameof(StudentSkillListRowViewStates.Description),
+            Width = "3fr"
+        };
+
+        this.ListContext.Columns.Definitions.Add(name);
+
     }
     #endregion
 
@@ -128,17 +146,25 @@ public partial class EditableStudentSkillListView
             this.ListContainerContext.SetProcessingStates(true, false);
             this.ListContext.SetProcessingStates(true);
             this.States.Items.Clear();
+            this.Items.Clear();
 
             this.StateHasChanged();
 
-            if (!string.IsNullOrEmpty(QuestionId))
+            AllSkills = await Skills.FindAll().AsNoTracking().ToListAsync();
+
+            if (!string.IsNullOrEmpty(StudentId))
             {
-                
-                
+                var student = await Students.FindAll(x => x.Id == StudentId)
+                    .Include(x => x.StudentSkills)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+
+                if (student != null)
+                    Items.AddRange(student.StudentSkills.ToList());
             }
 
-            this.ListContext.GetKey = (x => x.Id);
-            // TODO: await this.AppLogicProvider.InvokeLoadDelayAsync();
+            States.Items.AddRange(Items.ToListRowList());
+            this.ListContext.GetKey = x => x.Id;
         }
         catch (Exception ex)
         {
@@ -151,27 +177,49 @@ public partial class EditableStudentSkillListView
         }
     }
 
-    private async Task UpdateAsync(StudentSkill StudentSkill)
+    private async Task UpdateAsync(StudentSkill studentSkill)
     {
-        //await this.LogicContext.StudentSkills.UpdateAsync(StudentSkill);
+        var student = await this.Students.FindAll(x => x.Id == StudentId).AsTracking().Include(x => x.StudentSkills).FirstOrDefaultAsync();
+        if(student != null)
+        {
+            student.StudentSkills.Remove(student.StudentSkills.FirstOrDefault(x => x.SkillId == studentSkill.SkillId));
+            student.StudentSkills.Add(studentSkill);
+            await Students.UpdateAsync(student);
+        }
+
     }
 
-    private async Task AddAsync(StudentSkill StudentSkill)
+    private async Task AddAsync(StudentSkill studentSkill)
     {
-        //await this.LogicContext.StudentSkills.AddAsync(StudentSkill);
+        var student = await this.Students.FindAll(x => x.Id == StudentId).AsTracking().Include(x => x.StudentSkills).FirstOrDefaultAsync();
+        if (student != null)
+        {
+            if (student.StudentSkills.Contains(studentSkill))
+                return;
+            studentSkill.StudentId = StudentId;
+            student.StudentSkills.Add(studentSkill);
+            await Students.UpdateAsync(student);
+        }
     }
 
-    private async Task DeleteAsync(int answerId)
+    private async Task DeleteAsync(int skillId)
     {
-        Console.WriteLine($"{answerId} is deleted!");
-        //await this.LogicContext.StudentSkills.DeleteAsync(answerId);
+        var student = await this.Students.FindAll(x => x.Id == StudentId).AsTracking().Include(x => x.StudentSkills).FirstOrDefaultAsync();
+        if (student != null)
+        {
+            student.StudentSkills.Remove(student.StudentSkills.FirstOrDefault(x => x.SkillId == skillId));
+            await Students.UpdateAsync(student);
+            Items.Remove(Items.FirstOrDefault(x => x.SkillId == skillId));
+            States.Items.Remove(States.Items.FirstOrDefault(x => x.SkillId == skillId));
+            StateHasChanged();
+        }
     }
     #endregion
 
     #region [ Private Methods - Row ]
     private void OnToggleAdd(object args)
     {
-        IsAddRowShowed = !IsAddRowShowed;
+        IsAddRowShown = !IsAddRowShown;
         this.StateHasChanged();
     }
     #endregion

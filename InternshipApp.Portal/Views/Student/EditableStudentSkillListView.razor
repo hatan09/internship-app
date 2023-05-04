@@ -3,24 +3,37 @@
 @using Wave5.UI
 @using Wave5.UI.Forms;
 
-<h3> Answers </h3>
+<h3> Skills </h3>
 
 <FluentDataGrid TItem="StudentSkillListRowViewStates" id="testGrid"
-                    GenerateHeader=GenerateHeaderOption.None
-                    GridTemplateColumns=@(ListContext.Columns.GetGridTemplateColumns()+" 0.5fr")>
+                GenerateHeader=GenerateHeaderOption.None
+                GridTemplateColumns=@("1fr 1fr " + ListContext.Columns.GetGridTemplateColumns()+" 0.5fr")>
     <FluentDataGridRow TItem=StudentSkillListRowViewStates
                         RowType="DataGridRowType.Header">
             
+        <Stack>
+            <FluentDataGridCell GridColumn=0 CellType="DataGridCellType.ColumnHeader">
+                Skill Name
+            </FluentDataGridCell>
+        </Stack>
+
+        <Stack>
+            <FluentDataGridCell GridColumn=1 CellType="DataGridCellType.ColumnHeader">
+                Level
+            </FluentDataGridCell>
+        </Stack>
+
         @foreach (var column in Columns)
         {
             <Stack>
-                <FluentDataGridCell GridColumn=@Columns.IndexOf(column) CellType="DataGridCellType.ColumnHeader">
+                <FluentDataGridCell GridColumn=@(Columns.IndexOf(column) + 2) CellType="DataGridCellType.ColumnHeader">
                     @column.Title
                 </FluentDataGridCell>
             </Stack>
         }
+        
         <Stack ClassName="formFieldContainer" Style="width:60px">
-            <FluentDataGridCell GridColumn=@(Columns.Count+1) CellType="DataGridCellType.ColumnHeader"/>
+            <FluentDataGridCell GridColumn=@(Columns.Count+2) CellType="DataGridCellType.ColumnHeader"/>
         </Stack>
     </FluentDataGridRow>
 
@@ -30,6 +43,7 @@
         {
             <EditableStudentSkillListRow 
                     FormRequest=@(new FormRequest<FormAction, StudentSkill>(FormAction.Edit, item))
+                    AllSkills=@AllSkills
                     UpdateCallback=@OnUpdate
                     DeleteCallback=@OnDelete />
         }
@@ -37,7 +51,7 @@
     else
     {
         <Stack HorizontalAlign="Wave5.UI.Alignment.Center" Style="padding: 10px 0px">
-            <i> Nothing to display. Please add more answers for this question! </i>
+            <i> Nothing to display. Please add more skills! </i>
         </Stack>
     }
 
@@ -46,36 +60,50 @@
     <FluentButton @onclick=@OnToggleAdd 
                   Appearance=@FormStyles.SaveButtonAppearance
                   style=@FormStyles.SaveButtonStyle
-                  Disabled=@IsAddDisable> <label> Add New Answer </label> </FluentButton>
+                  Disabled=@IsAddDisable> <label> Add New Skill </label> </FluentButton>
 
     @{
-        if (IsAddRowShowed)
+        if (IsAddRowShown)
         {
             <br />
             <FluentDivider />
 
             <h4>
-                New Answer
+                New Skill
             </h4>
 
             <FluentDataGridRow TItem=StudentSkillListRowViewStates
                        RowType="DataGridRowType.Header">
 
+                <Stack>
+                    <FluentDataGridCell GridColumn=0 CellType="DataGridCellType.ColumnHeader">
+                        Skill Name
+                    </FluentDataGridCell>
+                </Stack>
+
+                <Stack>
+                    <FluentDataGridCell GridColumn=1 CellType="DataGridCellType.ColumnHeader">
+                        Level
+                    </FluentDataGridCell>
+                </Stack>
+
                 @foreach (var column in Columns)
                 {
                     <Stack>
-                        <FluentDataGridCell GridColumn=@Columns.IndexOf(column) CellType="DataGridCellType.ColumnHeader">
+                        <FluentDataGridCell GridColumn=@(Columns.IndexOf(column)+1) CellType="DataGridCellType.ColumnHeader">
                             @column.Title
                         </FluentDataGridCell>
                     </Stack>
                 }
+                
                 <Stack>
-                    <FluentDataGridCell GridColumn=@Columns.Count CellType="DataGridCellType.ColumnHeader" />
+                    <FluentDataGridCell GridColumn=@(Columns.Count+2) CellType="DataGridCellType.ColumnHeader" />
                 </Stack>
             </FluentDataGridRow>
 
             <EditableStudentSkillListRow 
                 FormRequest=@(new FormRequest<FormAction, StudentSkill>(FormAction.Add, new StudentSkill()))
+                AllSkills=@AllSkills
                 AddCallback=@OnAdd />
         }
     }

@@ -125,5 +125,10 @@ public partial class SkillTagList
             this.StateHasChanged();
         }
     }
+
+    public async void OnEdit()
+    {
+        await OnEditButtonClicked.InvokeAsync();
+    }
     #endregion
 }

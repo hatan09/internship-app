@@ -127,13 +127,9 @@ public partial class JobInfoView
             var matching = MatchingService.GetMatchingPoint(student.StudentSkills?.ToList(), item.JobSkills?.ToList());
             States.Matching = matching;
 
-            skillIds.ForEach(async x =>
-            {
-                if(x > 0)
-                {
-                    States.Skills.Add(await Skills.FindByIdAsync(x));
-                }
-            });
+
+            var skills = await Skills.FindAll(x => skillIds.Contains(x.Id)).AsNoTracking().ToListAsync();
+            States.Skills.AddRange(skills);
         }
         catch (Exception ex)
         {

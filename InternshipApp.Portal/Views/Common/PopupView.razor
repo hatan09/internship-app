@@ -1,0 +1,19 @@
+﻿@namespace InternshipApp.Portal.Views
+@using Syncfusion.Blazor.Popups
+
+<SfDialog Height="50%" Width="50%" Target="#target" ShowCloseIcon="true" @bind-Visible="Visible">
+    <DialogTemplates>
+        <Header>
+            <div>Edit Skills</div>
+        </Header>
+        <Content>
+            <EditableStudentSkillListView StudentId="@StudentId">
+
+            </EditableStudentSkillListView>
+        </Content>
+        <FooterTemplate>
+            <div>International University - Internship App</div>
+        </FooterTemplate>
+    </DialogTemplates>
+    @*<DialogEvents OnOpen="@BeforeDialogOpen" Closed="@DialogClosed"></DialogEvents>*@
+</SfDialog>
