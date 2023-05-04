@@ -18,6 +18,8 @@ public class BaseStudentViewStates : BaseViewModel
     private string _password;
     private string _oldPassword;
     private string _imgUrl;
+    private string _gitUrl;
+    private string _cVUrl;
     #endregion
 
     #region [ CTor ]
@@ -97,6 +99,18 @@ public class BaseStudentViewStates : BaseViewModel
     {
         get { return this._imgUrl; }
         set { this.SetProperty(ref this._imgUrl, value); }
+    }
+
+    public string GitUrl
+    {
+        get { return this._gitUrl; }
+        set { this.SetProperty(ref this._gitUrl, value); }
+    }
+
+    public string CVUrl
+    {
+        get { return this._cVUrl; }
+        set { this.SetProperty(ref this._cVUrl, value); }
     }
     #endregion
 }

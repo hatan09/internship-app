@@ -6,7 +6,7 @@
 
 <PageTitle>Home</PageTitle>
 
-@if (string.IsNullOrEmpty(LoginStudent?.FullName))
+@if (string.IsNullOrEmpty(LoginUser?.Id))
 {
     <h1>
         Hello Guest! Please Login!
@@ -15,21 +15,21 @@
 else
 {
     <h1>
-        Hello @LoginStudent?.FullName
+        Hello @LoginUser?.FullName
     </h1>
 }
 
 Welcome to Internship App!
 
-<SfDialog Height="50%" Width="50%" Target="#target" ShowCloseIcon="true" @bind-Visible="Visible">
+<SfDialog Height="50%" Width="50%" Target="#target" ShowCloseIcon="true" @bind-Visible="Visible" >
         <DialogTemplates>
             <Header>
                 <div>Login</div>
             </Header>
             <Content>
                 <Stack Style="width:100%;height:100%">
-                    <FluentTextField @bind-Value=@StudentId Placeholder="Your student id">
-                        <label>Student Id</label>
+                    <FluentTextField @bind-Value=@Username Placeholder="Your Username">
+                    <label>Username</label>
                     </FluentTextField>
 
                     <FluentTextField @bind-Value=@Password TextFieldType="TextFieldType.Password" Placeholder="Your password">

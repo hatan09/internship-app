@@ -1,4 +1,5 @@
 ﻿using InternshipApp.Core.Entities;
+using Microsoft.Fast.Components.FluentUI;
 using Microsoft.Fast.Components.FluentUI.DesignTokens;
 
 namespace InternshipApp.Portal.Views;
@@ -28,16 +29,18 @@ public static class CompanyExtension
     #endregion
 
     #region [ Public Methods - FormViewModel ]
-    //public static CompanyFormViewStates ToFormViewStates(this Company entity) {
+    public static CompanyFormViewStates ToFormViewStates(this Company entity)
+    {
 
-    //    var viewmodel = ToViewStates<CompanyFormViewStates>(entity);
+        var viewmodel = ToViewStates<CompanyFormViewStates>(entity);
 
-    //    return viewmodel;
-    //}
+        return viewmodel;
+    }
 
-    //public static Company ToEntity(this CompanyFormViewStates viewStates) {
-    //    return ToEntity<Company>(viewStates);
-    //}
+    public static Company ToEntity(this CompanyFormViewStates viewStates)
+    {
+        return ToEntity<Company>(viewStates);
+    }
     #endregion
 
     #region [ Public Methods - DetailsViewModel ]
@@ -66,9 +69,9 @@ public static class CompanyExtension
             Title = entity.Title,
             Address = entity.Address,
             CompanyWebsite = entity.CompanyWebsite,
-            Description = entity.Description,
             ImgUrl = entity.ImgUrl,
-            CompanyType = entity.Type.ToString() 
+            CompanyType = entity.Type.ToString(),
+            Description = entity.Description,
         };
     }
 
@@ -86,6 +89,26 @@ public static class CompanyExtension
             ImgUrl = viewModel.ImgUrl,
             Type = Enum.Parse<CompanyType>(viewModel.CompanyType)
         };
+    }
+    #endregion
+
+    #region [ Methods - Options ]
+    // Type
+    public static List<Option<string>> TypeOptions(this CompanyFormViewStates states)
+    {
+        return states.Types.ToOptionList(x => x, x => x, null);
+    }
+
+    public static string GetSelectedTypeName(this CompanyFormViewStates states)
+    {
+        // Somehow the SelectedProjectOption and ProjectOptions.Value (DisplayedName) might be different due to spaces 
+        // ex: SelectedProjectOption: 'Roo - Koppeling DM'
+        //     ProjectOptions.Value : 'Roo  - Koppeling DM'
+        // solution: ProjectOptions.Value: replace multiple spaces by single spaces before doing comparision
+
+        var result = states.TypeOptions()
+                           .FirstOrDefault(x => x.Value.Trim().Equals(states.CompanyType, StringComparison.InvariantCultureIgnoreCase))?.Key;
+        return result;
     }
     #endregion
 }

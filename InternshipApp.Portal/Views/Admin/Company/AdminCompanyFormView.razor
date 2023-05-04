@@ -8,38 +8,39 @@
 
         <FormFieldsContainer>
             <Stack ClassName="formFieldContainer">
-                <FluentNumberField @bind-Value=@this.States.Credits>
-                    <label>Acchieved Credits</label>
-                </FluentNumberField>
-            </Stack>
-
-            <Stack ClassName="formFieldContainer">
-                <FluentNumberField @bind-Value=@this.States.Gpa>
-                    <label>Gpa</label>
-                </FluentNumberField>
-            </Stack>
-
-            <Stack ClassName="formFieldContainer">
-                <FluentTextField @bind-Value=@this.States.ImgUrl>
-                    <label>Avatar Image Url</label>
+                <FluentTextField @bind-Value=@States.Title>
+                    <label>Title</label>
                 </FluentTextField>
             </Stack>
 
             <Stack ClassName="formFieldContainer">
-                <FluentTextField @bind-Value=@this.States.GitUrl>
-                    <label>Github Profile Url</label>
+                <FluentTextField @bind-Value=@States.Address>
+                    <label>Address</label>
                 </FluentTextField>
             </Stack>
 
             <Stack ClassName="formFieldContainer">
-                <FluentTextField @bind-Value=@this.States.CVUrl>
-                    <label>CV Url</label>
+                <FluentTextField @bind-Value=@States.CompanyWebsite>
+                    <label>Website</label>
                 </FluentTextField>
             </Stack>
 
             <Stack ClassName="formFieldContainer">
-                <FluentTextArea @bind-Value=@this.States.Bio>
-                    <label>Introduction</label>
+                <FluentTextField @bind-Value=@States.ImgUrl>
+                    <label>Image Url</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <label for="typeCombobox">Company Type</label>
+                <FluentCombobox Id="typeCombobox"
+                    @bind-Value=@States.CompanyType 
+                    Options=@States.TypeOptions() />
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentTextArea @bind-Value=@States.Description>
+                    <label>Description</label>
                 </FluentTextArea>
             </Stack>
         </FormFieldsContainer>

@@ -1,4 +1,6 @@
-﻿using InternshipApp.Core.Entities;
+﻿using System.Collections.ObjectModel;
+using InternshipApp.Core.Entities;
+using RCode.UI.ViewModels;
 using RCode.ViewModels;
 
 namespace InternshipApp.Portal.Views;
@@ -13,12 +15,13 @@ public class BaseCompanyViewStates : BaseViewModel
     private string _description;
     private string _imgUrl;
     private string _companyType;
+    private ObservableCollection<string> _types;
     #endregion
 
     #region [ CTor ]
     public BaseCompanyViewStates()
     {
-
+        _types = Enum.GetValues(typeof(CompanyType)).Cast<CompanyType>().Select(x => x.ToString()).ToList().ToObservableCollection();
     }
     #endregion
 
@@ -63,6 +66,12 @@ public class BaseCompanyViewStates : BaseViewModel
     {
         get { return this._companyType; }
         set { this.SetProperty(ref this._companyType, value); }
+    }
+
+    public ObservableCollection<string> Types
+    {
+        get { return this._types; }
+        set { this.SetProperty(ref this._types, value); }
     }
     #endregion
 }

@@ -11,44 +11,50 @@ public partial class Home
 {
     public bool Visible { get; set; }
 
-    public string StudentId { get; set; }
+    public string Username { get; set; }
 
     public string Password { get; set; }
 
-    public Student LoginStudent { get; set; }
+    public User LoginUser { get; set; }
+    public string Role { get; set; }
 
     [Inject]
     public ILocalStorageService LocalStorage { get; set; }
 
     [Inject]
-    public StudentManager Students { get; private set; }
+    public UserManager Users { get; private set; }
 
     [Inject]
     public SignInManager<User> SignInManager { get; private set; }
 
     #region [ Protected Override Methods - Page ]
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        try
+        if(firstRender)
         {
-            await LocalStorage.ClearAsync();
-            LoginStudent = new();
-            var student = await LocalStorage.GetItemAsync<Student>("login-student-info");
-            if(student == null || string.IsNullOrWhiteSpace(student.Id))
+            try
             {
-                Visible = true;
-            }
-            else
-            {
-                LoginStudent = student;
-            }
+                LoginUser = new();
+                var user = await LocalStorage.GetItemAsync<User>("login-user-info");
+                if (user == null || string.IsNullOrWhiteSpace(user.Id))
+                {
+                    Visible = true;
+                }
+                else
+                {
+                    LoginUser = user;
+                }
 
-            await base.OnInitializedAsync();
+                StateHasChanged();
+                await base.OnInitializedAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
-        catch (Exception ex)
-        {
-            
-        }
+        
+        await base.OnAfterRenderAsync(firstRender);
     }
     #endregion
 
@@ -62,21 +68,48 @@ public partial class Home
 
     private async Task<bool> Login()
     {
-        var student = await Students.FindByStudentId(StudentId, default);
-        if(student == null)
+        var user = await Users.FindByNameAsync(Username);
+        if(user == null)
         {
             return false;
         }
 
-        var passwordCheck = await SignInManager.CheckPasswordSignInAsync(student, Password, false);
+        var passwordCheck = await SignInManager.CheckPasswordSignInAsync(user, Password, false);
         if (!passwordCheck.Succeeded)
         {
             return false;
         }
 
-        LoginStudent = student;
-        await LocalStorage.SetItemAsync("login-student-info", student);
+        var roles = await Users.GetRolesAsync(user);
+        this.Role = await SaveRoleAsync(roles.ToList());
+
+        LoginUser = user;
+        await LocalStorage.SetItemAsync("login-user-info", user);
         return true;
+    }
+
+    private async Task<string> SaveRoleAsync(List<string> roles)
+    {
+        if (roles.Contains("admin")) {
+            await this.LocalStorage.SetItemAsStringAsync("role", "ADMIN");
+            return "ADMIN";
+        }
+        else if (roles.Contains("instructor"))  {
+            await this.LocalStorage.SetItemAsStringAsync("role", "INSTRUCTOR");
+            return "INSTRUCTOR";
+        }
+        else if (roles.Contains("recruiter")) {
+            await this.LocalStorage.SetItemAsStringAsync("role", "RECRUITER");
+            return "RECRUITER";
+        }
+        else if (roles.Contains("student")) {
+            await this.LocalStorage.SetItemAsStringAsync("role", "STUDENT");
+            return "STUDENT";
+        }
+        else {
+            await this.LocalStorage.SetItemAsStringAsync("role", "GUEST");
+            return "GUEST";
+        }
     }
     #endregion
 }

@@ -8,6 +8,7 @@
         public int Credit { get; set; }
         public string CVUrl { get; set; } = string.Empty;
         public int Year { get; set; } = 1;
+        public string ImgUrl { get; set; } = "https://i.imgur.com/WxNkK7J_d.webp";
         public string? Bio { get; set; } = string.Empty;
         public string GitProfileUrl { get; set; } = string.Empty;
 

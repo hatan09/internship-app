@@ -1,19 +1,18 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components;
-using Wave5.UI.Forms;
-using Wave5.UI;
+﻿using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
-using InternshipApp.Core.Entities;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Wave5.UI.Forms;
+using InternshipApp.Contracts;
 
 namespace InternshipApp.Portal.Views;
 
-public partial class StudentInfoFormView
+public partial class AdminCompanyFormView
 {
     #region [ Properties - Inject ]
     [Inject]
-    public StudentManager Students { get; private set; }
+    public ICompanyRepository Companies { get; private set; }
 
     [Inject]
     public RoleManager<Role> Roles { get; private set; }
@@ -23,23 +22,23 @@ public partial class StudentInfoFormView
     #region [ Properties - Parameters ]
     [EditorRequired]
     [Parameter]
-    public FormRequest<FormAction, Student> FormRequest { get; set; }
+    public FormRequest<FormAction, Company> FormRequest { get; set; }
 
     [EditorRequired]
     [Parameter]
-    public EventCallback<FormResult<Student>> FormResultCallback { get; set; }
+    public EventCallback<FormResult<Company>> FormResultCallback { get; set; }
     #endregion
 
     #region [ Properties - Data ]
     protected EditContext Context { get; private set; }
 
-    protected StudentFormViewStates States { get; private set; }
+    protected CompanyFormViewStates States { get; private set; }
     #endregion
 
     #region [ Event Handlers - Override ]
     protected override async Task OnInitializedAsync()
     {
-        this.States = new();
+        this.States = new CompanyFormViewStates();
         this.Context = new EditContext(this.States);
 
         await base.OnInitializedAsync();
@@ -47,7 +46,7 @@ public partial class StudentInfoFormView
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        var newFormRequest = parameters.GetValueOrDefault<FormRequest<FormAction, Student>>(nameof(this.FormRequest));
+        var newFormRequest = parameters.GetValueOrDefault<FormRequest<FormAction, Company>>(nameof(this.FormRequest));
         var currentFormRequest = this.FormRequest;
 
         await base.SetParametersAsync(parameters);
@@ -70,13 +69,7 @@ public partial class StudentInfoFormView
     #region [ Event Handlers - Form ]
     private void OnFieldChanged(object sender, FieldChangedEventArgs e)
     {
-        if (e.FieldIdentifier.FieldName.Equals(nameof(States.StudentId)))
-        {
-            if(string.IsNullOrWhiteSpace(States.Username) && !string.IsNullOrWhiteSpace(States.StudentId))
-            {
-                States.Username = States.StudentId;
-            }
-        }
+        
         this.StateHasChanged();
     }
 
@@ -85,14 +78,10 @@ public partial class StudentInfoFormView
         switch (this.FormRequest.Action)
         {
             case FormAction.Edit:
-                if (!this.Context.IsModified())
-                {
-                    await this.CanceledAsync();
-                }
-                else
-                {
-                    await this.UpdatedAsync();
-                }
+                await this.UpdatedAsync();
+                break;
+            case FormAction.Add:
+                await this.AddedAsync();
                 break;
         }
     }
@@ -108,11 +97,8 @@ public partial class StudentInfoFormView
     {
         try
         {
-            var student = await Students.FindAll(x => x.Id == FormRequest.Data.Id).AsNoTracking().FirstOrDefaultAsync();
-            if(student != null)
-            {
-                States = student.ToFormViewStates();
-            }
+
+            this.States = this.FormRequest.Data.ToFormViewStates();
 
             switch (this.FormRequest.Action)
             {
@@ -147,30 +133,41 @@ public partial class StudentInfoFormView
     #endregion
 
     #region [ Private Methods - CRUD ]
+    private async Task AddedAsync()
+    {
+        try
+        {
+            this.FormRequest.Data = this.States.ToEntity();
+            this.Companies.Add(this.FormRequest.Data);
+            await Companies.SaveChangesAsync();
+
+            await this.InvokeFormResultCallbackAsync(FormResultState.Added);
+        }
+        catch (Exception ex)
+        {
+
+        }
+        finally
+        {
+        }
+    }
+
     private async Task UpdatedAsync()
     {
         try
         {
-            var student = await Students.FindByIdAsync(FormRequest.Data.Id);
-            
-            if (student != null)
-            {
-                student.Credit = States.Credits;
-                student.GPA = States.Gpa;
-                student.Bio = States.Bio;
-                student.GitProfileUrl = States.GitUrl;
-                student.CVUrl = States.CVUrl;
-                student.ImgUrl = States.ImgUrl;
-            }
-            await this.Students.UpdateAsync(student);
+            this.FormRequest.Data = this.States.ToEntity();
+            this.Companies.Update(FormRequest.Data);
+            await Companies.SaveChangesAsync();
 
-            await this.InvokeFormResultCallbackAsync(FormResultState.Updated);
+            await this.InvokeFormResultCallbackAsync(FormResultState.Added);
         }
         catch (Exception ex)
         {
+
         }
         finally
-        { 
+        {
         }
     }
 
@@ -181,7 +178,7 @@ public partial class StudentInfoFormView
 
     private void Reset()
     {
-        this.States = new Student().ToFormViewStates();
+        this.States = new Company().ToFormViewStates();
         this.Context = new EditContext(this.States);
 
         this.StateHasChanged();

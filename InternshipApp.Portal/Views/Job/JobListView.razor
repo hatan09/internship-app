@@ -21,8 +21,8 @@
         <Template>
             <Stack Horizontal=false ClassName="list-view-item">
                 <h3><b> @((context as JobListRowViewStates).Title) </b></h3>
-                <lable> @((context as JobListRowViewStates).CompanyName) </lable>
-                <lable> @((context as JobListRowViewStates).Description) </lable>
+                <lable> <b>Company's name:</b> @((context as JobListRowViewStates).CompanyName) </lable>
+                <lable> &#x2022; @((context as JobListRowViewStates).Description) </lable>
             </Stack>
         </Template>
     </ListViewTemplates>

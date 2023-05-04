@@ -1,1 +1,7 @@
 ﻿@namespace InternshipApp.Portal.Views
+@using Syncfusion.Blazor.Inputs
+
+<Stack>
+    <SfTextBox Placeholder="Subject" @bind-Value=@Subject></SfTextBox>
+    <SfTextBox Multiline=true Placeholder="Body" FloatLabelType="@FloatLabelType.Auto" @bind-Value=@Body></SfTextBox>
+</Stack>

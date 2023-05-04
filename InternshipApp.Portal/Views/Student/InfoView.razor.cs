@@ -1,6 +1,7 @@
 ﻿using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using RCode;
 using Wave5.UI;
 using Wave5.UI.Forms;
@@ -21,12 +22,15 @@ public partial class InfoView
     public bool IsStudent { get; set; } = false;
     #endregion
 
-    #region [ Properties ]
+    #region [ Properties - Inject ]
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
     [Inject]
     public StudentManager Students { get; set; }
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; private set; }
     #endregion
 
     #region [ Properties - Panel ]
@@ -130,9 +134,22 @@ public partial class InfoView
 
     }
 
-    public async void OnEdit()
+    public async void OnOpenGithubProfile()
     {
+        if (string.IsNullOrEmpty(States.GitUrl)) return;
 
+        if (!States.GitUrl.Contains("http://") && !States.GitUrl.Contains("https://"))
+            States.GitUrl = "https://" + States.GitUrl;
+        await JSRuntime.InvokeVoidAsync("open", States.GitUrl, "_blank");
+    }
+
+    public async void OnOpenCVUrl()
+    {
+        if (string.IsNullOrEmpty(States.CVUrl)) return;
+
+        if (!States.CVUrl.Contains("http://") && !States.CVUrl.Contains("https://"))
+            States.CVUrl = "https://" + States.CVUrl;
+        await JSRuntime.InvokeVoidAsync("open", States.CVUrl, "_blank");
     }
     #endregion
 }

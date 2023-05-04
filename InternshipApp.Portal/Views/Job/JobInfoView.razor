@@ -46,7 +46,7 @@
                 @States.Title
             </b>
         </h1>
-        <h3>@States.CompanyName</h3>
+        <h3> At @States.CompanyName</h3>
         <SfButton Content=@(States.HasApplied ? "Already Applied" : "Apply Now") CssClass="apply-btn" OnClick="OnApply" Disabled="@States.HasApplied">
 
         </SfButton>
@@ -68,7 +68,7 @@
             </label>
             <ul>
                 <li>
-                    Location: 
+                    <b> Location: @States.Address </b>
                 </li>
             </ul>
 

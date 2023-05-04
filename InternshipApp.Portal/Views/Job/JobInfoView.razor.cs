@@ -1,4 +1,5 @@
-﻿using InternshipApp.Contracts;
+﻿using Blazored.LocalStorage;
+using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
@@ -19,7 +20,7 @@ public partial class JobInfoView
     public string JobId { get; set; }
     #endregion
 
-    #region [ Properties ]
+    #region [ Properties - Inject ]
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
@@ -34,6 +35,9 @@ public partial class JobInfoView
 
     [Inject]
     public IMatchingService MatchingService { get; set; }
+
+    [Inject]
+    public ILocalStorageService LocalStorage { get; set; }
     #endregion
 
     #region [ Properties - Panel ]
@@ -86,7 +90,16 @@ public partial class JobInfoView
 
     private async Task<Student> GetStudentAsync()
     {
-        var student = await Students.FindAll().Include(x => x.StudentSkills).FirstOrDefaultAsync();
+        var user = await LocalStorage.GetItemAsync<User>("login-user-info");
+        string studentId = string.Empty;
+        if(user != null)
+        {
+            studentId = user.Id;
+        }
+        var student = await Students.FindAll(x => x.Id == studentId)
+            .AsNoTracking()
+            .Include(x => x.StudentSkills)
+            .FirstOrDefaultAsync();
 
         return student;
     }
@@ -108,6 +121,7 @@ public partial class JobInfoView
             var student = await GetStudentAsync();
 
             var item = await this.Jobs.FindAll(x => x.Id == int.Parse(JobId))
+                .Include(x => x.Company)
                 .Include(x => x.JobSkills)
                 .Include(x => x.StudentJobs.Where(y => y.StudentId == student.Id))
                 .FirstOrDefaultAsync();
@@ -118,15 +132,20 @@ public partial class JobInfoView
                 return;
             }
 
-
             this.States = item.ToDetailsViewStates();
             States.HasApplied = item.StudentJobs.Any();
             States.JobSkills = item.JobSkills.ToList();
             var skillIds = item.JobSkills.Select(x => x.SkillId).ToList();
 
+            var company = item.Company;
+            if(company != null)
+            {
+                States.CompanyName = company.Title;
+                States.Address = company.Address;
+            }
+
             var matching = MatchingService.GetMatchingPoint(student.StudentSkills?.ToList(), item.JobSkills?.ToList());
             States.Matching = matching;
-
 
             var skills = await Skills.FindAll(x => skillIds.Contains(x.Id)).AsNoTracking().ToListAsync();
             States.Skills.AddRange(skills);

@@ -49,6 +49,21 @@
 
         </SkillTagList>
     </Stack>
+
+    <Stack Style="margin:10px">
+        <h2>
+            External Links
+        </h2>
+        <SfButton CssClass="github github-logo image" OnClick="OnOpenGithubProfile">
+
+        </SfButton>
+    </Stack>
+
+    <Stack Style="margin:10px">
+        <SfButton CssClass="opencv-btn" Content="See Student's CV" OnClick="OnOpenCVUrl">
+
+        </SfButton>
+    </Stack>
 </Stack>
 
 <StudentInfoFormPanel FormRequest="StudentFormRequest" FormResultCallback="OnFormResultReceived"/>
@@ -56,8 +71,23 @@
 <PopupView IsEditSkillView=true StudentId="@States.Id" Context=PopupContext />
 
 <style>
+    .opencv-btn {
+        max-width: 200px;
+    }
+
+    .github.github-logo {
+        width: 70px;
+        height: 70px;
+    }
+
+    .github.github-logo.image {
+        background-image: url("https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png");
+        background-size: contain;
+    }
+
     .e-avatar.image {
         background-image: url("@States.ImgUrl");
+        background-size: contain;
     }
 
     .e-avatar.e-avatar-xlarge {

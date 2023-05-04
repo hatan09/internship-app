@@ -1,0 +1,18 @@
+﻿@using Wave5.UI.DataGrids
+@using Wave5.UI
+
+@namespace InternshipApp.Portal.Views
+
+<DetailsListContainer ContainerContext=@ListContainerContext
+                      CommandBarContext=@CommandBarContext
+                      SearchContext=@SearchContext
+                      TItem="CompanyListRowViewStates"
+                      Title="Manange Companies">
+
+    <DetailsList DetailsListContext=@ListContext />
+
+</DetailsListContainer>
+
+<AdminCompanyFormViewPanel FormRequest="CompanyFormRequest" FormResultCallback="@OnFormResultReceived"> 
+
+</AdminCompanyFormViewPanel>

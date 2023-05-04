@@ -1,6 +1,4 @@
-﻿using InternshipApp.Core.Entities;
-using Microsoft.AspNetCore.Components;
-using Wave5.UI.Forms;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace InternshipApp.Portal.Views;
 

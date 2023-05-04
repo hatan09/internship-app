@@ -15,37 +15,82 @@
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
 
-            <NavLink class="nav-link" href="/student-profile" Match="NavLinkMatch.All">
-                <span class="oi oi-person"></span> Your Profile
-            </NavLink>
+            @if (!IsAdmin)
+            {
+                <NavLink class="nav-link" href="/students" Match="NavLinkMatch.All">
+                    <span class="oi oi-people"></span> Students
+                </NavLink>
 
-            <NavLink class="nav-link" href="/students" Match="NavLinkMatch.All">
-                <span class="oi oi-people"></span> Students
-            </NavLink>
+                <NavLink class="nav-link" href="/instructors" Match="NavLinkMatch.All">
+                    <span class="oi oi-people"></span> Instructors
+                </NavLink>
 
-            <NavLink class="nav-link" href="/jobs" Match="NavLinkMatch.All">
-                <span class="oi oi-briefcase"></span> Jobs
-            </NavLink>
+                <NavLink class="nav-link" href="/recruiters" Match="NavLinkMatch.All">
+                    <span class="oi oi-people"></span> Recruiters
+                </NavLink>
 
-            <NavLink class="nav-link" href="/manage-jobs" Match="NavLinkMatch.All">
-                <span class="oi oi-briefcase"></span> Manage Jobs
-            </NavLink>
+                <NavLink class="nav-link" href="/admin-companies" Match="NavLinkMatch.All">
+                    <span class="oi oi-monitor"></span> Companies
+                </NavLink>
 
-            <NavLink class="nav-link" href="/applications" Match="NavLinkMatch.All">
-                <span class="oi oi-clipboard"></span> Applications
-            </NavLink>
+                <br />
 
-            <NavLink class="nav-link" href="/companies" Match="NavLinkMatch.All">
-                <span class="oi oi-monitor"></span> Companies
-            </NavLink>
+                <SfButton OnClick="@OnLogout" Content="Logout" IconCss="oi oi-account-logout" />
+            }
+            else if (IsRecruiter)
+            {
+                <NavLink class="nav-link" href="/manage-jobs" Match="NavLinkMatch.All">
+                    <span class="oi oi-briefcase"></span> Manage Jobs
+                </NavLink>
 
-            <NavLink class="nav-link" href="/chat" Match="NavLinkMatch.All">
-                <span class="oi oi-chat"></span> Chat
-            </NavLink>
+                <NavLink class="nav-link" href="/applications" Match="NavLinkMatch.All">
+                    <span class="oi oi-clipboard"></span> Applications
+                </NavLink>
 
-            <br />
+                <NavLink class="nav-link" href="/chat" Match="NavLinkMatch.All">
+                    <span class="oi oi-chat"></span> Chat
+                </NavLink>
 
-            <SfButton OnClick="@OnLogout" Content="Logout" IconCss="oi oi-account-logout" />
+                <br />
+
+                <SfButton OnClick="@OnLogout" Content="Logout" IconCss="oi oi-account-logout" />
+            }
+            else if (IsTeacher)
+            {
+                <NavLink class="nav-link" href="/students" Match="NavLinkMatch.All">
+                    <span class="oi oi-people"></span> Students
+                </NavLink>
+
+                <NavLink class="nav-link" href="/chat" Match="NavLinkMatch.All">
+                    <span class="oi oi-chat"></span> Chat
+                </NavLink>
+
+                <br />
+
+                <SfButton OnClick="@OnLogout" Content="Logout" IconCss="oi oi-account-logout" />
+            }
+            else if (IsStudent)
+            {
+                <NavLink class="nav-link" href=@($"/student/{this.UserId}") Match="NavLinkMatch.All">
+                    <span class="oi oi-person"></span> My Profile
+                </NavLink>
+
+                <NavLink class="nav-link" href="/companies" Match="NavLinkMatch.All">
+                    <span class="oi oi-monitor"></span> Companies
+                </NavLink>
+
+                <NavLink class="nav-link" href="/jobs" Match="NavLinkMatch.All">
+                    <span class="oi oi-briefcase"></span> Jobs
+                </NavLink>
+
+                <NavLink class="nav-link" href="/chat" Match="NavLinkMatch.All">
+                    <span class="oi oi-chat"></span> Chat
+                </NavLink>
+
+                <br />
+
+                <SfButton OnClick="@OnLogout" Content="Logout" IconCss="oi oi-account-logout" />
+            }
         </div>
     </nav>
 </div>

@@ -1,4 +1,5 @@
 ﻿using InternshipApp.Core.Entities;
+using Microsoft.Fast.Components.FluentUI.DesignTokens;
 
 namespace InternshipApp.Portal.Views;
 
@@ -72,6 +73,9 @@ public static class StudentExtension
             Credits = entity.Credit,
             Status = entity.Stat.ToString(),
             StudentId = entity.StudentId,
+            ImgUrl = entity.ImgUrl,
+            GitUrl = entity.GitProfileUrl,
+            CVUrl = entity.CVUrl,
 
             Username = entity.UserName
         };
@@ -91,6 +95,9 @@ public static class StudentExtension
             Credit = viewModel.Credits,
             Stat = (Stat)Enum.Parse(typeof(Stat), viewModel.Status, true),
             StudentId = viewModel.StudentId,
+            ImgUrl = viewModel.ImgUrl,
+            GitProfileUrl = viewModel.GitUrl,
+            CVUrl = viewModel.CVUrl,
 
             UserName = viewModel.Username
         };

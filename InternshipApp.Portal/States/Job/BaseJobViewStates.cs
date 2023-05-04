@@ -18,6 +18,7 @@ public class BaseJobViewStates : BaseViewModel
     private List<JobSkill> _jobSkills;
     private List<Skill> _skills;
     private bool _hasApplied;
+    private string _address;
 
     #endregion
 
@@ -100,6 +101,12 @@ public class BaseJobViewStates : BaseViewModel
     {
         get { return this._hasApplied; }
         set { this.SetProperty(ref this._hasApplied, value); }
+    }
+
+    public string Address
+    {
+        get { return this._address; }
+        set { this.SetProperty(ref this._address, value); }
     }
     #endregion
 }

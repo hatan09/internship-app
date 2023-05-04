@@ -91,6 +91,7 @@ public partial class SkillTagList
     {
         try
         {
+            await Task.Delay(1000);
             var IsStudent = !string.IsNullOrEmpty(StudentId);
             var IsJob = JobId > 0;
             

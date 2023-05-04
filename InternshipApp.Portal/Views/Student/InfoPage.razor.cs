@@ -15,7 +15,7 @@ public partial class InfoPage
     [Parameter]
     public string StudentId { get; set; }
 
-    #region [ Methods -  ]
+    #region [ Methods - Override ]
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -26,7 +26,9 @@ public partial class InfoPage
         if(firstRender)
         {
             var role = await StorageService.GetItemAsync<string>("role");
-            if (role == "student") IsStudent = true;
+            if (role == "STUDENT") IsStudent = true;
+
+            StateHasChanged();
         }
         await base.OnAfterRenderAsync(firstRender);
     }
