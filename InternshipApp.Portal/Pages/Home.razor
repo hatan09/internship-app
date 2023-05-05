@@ -6,16 +6,16 @@
 
 <PageTitle>Home</PageTitle>
 
-@if (string.IsNullOrEmpty(LoginUser?.Id))
+@if (string.IsNullOrEmpty(LoginUser?.UserName))
 {
     <h1>
-        Hello Guest! Please Login!
+        Hello! Please Login!
     </h1>
 }
 else
 {
     <h1>
-        Hello @LoginUser?.FullName
+        Hello @(LoginUser?.FullName)!
     </h1>
 }
 

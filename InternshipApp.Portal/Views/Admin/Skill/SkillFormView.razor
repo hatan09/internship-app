@@ -1,0 +1,35 @@
+﻿@namespace InternshipApp.Portal.Views
+@using Wave5.UI.Forms;
+
+<Stack ClassName="formContainer">
+
+    <EditForm EditContext="Context"
+              OnValidSubmit="OnFormSubmit">
+
+        <FormFieldsContainer>
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@States.Name>
+                    <label>Title</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <label for="typeCombobox">Company Type</label>
+                <FluentCombobox Id="typeCombobox"
+                    @bind-Value=@States.SkillType 
+                    Options=@States.TypeOptions() />
+            </Stack>
+        </FormFieldsContainer>
+
+        <FormButtonsContainer>
+            <FluentButton Appearance=@FormStyles.SaveButtonAppearance
+                        style=@FormStyles.SaveButtonStyle
+                          type="submit"> <label>Save</label> </FluentButton>
+
+            <FluentButton Appearance=@FormStyles.CancelButtonAppearance    
+                    style=@FormStyles.CancelButtonStyle
+                          @onclick="@OnCancel"> <label>Cancel</label> </FluentButton>
+
+        </FormButtonsContainer>
+    </EditForm>
+</Stack>

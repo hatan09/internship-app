@@ -1,0 +1,47 @@
+﻿@namespace InternshipApp.Portal.Views
+@using Wave5.UI.Forms;
+
+<Stack ClassName="formContainer">
+
+    <EditForm EditContext="Context"
+              OnValidSubmit="OnFormSubmit">
+
+        <FormFieldsContainer>
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@States.Name>
+                    <label>Name</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@States.Email>
+                    <label>Email Address</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@States.Username Readonly=@(FormRequest?.Action != FormAction.Add)>
+                    <label>Username</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@States.Password TextFieldType="TextFieldType.Password" Disabled=@(FormRequest?.Action != FormAction.Add)>
+                    <label>Password</label>
+                </FluentTextField>
+            </Stack>
+
+        </FormFieldsContainer>
+
+        <FormButtonsContainer>
+            <FluentButton Appearance=@FormStyles.SaveButtonAppearance
+                        style=@FormStyles.SaveButtonStyle
+                          type="submit"> <label>Save</label> </FluentButton>
+
+            <FluentButton Appearance=@FormStyles.CancelButtonAppearance    
+                    style=@FormStyles.CancelButtonStyle
+                          @onclick="@OnCancel"> <label>Cancel</label> </FluentButton>
+
+        </FormButtonsContainer>
+    </EditForm>
+</Stack>

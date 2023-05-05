@@ -120,6 +120,11 @@ public partial class CompanyDetailsView
 
 
             this.States = item.ToDetailsViewStates();
+            if (!string.IsNullOrEmpty(States.CompanyWebsite))
+            {
+                if (!States.CompanyWebsite.Contains("http://") && !States.CompanyWebsite.Contains("https://"))
+                    States.CompanyWebsite = "https://" + States.CompanyWebsite;
+            }
         }
         catch (Exception ex)
         {

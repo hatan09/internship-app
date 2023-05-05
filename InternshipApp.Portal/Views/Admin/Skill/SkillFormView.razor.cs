@@ -1,44 +1,39 @@
-﻿using InternshipApp.Core.Entities;
-using InternshipApp.Repository;
-using Microsoft.AspNetCore.Components.Forms;
+﻿using InternshipApp.Contracts;
+using InternshipApp.Core.Entities;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Components.Forms;
 using Wave5.UI.Forms;
-using InternshipApp.Contracts;
 
 namespace InternshipApp.Portal.Views;
 
-public partial class AdminCompanyFormView
+public partial class SkillFormView
 {
     #region [ Properties - Inject ]
     [Inject]
-    public ICompanyRepository Companies { get; private set; }
-
-    [Inject]
-    public RoleManager<Role> Roles { get; private set; }
+    public ISkillRepository Skills { get; private set; }
 
     #endregion
 
     #region [ Properties - Parameters ]
     [EditorRequired]
     [Parameter]
-    public FormRequest<FormAction, Company> FormRequest { get; set; }
+    public FormRequest<FormAction, Skill> FormRequest { get; set; }
 
     [EditorRequired]
     [Parameter]
-    public EventCallback<FormResult<Company>> FormResultCallback { get; set; }
+    public EventCallback<FormResult<Skill>> FormResultCallback { get; set; }
     #endregion
 
     #region [ Properties - Data ]
     protected EditContext Context { get; private set; }
 
-    protected CompanyFormViewStates States { get; private set; }
+    protected SkillFormViewStates States { get; private set; }
     #endregion
 
     #region [ Event Handlers - Override ]
     protected override async Task OnInitializedAsync()
     {
-        this.States = new CompanyFormViewStates();
+        this.States = new SkillFormViewStates();
         this.Context = new EditContext(this.States);
 
         await base.OnInitializedAsync();
@@ -46,7 +41,7 @@ public partial class AdminCompanyFormView
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        var newFormRequest = parameters.GetValueOrDefault<FormRequest<FormAction, Company>>(nameof(this.FormRequest));
+        var newFormRequest = parameters.GetValueOrDefault<FormRequest<FormAction, Skill>>(nameof(this.FormRequest));
         var currentFormRequest = this.FormRequest;
 
         await base.SetParametersAsync(parameters);
@@ -69,7 +64,7 @@ public partial class AdminCompanyFormView
     #region [ Event Handlers - Form ]
     private void OnFieldChanged(object sender, FieldChangedEventArgs e)
     {
-        
+
         this.StateHasChanged();
     }
 
@@ -99,11 +94,6 @@ public partial class AdminCompanyFormView
         {
             this.States = this.FormRequest.Data.ToFormViewStates();
 
-            if (!string.IsNullOrEmpty(States.CompanyWebsite)) {
-                if (!States.CompanyWebsite.Contains("http://") && !States.CompanyWebsite.Contains("https://"))
-                    States.CompanyWebsite = "https://" + States.CompanyWebsite;
-
-            }
             switch (this.FormRequest.Action)
             {
                 case FormAction.Add:
@@ -142,8 +132,8 @@ public partial class AdminCompanyFormView
         try
         {
             this.FormRequest.Data = this.States.ToEntity();
-            this.Companies.Add(this.FormRequest.Data);
-            await Companies.SaveChangesAsync();
+            this.Skills.Add(this.FormRequest.Data);
+            await Skills.SaveChangesAsync();
 
             await this.InvokeFormResultCallbackAsync(FormResultState.Added);
         }
@@ -161,8 +151,8 @@ public partial class AdminCompanyFormView
         try
         {
             this.FormRequest.Data = this.States.ToEntity();
-            this.Companies.Update(FormRequest.Data);
-            await Companies.SaveChangesAsync();
+            this.Skills.Update(FormRequest.Data);
+            await Skills.SaveChangesAsync();
 
             await this.InvokeFormResultCallbackAsync(FormResultState.Added);
         }
@@ -182,7 +172,7 @@ public partial class AdminCompanyFormView
 
     private void Reset()
     {
-        this.States = new Company().ToFormViewStates();
+        this.States = new Skill().ToFormViewStates();
         this.Context = new EditContext(this.States);
 
         this.StateHasChanged();

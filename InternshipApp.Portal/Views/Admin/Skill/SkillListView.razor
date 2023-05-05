@@ -1,0 +1,18 @@
+﻿@using Wave5.UI.DataGrids
+@using Wave5.UI
+
+@namespace InternshipApp.Portal.Views
+
+<DetailsListContainer ContainerContext=@ListContainerContext
+                      CommandBarContext=@CommandBarContext
+                      SearchContext=@SearchContext
+                      TItem="SkillListRowViewStates"
+                      Title="Manange Skills">
+
+    <DetailsList DetailsListContext=@ListContext />
+
+</DetailsListContainer>
+
+<SkillFormViewPanel FormRequest="SkillFormRequest" FormResultCallback="@OnFormResultReceived">
+
+</SkillFormViewPanel>

@@ -8,11 +8,11 @@ using InternshipApp.Contracts;
 
 namespace InternshipApp.Portal.Views;
 
-public partial class AdminCompanyFormView
+public partial class InstructorFormView
 {
     #region [ Properties - Inject ]
     [Inject]
-    public ICompanyRepository Companies { get; private set; }
+    public InstructorManager Instructors { get; private set; }
 
     [Inject]
     public RoleManager<Role> Roles { get; private set; }
@@ -22,23 +22,23 @@ public partial class AdminCompanyFormView
     #region [ Properties - Parameters ]
     [EditorRequired]
     [Parameter]
-    public FormRequest<FormAction, Company> FormRequest { get; set; }
+    public FormRequest<FormAction, Instructor> FormRequest { get; set; }
 
     [EditorRequired]
     [Parameter]
-    public EventCallback<FormResult<Company>> FormResultCallback { get; set; }
+    public EventCallback<FormResult<Instructor>> FormResultCallback { get; set; }
     #endregion
 
     #region [ Properties - Data ]
     protected EditContext Context { get; private set; }
 
-    protected CompanyFormViewStates States { get; private set; }
+    protected InstructorFormViewStates States { get; private set; }
     #endregion
 
     #region [ Event Handlers - Override ]
     protected override async Task OnInitializedAsync()
     {
-        this.States = new CompanyFormViewStates();
+        this.States = new InstructorFormViewStates();
         this.Context = new EditContext(this.States);
 
         await base.OnInitializedAsync();
@@ -46,7 +46,7 @@ public partial class AdminCompanyFormView
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        var newFormRequest = parameters.GetValueOrDefault<FormRequest<FormAction, Company>>(nameof(this.FormRequest));
+        var newFormRequest = parameters.GetValueOrDefault<FormRequest<FormAction, Instructor>>(nameof(this.FormRequest));
         var currentFormRequest = this.FormRequest;
 
         await base.SetParametersAsync(parameters);
@@ -97,13 +97,9 @@ public partial class AdminCompanyFormView
     {
         try
         {
+
             this.States = this.FormRequest.Data.ToFormViewStates();
 
-            if (!string.IsNullOrEmpty(States.CompanyWebsite)) {
-                if (!States.CompanyWebsite.Contains("http://") && !States.CompanyWebsite.Contains("https://"))
-                    States.CompanyWebsite = "https://" + States.CompanyWebsite;
-
-            }
             switch (this.FormRequest.Action)
             {
                 case FormAction.Add:
@@ -141,9 +137,25 @@ public partial class AdminCompanyFormView
     {
         try
         {
-            this.FormRequest.Data = this.States.ToEntity();
-            this.Companies.Add(this.FormRequest.Data);
-            await Companies.SaveChangesAsync();
+            var recruiter = this.States.ToEntity();
+
+            var result = await Instructors.CreateAsync(recruiter);
+            if (!result.Succeeded)
+            {
+                return;
+            }
+
+            result = await Instructors.AddPasswordAsync(recruiter, States.Password);
+            if (!result.Succeeded)
+            {
+                return;
+            }
+
+            result = await Instructors.AddToRoleAsync(recruiter, "instructor");
+            if (!result.Succeeded)
+            {
+                return;
+            }
 
             await this.InvokeFormResultCallbackAsync(FormResultState.Added);
         }
@@ -160,11 +172,18 @@ public partial class AdminCompanyFormView
     {
         try
         {
-            this.FormRequest.Data = this.States.ToEntity();
-            this.Companies.Update(FormRequest.Data);
-            await Companies.SaveChangesAsync();
+            var recruiter = await Instructors.FindByIdAsync(States.Id);
+            if(recruiter == null)
+            {
+                return;
+            }
 
-            await this.InvokeFormResultCallbackAsync(FormResultState.Added);
+            recruiter.FullName = States.Name;
+            recruiter.Email = States.Email;
+
+            await Instructors.UpdateAsync(recruiter);
+
+            await this.InvokeFormResultCallbackAsync(FormResultState.Updated);
         }
         catch (Exception ex)
         {
@@ -182,7 +201,7 @@ public partial class AdminCompanyFormView
 
     private void Reset()
     {
-        this.States = new Company().ToFormViewStates();
+        this.States = new Instructor().ToFormViewStates();
         this.Context = new EditContext(this.States);
 
         this.StateHasChanged();

@@ -21,7 +21,6 @@
     <Folder Include="Data\Extensions\" />
     <Folder Include="Data\HttpClients\" />
     <Folder Include="Data\Settings\" />
-    <Folder Include="States\Instructor\" />
     <Folder Include="Views\Instructor\" />
   </ItemGroup>
 

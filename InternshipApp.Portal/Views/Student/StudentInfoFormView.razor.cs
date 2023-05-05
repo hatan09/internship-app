@@ -191,6 +191,7 @@ public partial class StudentInfoFormView
                 student.Credit = States.Credits;
                 student.GPA = States.Gpa;
                 student.Bio = States.Bio;
+                student.Email = States.Email;
                 student.GitProfileUrl = States.GitUrl;
                 student.CVUrl = States.CVUrl;
                 student.ImgUrl = States.ImgUrl;
