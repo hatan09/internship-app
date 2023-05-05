@@ -1,0 +1,61 @@
+﻿@namespace InternshipApp.Portal.Views
+
+@using Wave5.ProjectPortal.Views;
+@using Wave5.UI
+
+<Stack>
+    <DetailsCardContainer CommandBarContext=@CommandBarContext
+                          ContainerContext=@DetailsContainerContext
+                          Title="Manage Company">
+
+        @if (States == null)
+        {
+            <span>No data found.</span>
+        }
+        else
+        {
+            <Stack Style="font-family: var(--body-font);"
+               Horizontal=@true
+               Tokens=@(new StackTokens { Padding="15px 10px" })>
+                <Stack Style="width:100%" Horizontal=false>
+                    <h3>Logo</h3>
+                    <a href="@States.CompanyWebsite" target="_blank">
+                        <div class="e-avatar e-avatar-xlarge image"></div>
+                    </a>
+
+                    <FormDetailsField Label="Title" Value=@(States.Title) />
+
+                    <FormDetailsField Label="Address" Value=@(States.Address) />
+
+                    <FormDetailsField Label="Company Type" Value=@(States.CompanyType) />
+
+                    <FormDetailsField Label="Description" Value=@(States.Description) />
+                </Stack>
+            </Stack>
+        }
+
+    </DetailsCardContainer>
+</Stack>
+
+<Stack Style="margin-top:10px">
+    <RecruiterListView CompanyId="@States.Id">
+
+    </RecruiterListView>
+</Stack>
+
+<AdminCompanyFormViewPanel FormRequest="@ApplicationFormRequest" FormResultCallback="OnFormResultReceived">
+
+</AdminCompanyFormViewPanel>
+
+<style>
+    .e-avatar.image {
+        background-image: url("@States.ImgUrl");
+        background-size: contain;
+    }
+
+    .e-avatar.e-avatar-xlarge {
+        border-radius: 3%;
+        height: 150px;
+        width: 150px;
+    }
+</style>

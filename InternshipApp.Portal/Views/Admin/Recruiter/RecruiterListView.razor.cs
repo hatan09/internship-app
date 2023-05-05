@@ -20,9 +20,6 @@ public partial class RecruiterListView
 
     #region [ Properties - Inject ]
     [Inject]
-    public ICompanyRepository Companies { get; set; }
-
-    [Inject]
     public RecruiterManager Recruiters { get; set; }
 
     [Inject]
@@ -253,12 +250,6 @@ public partial class RecruiterListView
             States.Items.Clear();
 
             StateHasChanged();
-
-            var company = await Companies.FindByIdAsync(CompanyId);
-
-            if(company == null) {
-                return;
-            }
 
             var items = await Recruiters.FindAll(x => x.CompanyId == CompanyId).AsNoTracking().ToListAsync();
 

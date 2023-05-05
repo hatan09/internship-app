@@ -20,13 +20,13 @@
             </Stack>
 
             <Stack ClassName="formFieldContainer">
-                <FluentTextField @bind-Value=@States.Username>
+                <FluentTextField @bind-Value=@States.Username Readonly=@(FormRequest?.Action != FormAction.Add)>
                     <label>Username</label>
                 </FluentTextField>
             </Stack>
 
             <Stack ClassName="formFieldContainer">
-                <FluentTextField @bind-Value=@States.Password TextFieldType="TextFieldType.Password">
+                <FluentTextField @bind-Value=@States.Password TextFieldType="TextFieldType.Password" Disabled=@(FormRequest?.Action != FormAction.Add)>
                     <label>Password</label>
                 </FluentTextField>
             </Stack>

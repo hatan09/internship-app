@@ -6,6 +6,7 @@ using Wave5.UI.Forms;
 using Wave5.UI;
 using Wave5.UI.Blazor;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.Design;
 
 namespace InternshipApp.Portal.Views;
 
@@ -94,7 +95,7 @@ public partial class AdminCompanyListView
     #region [ Event Handlers - DataList ]
     private void OnRowClicked(CompanyListRowViewStates rowItem)
     {
-        CompanyFormRequest = FormRequestFactory.EditRequest(rowItem.ToEntity());
+        NavigationManager.NavigateTo($"/admin-company-info/{rowItem.Id}");
     }
 
     private void OnSelectionChanged()

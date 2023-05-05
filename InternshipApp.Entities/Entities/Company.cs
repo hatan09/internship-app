@@ -16,6 +16,7 @@ namespace InternshipApp.Core.Entities
         public CompanyType Type { get; set; } = CompanyType.OTHER;
 
         public virtual ICollection<Job> Jobs { get; set; } = new HashSet<Job>();
+        public virtual ICollection<Recruiter> Recruiters { get; set; } = new HashSet<Recruiter>();
     }
 
     public enum CompanyType { PRODUCT, OUTSOURCE, SERVICE, HARDWARE, NETWORK, OTHER }

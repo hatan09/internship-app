@@ -137,7 +137,25 @@ public partial class RecruiterFormView
     {
         try
         {
-            this.FormRequest.Data = this.States.ToEntity();
+            var recruiter = this.States.ToEntity();
+
+            var result = await Recruiters.CreateAsync(recruiter);
+            if (!result.Succeeded)
+            {
+                return;
+            }
+
+            result = await Recruiters.AddPasswordAsync(recruiter, States.Password);
+            if (!result.Succeeded)
+            {
+                return;
+            }
+
+            result = await Recruiters.AddToRoleAsync(recruiter, "recruiter");
+            if (!result.Succeeded)
+            {
+                return;
+            }
 
             await this.InvokeFormResultCallbackAsync(FormResultState.Added);
         }
@@ -154,9 +172,18 @@ public partial class RecruiterFormView
     {
         try
         {
-            this.FormRequest.Data = this.States.ToEntity();
+            var recruiter = await Recruiters.FindByIdAsync(States.Id);
+            if(recruiter == null)
+            {
+                return;
+            }
 
-            await this.InvokeFormResultCallbackAsync(FormResultState.Added);
+            recruiter.FullName = States.Name;
+            recruiter.Email = States.Email;
+
+            await Recruiters.UpdateAsync(recruiter);
+
+            await this.InvokeFormResultCallbackAsync(FormResultState.Updated);
         }
         catch (Exception ex)
         {

@@ -2,7 +2,7 @@
 {
     public class Recruiter : User
     {
-        public Company Company { get; set; } = new Company();
-        public int CompanyId { get; set; } = 0;
+        public Company? Company { get; set; }
+        public int? CompanyId { get; set; }
     }
 }

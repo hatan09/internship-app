@@ -66,6 +66,7 @@ public static class RecruiterExtension
         {
             Id = entity.Id,
 
+            CompanyId = entity.CompanyId?? 0,
             Name = entity.FullName,
             Email = entity.Email,
 
@@ -80,6 +81,7 @@ public static class RecruiterExtension
         {
             Id = viewModel.Id,
 
+            CompanyId = viewModel.CompanyId,
             FullName = viewModel.Name,
             Email = viewModel.Email,
 
