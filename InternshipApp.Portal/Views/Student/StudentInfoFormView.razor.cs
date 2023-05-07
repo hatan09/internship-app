@@ -84,6 +84,9 @@ public partial class StudentInfoFormView
     {
         switch (this.FormRequest.Action)
         {
+            case FormAction.Add:
+                await AddedAsync();
+                break;
             case FormAction.Edit:
                 if (!this.Context.IsModified())
                 {
@@ -151,14 +154,10 @@ public partial class StudentInfoFormView
     {
         try
         {
+            States.Status = Stat.WAITING.ToString();
             var student = States.ToEntity();
-            var result = await Students.CreateAsync(student);
-            if (!result.Succeeded)
-            {
-                return;
-            }
-
-            result = await Students.AddPasswordAsync(student, States.Password);
+            student.Id = Guid.NewGuid().ToString();
+            var result = await Students.CreateAsync(student, States.Password);
             if (!result.Succeeded)
             {
                 return;
@@ -184,7 +183,7 @@ public partial class StudentInfoFormView
     {
         try
         {
-            var student = await Students.FindByIdAsync(FormRequest.Data.Id);
+            var student = await Students.FindAll(x => x.Id == FormRequest.Data.Id).AsTracking().FirstOrDefaultAsync();
             
             if (student != null)
             {
@@ -192,6 +191,7 @@ public partial class StudentInfoFormView
                 student.GPA = States.Gpa;
                 student.Bio = States.Bio;
                 student.Email = States.Email;
+                student.Year = States.Year;
                 student.GitProfileUrl = States.GitUrl;
                 student.CVUrl = States.CVUrl;
                 student.ImgUrl = States.ImgUrl;

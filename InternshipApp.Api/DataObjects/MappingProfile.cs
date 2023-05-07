@@ -16,7 +16,8 @@ namespace InternshipApp.Api.DataObjects
 
             CreateMap<User, UserDTO>()
                 .ForMember(dto => dto.Roles, opt => opt.MapFrom(usr => usr.UserRoles.Select(u_r => u_r.Role!.Name)));
-            CreateMap<UserDTO, User>();
+            CreateMap<UserDTO, User>()
+                .ForMember(ent => ent.Id, opt => opt.Ignore());
 
             CreateMap<Student, StudentDTO>().ForMember(dto => dto.Birthdate, opt => opt.MapFrom(ent => ent.Birthdate.Date));
             CreateMap<Student, GetStudentDTO>()

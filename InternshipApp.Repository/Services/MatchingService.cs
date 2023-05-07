@@ -377,7 +377,7 @@ public class MatchingService : IMatchingService
             }
 
             // primary skills
-            if (studentSkills.Where(x => x.SkillId == jobSkill.SkillId).Any())  // match exact required skill
+            if (studentSkills.FirstOrDefault(x => x.SkillId == jobSkill.SkillId) != null)  // match exact required skill
                 score += (int)(100 * jobSkill.Weight);
             else    // find alternative skills
             {
@@ -475,5 +475,5 @@ public class MatchingService : IMatchingService
 
     private Dictionary<int, Dictionary<int, MatchingType>> ScoreMap { get; set; }
 
-    public enum MatchingType { FIT, NEARLYFIT, AVERAGE }
+    
 }

@@ -335,6 +335,28 @@ namespace InternshipApp.Core.Migrations
                     b.ToTable("Skills");
                 });
 
+            modelBuilder.Entity("InternshipApp.Core.Entities.SkillScore", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AlternativeSkillId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Matching")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SkillId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SkillScores");
+                });
+
             modelBuilder.Entity("InternshipApp.Core.Entities.StudentJob", b =>
                 {
                     b.Property<int?>("JobId")

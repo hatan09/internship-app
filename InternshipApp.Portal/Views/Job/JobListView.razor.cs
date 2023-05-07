@@ -10,13 +10,16 @@ using Syncfusion.Blazor.Lists;
 namespace InternshipApp.Portal.Views;
 public partial class JobListView
 {
-    #region
+    #region [ Properties ]
+    [Parameter]
+    public string CompanyId { get; set; }
+
     public JobListViewStates States { get; set; }
 
     public SfMultiSelect<string[], Option> SfMultiSelect { get; set; }
     #endregion
 
-    #region
+    #region [ Properties - Inject ]
     [Inject]
     public ILocalStorageService LocalStorage { get; set; }
 
@@ -33,7 +36,7 @@ public partial class JobListView
     public NavigationManager NavigationManager { get; set; }
     #endregion
 
-    #region
+    #region [ Override Methods - Page ]
     protected override async Task OnInitializedAsync()
     {
         States = new();
@@ -116,7 +119,7 @@ public partial class JobListView
             this.States.Items.Clear();
             this.States.Options.Clear();
             var jobList = new List<Job>();
-            jobList.AddRange(await Jobs.FindAll().Include(x => x.Company).ToListAsync());
+            jobList.AddRange(await Jobs.FindAll(x => string.IsNullOrEmpty(CompanyId) || x.CompanyId == int.Parse(CompanyId)).Include(x => x.Company).ToListAsync());
 
             var skills = await Skills.FindAll().ToListAsync();
             skills.ForEach(x =>

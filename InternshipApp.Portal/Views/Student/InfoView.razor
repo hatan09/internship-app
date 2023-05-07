@@ -82,7 +82,7 @@
     }
 
     .e-avatar.image {
-        background-image: url("@States.ImgUrl");
+        background-image: url("@(string.IsNullOrEmpty(States.ImgUrl) ? "https://i.imgur.com/WxNkK7J_d.webp" : States.ImgUrl)");
         background-size: contain;
     }
 

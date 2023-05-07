@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternshipApp.Core.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230419142050_init")]
-    partial class init
+    [Migration("20230507053813_first init")]
+    partial class firstinit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -218,6 +218,9 @@ namespace InternshipApp.Core.Migrations
                     b.Property<double>("MinGPA")
                         .HasColumnType("float");
 
+                    b.Property<int>("MinYear")
+                        .HasColumnType("int");
+
                     b.Property<int>("Slots")
                         .HasColumnType("int");
 
@@ -332,6 +335,28 @@ namespace InternshipApp.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Skills");
+                });
+
+            modelBuilder.Entity("InternshipApp.Core.Entities.SkillScore", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AlternativeSkillId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Matching")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SkillId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SkillScores");
                 });
 
             modelBuilder.Entity("InternshipApp.Core.Entities.StudentJob", b =>
@@ -568,7 +593,7 @@ namespace InternshipApp.Core.Migrations
                 {
                     b.HasBaseType("InternshipApp.Core.Entities.User");
 
-                    b.Property<int>("DepartmentId")
+                    b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
                     b.HasIndex("DepartmentId")
@@ -582,7 +607,7 @@ namespace InternshipApp.Core.Migrations
                 {
                     b.HasBaseType("InternshipApp.Core.Entities.User");
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.HasIndex("CompanyId");
@@ -611,6 +636,10 @@ namespace InternshipApp.Core.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("GitProfileUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImgUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -828,9 +857,7 @@ namespace InternshipApp.Core.Migrations
                 {
                     b.HasOne("InternshipApp.Core.Entities.Department", "Department")
                         .WithOne("Instructor")
-                        .HasForeignKey("InternshipApp.Core.Entities.Instructor", "DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("InternshipApp.Core.Entities.Instructor", "DepartmentId");
 
                     b.HasOne("InternshipApp.Core.Entities.User", null)
                         .WithOne()
@@ -844,10 +871,8 @@ namespace InternshipApp.Core.Migrations
             modelBuilder.Entity("InternshipApp.Core.Entities.Recruiter", b =>
                 {
                     b.HasOne("InternshipApp.Core.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Recruiters")
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("InternshipApp.Core.Entities.User", null)
                         .WithOne()
@@ -882,6 +907,8 @@ namespace InternshipApp.Core.Migrations
             modelBuilder.Entity("InternshipApp.Core.Entities.Company", b =>
                 {
                     b.Navigation("Jobs");
+
+                    b.Navigation("Recruiters");
                 });
 
             modelBuilder.Entity("InternshipApp.Core.Entities.Conversation", b =>

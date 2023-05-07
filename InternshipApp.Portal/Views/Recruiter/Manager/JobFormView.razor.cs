@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Wave5.UI.Forms;
 using InternshipApp.Contracts;
+using Blazored.LocalStorage;
 
 namespace InternshipApp.Portal.Views;
 
@@ -12,7 +13,13 @@ public partial class JobFormView
 {
     #region [ Properties - Inject ]
     [Inject]
+    public ILocalStorageService LocalStorage { get; set; }
+
+    [Inject]
     public IJobRepository Jobs { get; private set; }
+
+    [Inject]
+    public RecruiterManager Recruiters { get; private set; }
 
     [Inject]
     public RoleManager<Role> Roles { get; private set; }
@@ -130,9 +137,17 @@ public partial class JobFormView
     #endregion
 
     #region [ Private Methods - CRUD ]
-    private int GetCompanyId()
+    private async Task<int> GetCompanyId()
     {
-        return 1;
+        var user = await LocalStorage.GetItemAsync<User>("login-user-info");
+        if(user == null) return 0;
+
+        var recruiter = await Recruiters.FindByIdAsync(user.Id);
+
+        if(recruiter == null)
+            return 0;
+
+        return recruiter.CompanyId?? 0;
     }
 
     private async Task AddedAsync()
@@ -140,7 +155,7 @@ public partial class JobFormView
         try
         {
             this.FormRequest.Data = this.States.ToEntity();
-            FormRequest.Data.CompanyId = GetCompanyId();
+            FormRequest.Data.CompanyId = await GetCompanyId();
             this.Jobs.Add(this.FormRequest.Data);
             await Jobs.SaveChangesAsync();
 

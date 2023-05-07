@@ -1,4 +1,6 @@
-﻿using InternshipApp.Api.AppsettingConfig;
+﻿using AutoMapper;
+using InternshipApp.Api.AppsettingConfig;
+using InternshipApp.Api.DataObjects;
 using InternshipApp.Api.Models;
 using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
@@ -21,12 +23,14 @@ namespace InternshipApp.Api.Controllers
         private readonly UserManager _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IOptionsMonitor<JwtConfig> _tokenConfigOptionsAccessor;
+        private readonly IMapper _mapper;
 
-        public AuthController(UserManager userManager, SignInManager<User> signInManager, IOptionsMonitor<JwtConfig> tokenConfigOptionsAccessor)
+        public AuthController(UserManager userManager, SignInManager<User> signInManager, IOptionsMonitor<JwtConfig> tokenConfigOptionsAccessor, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenConfigOptionsAccessor = tokenConfigOptionsAccessor;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -57,6 +61,21 @@ namespace InternshipApp.Api.Controllers
                 refresh_token,
                 roles
             });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAdmin([FromBody] UserDTO dto)
+        {
+            var user = await _userManager.FindByNameAsync(dto.Username);
+
+            if (user != null) return BadRequest("User exists");
+
+            user = _mapper.Map<User>(dto);
+            var result = await _userManager.CreateAsync(user, "123");
+            if (!result.Succeeded) return BadRequest("Can't create");
+
+            await _userManager.AddToRoleAsync(user, "admin");
+            return Ok();
         }
 
         private async Task<string> GenerateToken(User user, JwtConfig tokenConfig)

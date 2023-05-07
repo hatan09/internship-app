@@ -21,6 +21,12 @@
             </Stack>
 
             <Stack ClassName="formFieldContainer">
+                <FluentNumberField @bind-Value=@this.States.Year>
+                    <label>Year</label>
+                </FluentNumberField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
                 <FluentTextField @bind-Value=@this.States.Email>
                     <label>Email Address</label>
                 </FluentTextField>

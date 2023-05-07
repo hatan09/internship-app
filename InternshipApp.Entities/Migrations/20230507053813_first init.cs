@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InternshipApp.Core.Migrations
 {
-    public partial class init : Migration
+    public partial class firstinit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -133,6 +133,21 @@ namespace InternshipApp.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SkillScores",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SkillId = table.Column<int>(type: "int", nullable: false),
+                    AlternativeSkillId = table.Column<int>(type: "int", nullable: false),
+                    Matching = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SkillScores", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -248,6 +263,7 @@ namespace InternshipApp.Core.Migrations
                     MinGPA = table.Column<double>(type: "float", nullable: false),
                     Slots = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MinYear = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CompanyId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -267,7 +283,7 @@ namespace InternshipApp.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CompanyId = table.Column<int>(type: "int", nullable: false)
+                    CompanyId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -281,8 +297,7 @@ namespace InternshipApp.Core.Migrations
                         name: "FK_Recruiters_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -341,7 +356,7 @@ namespace InternshipApp.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DepartmentId = table.Column<int>(type: "int", nullable: false)
+                    DepartmentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -355,8 +370,7 @@ namespace InternshipApp.Core.Migrations
                         name: "FK_Instructors_Departments_DepartmentId",
                         column: x => x.DepartmentId,
                         principalTable: "Departments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -448,6 +462,7 @@ namespace InternshipApp.Core.Migrations
                     Credit = table.Column<int>(type: "int", nullable: false),
                     CVUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
+                    ImgUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GitProfileUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Score = table.Column<int>(type: "int", nullable: false),
@@ -675,6 +690,9 @@ namespace InternshipApp.Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "Recruiters");
+
+            migrationBuilder.DropTable(
+                name: "SkillScores");
 
             migrationBuilder.DropTable(
                 name: "StudentJob");

@@ -20,6 +20,7 @@ namespace InternshipApp.Core.Database
         public virtual DbSet<Message> Messages { get; set; } = null!;
         public virtual DbSet<Conversation> Conversations { get; set; } = null!;
         public virtual DbSet<Evaluation> Evaluations { get; set; } = null!;
+        public virtual DbSet<SkillScore> SkillScores { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

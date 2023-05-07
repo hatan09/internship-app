@@ -154,7 +154,7 @@ public partial class JobSkillFormView
                 return;
             }
 
-            var job = await Jobs.FindAll(x => x.Id == FormRequest.Data.JobId)
+            var job = await Jobs.FindAll(x => x.Id == FormRequest.Data.JobId).AsTracking()
                 .Include(x => x.JobSkills)
                 .FirstOrDefaultAsync();
 
@@ -174,6 +174,7 @@ public partial class JobSkillFormView
             FormRequest.Data.SkillId = int.Parse(States.GetSelectedSkillId());
             FormRequest.Data.Level = Enum.Parse<SkillLevel>(States.SelectedLevel);
             job.JobSkills.Add(FormRequest.Data);
+            Jobs.Update(job);
             await Jobs.SaveChangesAsync();
             await this.InvokeFormResultCallbackAsync(FormResultState.Added);
         }
@@ -202,6 +203,7 @@ public partial class JobSkillFormView
             }
 
             var job = await Jobs.FindAll(x => x.Id == FormRequest.Data.JobId)
+                .AsTracking()
                 .Include(x => x.JobSkills)
                 .FirstOrDefaultAsync();
 

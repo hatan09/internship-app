@@ -1,5 +1,7 @@
-﻿using InternshipApp.Contracts;
+﻿using Blazored.LocalStorage;
+using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
+using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Wave5.UI;
@@ -13,10 +15,16 @@ public partial class ManageJobListView : ComponentBase
 {
     #region [ Properties - Inject ]
     [Inject]
+    public ILocalStorageService LocalStorage { get; set; }
+
+    [Inject]
     public IJobRepository Jobs { get; set; }
 
     [Inject]
     public ICompanyRepository Companies { get; set; }
+
+    [Inject]
+    public RecruiterManager Recruiters { get; set; }
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
@@ -210,8 +218,14 @@ public partial class ManageJobListView : ComponentBase
     #region [ Private Methods - Data ]
     private async Task<int> GetCompanyId()
     {
-        var company = await Companies.FindAll().AsNoTracking().FirstOrDefaultAsync();
-        return company == null ? 1 : company.Id;
+        var user = await LocalStorage.GetItemAsync<User>("login-user-info");
+        if(user == null)
+        {
+            return 0;
+        }
+
+        var recruiter = await Recruiters.FindByIdAsync(user.Id);
+        return recruiter.CompanyId?? 0;
     }
 
     private async Task LoadDataAsync()
