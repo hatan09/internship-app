@@ -1,0 +1,38 @@
+﻿@namespace InternshipApp.Portal.Views
+
+@using Wave5.ProjectPortal.Views;
+@using Wave5.UI
+
+<Stack>
+    <DetailsCardContainer CommandBarContext=@CommandBarContext
+                          ContainerContext=@DetailsContainerContext
+                          Title="Manage Skill">
+
+        @if (States == null)
+        {
+                <span>No data found.</span>
+        }
+        else
+        {
+                <Stack Style="font-family: var(--body-font);"
+               Horizontal=@true
+               Tokens=@(new StackTokens { Padding="15px 10px" })>
+                    <Stack Style="width:100%" Horizontal=false>
+                        <FormDetailsField Label="Skill Name" Value=@(States.Name) />
+                        <FormDetailsField Label="Category" Value=@(States.SkillType) />
+                    </Stack>
+                </Stack>
+        }
+
+    </DetailsCardContainer>
+</Stack>
+
+<Stack Style="margin-top:10px">
+    @*<SkillScoreListView SkillId="@States.Id">
+
+    </SkillScoreListView>*@
+</Stack>
+
+<SkillFormViewPanel FormRequest="@SkillFormRequest" FormResultCallback="OnFormResultReceived">
+
+</SkillFormViewPanel>

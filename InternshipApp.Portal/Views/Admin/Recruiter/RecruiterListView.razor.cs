@@ -198,8 +198,10 @@ public partial class RecruiterListView
             foreach (var item in selectedItem)
             {
                 var recruiter = await Recruiters.FindByIdAsync(item.Id);
-                await Recruiters.DeleteAsync(recruiter);
-
+                if(recruiter != null)
+                {
+                    await Recruiters.DeleteAsync(recruiter);
+                }
             }
 
             var tasks = new List<Task>

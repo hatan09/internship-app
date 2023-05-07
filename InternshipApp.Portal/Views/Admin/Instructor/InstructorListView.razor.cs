@@ -187,7 +187,11 @@ public partial class InstructorListView
 
             foreach (var item in selectedItem)
             {
-                await Instructors.DeleteAsync(item.ToEntity());
+                var instructor = await Instructors.FindByIdAsync(item.Id);
+                if (instructor != null)
+                {
+                    await Instructors.DeleteAsync(instructor);
+                }
 
             }
             var tasks = new List<Task>

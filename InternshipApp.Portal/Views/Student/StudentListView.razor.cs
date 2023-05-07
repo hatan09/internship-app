@@ -196,7 +196,12 @@ public partial class StudentListView : ComponentBase
 
             foreach (var item in selectedItem)
             {
-                
+                var student = await Students.FindByIdAsync(item.Id);
+                if(student != null)
+                {
+                    await Students.DeleteAsync(student);
+                }
+
             }
             var tasks = new List<Task>();
 
@@ -249,7 +254,8 @@ public partial class StudentListView : ComponentBase
             studentList.AddRange(students);
 
             this.States.Items.AddRange(studentList.ToListRowList());
-            this.ListContext.GetKey = (x => x.Id);
+            this.ListContext.GetKey = x => x.Id;
+            this.ListContext.ItemsSource.Clear();
             this.ListContext.ItemsSource.AddRange(this.States.Items);
         }
         catch (Exception ex)

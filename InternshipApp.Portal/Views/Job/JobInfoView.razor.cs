@@ -73,7 +73,8 @@ public partial class JobInfoView
     private async void OnApply()
     {
         var student = await GetStudentAsync();
-        if(student.StudentJobs.FirstOrDefault(x => x.JobId == int.Parse(JobId)) != null)
+
+        if(student == null || student.StudentJobs.FirstOrDefault(x => x.JobId == int.Parse(JobId)) != null)
         {
             return;
         }
@@ -97,7 +98,7 @@ public partial class JobInfoView
             studentId = user.Id;
         }
         var student = await Students.FindAll(x => x.Id == studentId)
-            .AsNoTracking()
+            .AsTracking()
             .Include(x => x.StudentSkills)
             .FirstOrDefaultAsync();
 
@@ -106,7 +107,7 @@ public partial class JobInfoView
 
     private async Task OnUpdateApplicationAsync(StudentJob studentJob)
     {
-        var job = await Jobs.FindAll(x => x.Id == int.Parse(JobId)).Include(x => x.StudentJobs).FirstOrDefaultAsync();
+        var job = await Jobs.FindAll(x => x.Id == int.Parse(JobId)).AsTracking().Include(x => x.StudentJobs).FirstOrDefaultAsync();
         job?.StudentJobs.Add(studentJob);
         Jobs.Update(job);
         await Jobs.SaveChangesAsync();

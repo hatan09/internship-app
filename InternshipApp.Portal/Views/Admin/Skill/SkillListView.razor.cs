@@ -94,7 +94,7 @@ public partial class SkillListView
     #region [ Event Handlers - DataList ]
     private void OnRowClicked(SkillListRowViewStates rowItem)
     {
-        SkillFormRequest = FormRequestFactory.EditRequest(rowItem.ToEntity());
+        NavigationManager.NavigateTo($"admin-skill-details/{rowItem.Id}");
     }
 
     private void OnSelectionChanged()

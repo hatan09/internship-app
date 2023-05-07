@@ -43,17 +43,17 @@ public static class SkillExtension
     #endregion
 
     #region [ Public Methods - DetailsViewModel ]
-    //public static SkillDetailsViewStates ToDetailsViewStates(this Skill entity)
-    //{
-    //    var viewmodel = ToViewStates<SkillDetailsViewStates>(entity);
+    public static SkillDetailsViewStates ToDetailsViewStates(this Skill entity)
+    {
+        var viewmodel = ToViewStates<SkillDetailsViewStates>(entity);
 
-    //    return viewmodel;
-    //}
+        return viewmodel;
+    }
 
-    //public static Skill ToEntity(this SkillDetailsViewStates viewStates)
-    //{
-    //    return ToEntity<Skill>(viewStates);
-    //}
+    public static Skill ToEntity(this SkillDetailsViewStates viewStates)
+    {
+        return ToEntity<Skill>(viewStates);
+    }
     #endregion
 
     #region [ Private Methods - BaseViewModel ]

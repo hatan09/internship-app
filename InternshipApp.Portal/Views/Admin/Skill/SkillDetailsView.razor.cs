@@ -10,11 +10,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
 
-public partial class CompanyDetailsView
+public partial class SkillDetailsView
 {
-    #region [ Properties - Parameter ]
-    [Parameter]
-    public string CompanyId { get; set; }
+	#region [ Properties - Parameters ]
+	[Parameter]
+	public string SkillId { get; set; }
     #endregion
 
     #region [ Properties ]
@@ -22,11 +22,14 @@ public partial class CompanyDetailsView
     public NavigationManager NavigationManager { get; set; }
 
     [Inject]
-    public ICompanyRepository Companies { get; set; }
+    public ISkillRepository Skills { get; set; }
+
+    [Inject]
+    public StudentManager Students { get; set; }
     #endregion
 
     #region [ Properties - Panel ]
-    protected FormRequest<FormAction, Company> CompanyFormRequest { get; private set; }
+    protected FormRequest<FormAction, Skill> SkillFormRequest { get; private set; }
 
     protected CommandBarContext CommandBarContext { get; private set; }
 
@@ -34,7 +37,7 @@ public partial class CompanyDetailsView
     #endregion
 
     #region [ Properties - Data ]
-    protected CompanyDetailsViewStates States { get; private set; }
+    protected SkillDetailsViewStates States { get; private set; }
     #endregion
 
     #region [ Protected Methods - Override ]
@@ -50,12 +53,12 @@ public partial class CompanyDetailsView
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        var currentCompanyId = this.CompanyId;
-        var parameterCompanyId = parameters.GetValueOrDefault<string>(nameof(this.CompanyId));
+        var currentSkillId = this.SkillId;
+        var parameterSkillId = parameters.GetValueOrDefault<string>(nameof(this.SkillId));
 
         await base.SetParametersAsync(parameters);
 
-        if (currentCompanyId != parameterCompanyId)
+        if (currentSkillId != parameterSkillId)
         {
             await this.LoadDataAsync();
         }
@@ -70,7 +73,7 @@ public partial class CompanyDetailsView
     #endregion
 
     #region [ Event Handlers - Panel ]
-    protected async Task OnFormResultReceived(FormResult<Company> result)
+    protected async Task OnFormResultReceived(FormResult<Skill> result)
     {
         switch (result.State)
         {
@@ -84,7 +87,7 @@ public partial class CompanyDetailsView
 
     protected void OnEditButtonClicked(EventArgs args)
     {
-        CompanyFormRequest = FormRequestFactory.EditRequest(States.ToEntity());
+        SkillFormRequest = FormRequestFactory.EditRequest(States.ToEntity());
         StateHasChanged();
     }
     #endregion
@@ -92,15 +95,15 @@ public partial class CompanyDetailsView
     #region [ Private Methods - Data ]
     private async Task LoadDataAsync()
     {
-        Guard.ParamIsNullOrEmpty(this.CompanyId, nameof(this.CompanyId));
+        Guard.ParamIsNullOrEmpty(this.SkillId, nameof(this.SkillId));
 
         try
         {
             this.DetailsContainerContext.SetProcessingStates(true, false);
             this.CommandBarContext.SetProcessingStates(true);
 
-            var item = await this.Companies
-                .FindAll(x => x.Id == int.Parse(CompanyId)).AsNoTracking()
+            var item = await this.Skills
+                .FindAll(x => x.Id == int.Parse(SkillId)).AsNoTracking()
                 .FirstOrDefaultAsync();
 
             if (item is null)
@@ -111,11 +114,6 @@ public partial class CompanyDetailsView
 
 
             this.States = item.ToDetailsViewStates();
-            if (!string.IsNullOrEmpty(States.CompanyWebsite))
-            {
-                if (!States.CompanyWebsite.Contains("http://") && !States.CompanyWebsite.Contains("https://"))
-                    States.CompanyWebsite = "https://" + States.CompanyWebsite;
-            }
         }
         catch (Exception ex)
         {

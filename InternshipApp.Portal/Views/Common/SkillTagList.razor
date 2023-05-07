@@ -3,6 +3,10 @@
 <Stack Horizontal>
     @if (IsStudentSkills)
     {
+        if (!StudentSkills.Any())
+        {
+            <label> No Skill Found! </label>
+        }
         foreach (var item in StudentSkills)
         {
             var skill = AllSkills.FirstOrDefault(x => x.Id == item.SkillId);
@@ -16,6 +20,11 @@
     }
     else
     {
+        if (!JobSkills.Any())
+        {
+            <label> No Skill Found! </label>
+        }
+
         foreach (var item in JobSkills)
         {
             var skill = AllSkills.FirstOrDefault(x => x.Id == item.SkillId);
