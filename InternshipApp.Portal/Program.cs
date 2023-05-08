@@ -29,7 +29,7 @@ builder.Services.AddBlazoredLocalStorage();
 //Add database
 builder.Services
     .AddDbContextPool<AppDbContext>(options => options.UseSqlServer(builder.Configuration
-                                                        .GetConnectionString("LocalConnection"))
+                                                        .GetConnectionString("StandardConnection"))
                                                         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                                                         .EnableSensitiveDataLogging(true));
 
@@ -103,6 +103,7 @@ builder.Services.AddTransient<ISkillRepository, SkillRepository>();
 builder.Services.AddTransient<IJobRepository, JobRepository>();
 builder.Services.AddTransient<IMatchingService, MatchingService>();
 builder.Services.AddTransient<IEvaluationRepository, EvaluationRepository>();
+builder.Services.AddTransient<ISkillScoreRepository, SkillScoreRepository>();
 
 //Services
 //builder.Services.AddTransient<IEmailService, EmailService>();

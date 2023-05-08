@@ -1,5 +1,19 @@
-﻿<h3>SkillScoreFormPanel</h3>
+﻿@namespace InternshipApp.Portal.Views
 
-@code {
+@using Wave5.UI.DataGrids
+@using Wave5.UI
+@using Wave5.UI.Forms;
 
-}
+<Panel IsOpen=@(IsOpen)
+       ShowCloseButton=@true
+       HeaderText="Form"
+       IsLightDismiss=@true
+       PanelType=PanelType.Medium
+       OnDismissed=@OnPanelDismissed>
+
+    <PanelContentTemplate>
+        <SkillScoreFormView FormRequest="@FormRequest"
+                       FormResultCallback="OnFormResultReceived" />
+    </PanelContentTemplate>
+
+</Panel>

@@ -1,5 +1,24 @@
-﻿<h3>SkillScoreFormView</h3>
+﻿@namespace InternshipApp.Portal.Views
+@using Wave5.UI.Forms;
 
-@code {
+<Stack ClassName="formContainer">
 
-}
+    <EditForm EditContext="Context"
+              OnValidSubmit="OnFormSubmit">
+
+        <FormFieldsContainer>
+            
+        </FormFieldsContainer>
+
+        <FormButtonsContainer>
+            <FluentButton Appearance=@FormStyles.SaveButtonAppearance
+                          style=@FormStyles.SaveButtonStyle
+                          type="submit"> <label>Save</label> </FluentButton>
+
+            <FluentButton Appearance=@FormStyles.CancelButtonAppearance
+                          style=@FormStyles.CancelButtonStyle
+                          @onclick="@OnCancel"> <label>Cancel</label> </FluentButton>
+
+        </FormButtonsContainer>
+    </EditForm>
+</Stack>
