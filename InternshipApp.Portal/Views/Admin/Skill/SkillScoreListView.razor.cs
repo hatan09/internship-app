@@ -11,19 +11,24 @@ namespace InternshipApp.Portal.Views;
 
 public partial class SkillScoreListView
 {
+    #region [ Properties - Parameters ]
+    [Parameter]
+    public string SkillId { get; set; }
+    #endregion
+
     #region [ Properties - Inject ]
     [Inject]
-    public ISkillRepository Skills { get; set; }
+    public ISkillScoreRepository SkillScores { get; set; }
 
     [Inject]
-    public ISkillScoreRepository SkillScores { get; set; }
+    public ISkillRepository Skills { get; set; }
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
     #endregion
 
     #region [ Properties - States - Contexts ]
-    public FormRequest<FormAction, Skill> SkillFormRequest { get; private set; }
+    public FormRequest<FormAction, SkillScore> SkillScoreFormRequest { get; private set; }
 
     protected DetailsListContainerContext ListContainerContext { get; private set; }
 
@@ -31,11 +36,11 @@ public partial class SkillScoreListView
 
     protected CommandBarContext CommandBarContext { get; private set; }
 
-    protected DetailsListContext<SkillListRowViewStates> ListContext { get; private set; }
+    protected DetailsListContext<SkillScoreListRowViewStates> ListContext { get; private set; }
     #endregion
 
     #region [ Properties - States - DataList ]
-    protected SkillListViewStates States { get; private set; }
+    protected SkillScoreListViewStates States { get; private set; }
     #endregion
 
     #region [ Protected Override Methods - Page ]
@@ -47,7 +52,7 @@ public partial class SkillScoreListView
 
             SearchContext = new DataListSearchContext();
             ListContainerContext = new DetailsListContainerContext();
-            ListContext = new DetailsListContext<SkillListRowViewStates>();
+            ListContext = new DetailsListContext<SkillScoreListRowViewStates>();
             ListContext.SelectionMode = SelectionMode.Single;
             ListContext.OnItemInvoked += OnRowClicked;
             ListContext.OnSelectionChanged += OnSelectionChanged;
@@ -76,7 +81,7 @@ public partial class SkillScoreListView
     #region [ Event Handlers - Search ]
     private async void OnSearchDatalist(ChangeEventArgs args)
     {
-        var filtered = new List<SkillListRowViewStates>();
+        var filtered = new List<SkillScoreListRowViewStates>();
 
         var value = args?.Value.ToString();
         if (String.IsNullOrWhiteSpace(value))
@@ -95,7 +100,7 @@ public partial class SkillScoreListView
     #endregion
 
     #region [ Event Handlers - DataList ]
-    private void OnRowClicked(SkillListRowViewStates rowItem)
+    private void OnRowClicked(SkillScoreListRowViewStates rowItem)
     {
         NavigationManager.NavigateTo($"admin-skill-details/{rowItem.Id}");
     }
@@ -112,15 +117,15 @@ public partial class SkillScoreListView
     #region [ Private Methods - Column ]
     private void InitializeColumn()
     {
-        var name = new DataGridColumnDefinition<SkillListRowViewStates>("Skill Name", x => x.Name)
+        var name = new DataGridColumnDefinition<SkillScoreListRowViewStates>("Alternative Skill Name", x => x.Name)
         {
-            ColumnDataKey = nameof(SkillListRowViewStates.Name),
+            ColumnDataKey = nameof(SkillScoreListRowViewStates.Name),
             Width = "3fr"
         };
 
-        var type = new DataGridColumnDefinition<SkillListRowViewStates>("Skill Type", x => x.SkillType)
+        var type = new DataGridColumnDefinition<SkillScoreListRowViewStates>("Matching Type", x => x.MatchingType)
         {
-            ColumnDataKey = nameof(SkillListRowViewStates.SkillType),
+            ColumnDataKey = nameof(SkillScoreListRowViewStates.MatchingType),
             Width = "1fr"
         };
 
@@ -153,8 +158,8 @@ public partial class SkillScoreListView
 
     private void OnAddButtonClicked(EventArgs e)
     {
-        var item = new Skill();
-        SkillFormRequest = FormRequestFactory.AddRequest(item);
+        var item = new SkillScore();
+        SkillScoreFormRequest = FormRequestFactory.AddRequest(item);
         StateHasChanged();
     }
 
@@ -168,7 +173,7 @@ public partial class SkillScoreListView
                 return;
             }
 
-            SkillFormRequest = FormRequestFactory.EditRequest(selectedItem.ToEntity());
+            SkillScoreFormRequest = FormRequestFactory.EditRequest(selectedItem.ToEntity());
             StateHasChanged();
 
         }
@@ -190,11 +195,11 @@ public partial class SkillScoreListView
 
             foreach (var item in selectedItem)
             {
-                Skills.Delete(item.ToEntity());
+                SkillScores.Delete(item.ToEntity());
 
             }
 
-            await Skills.SaveChangesAsync();
+            await SkillScores.SaveChangesAsync();
             var tasks = new List<Task>
         {
             LoadDataAsync()
@@ -211,7 +216,7 @@ public partial class SkillScoreListView
     #endregion
 
     #region [ Event Handlers - Panel ]
-    protected async Task OnFormResultReceived(FormResult<Skill> result)
+    protected async Task OnFormResultReceived(FormResult<SkillScore> result)
     {
         switch (result.State)
         {
@@ -242,9 +247,18 @@ public partial class SkillScoreListView
 
             StateHasChanged();
 
-            var items = await Skills.FindAll().AsNoTracking().ToListAsync();
+            var skill = await Skills.FindByIdAsync(int.Parse(SkillId));
+            var items = await SkillScores.FindAll(x => x.SkillId == skill.Id).AsNoTracking().ToListAsync();
+
+            var skills = await Skills.FindAll(x => items.Select(x => x.AlternativeSkillId).Contains(x.Id)).ToListAsync();
 
             States.Items = items.ToListRowList();
+
+            States.Items.ForEach(x =>
+            {
+                x.MasterSkillName = skill.Name;
+                x.Name = skills.FirstOrDefault(y => y.Id == x.SkillId)?.Name;
+            });
             ListContext.GetKey = (x => x.Id);
             ListContext.ItemsSource.Clear();
             ListContext.ItemsSource.AddRange(States.Items);

@@ -5,22 +5,22 @@ namespace InternshipApp.Portal.Views;
 public class SkillScoreListViewStates : BaseViewModel
 {
     #region [ Fields ]
-    private List<Option> _options;
+    private List<SkillScoreListRowViewStates> _items;
     #endregion
 
     #region [ CTor ]
     public SkillScoreListViewStates()
     {
-        _options = new();
+        _items = new();
     }
     #endregion
 
     #region [ Properties ]
 
-    public List<Option> Options
+    public List<SkillScoreListRowViewStates> Items
     {
-        get { return this._options; }
-        set { this.SetProperty(ref this._options, value); }
+        get { return this._items; }
+        set { this.SetProperty(ref this._items, value); }
     }
     #endregion
 }

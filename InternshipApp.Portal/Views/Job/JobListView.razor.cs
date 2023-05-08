@@ -16,7 +16,7 @@ public partial class JobListView
 
     public JobListViewStates States { get; set; }
 
-    public SfMultiSelect<string[], Option> SfMultiSelect { get; set; }
+    public SfMultiSelect<string[], JobFilterOption> SfMultiSelect { get; set; }
     #endregion
 
     #region [ Properties - Inject ]
@@ -73,7 +73,7 @@ public partial class JobListView
         await OnFilterItems();
     }
 
-    private List<JobListRowViewStates> GetItemsList(List<Option> options)
+    private List<JobListRowViewStates> GetItemsList(List<JobFilterOption> options)
     {
         var result = new List<JobListRowViewStates>();
         options.ForEach(x =>

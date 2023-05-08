@@ -8,9 +8,9 @@
 
     </SfTextBox>
 
-    <SfMultiSelect @ref="SfMultiSelect" TValue="string[]" AllowFiltering="true" TItem="Option" Mode="@VisualMode.CheckBox" Width="250px" Placeholder="Search for skills" DataSource="@this.States.Options" ShowSelectAll="@true"
+    <SfMultiSelect @ref="SfMultiSelect" TValue="string[]" AllowFiltering="true" TItem="JobFilterOption" Mode="@VisualMode.CheckBox" Width="250px" Placeholder="Search for skills" DataSource="@this.States.Options" ShowSelectAll="@true"
                EnableSelectionOrder="@true" FilterBarPlaceholder="Search for skills" EnableGroupCheckBox="@true" PopupHeight="350px">
-    <MultiSelectEvents TItem="Option" TValue="string[]" ValueChange="@FilterChangeHandler"></MultiSelectEvents>
+    <MultiSelectEvents TItem="JobFilterOption" TValue="string[]" ValueChange="@FilterChangeHandler"></MultiSelectEvents>
     <MultiSelectFieldSettings GroupBy="Category" Value="Title"></MultiSelectFieldSettings>
 </SfMultiSelect>
 </Stack>

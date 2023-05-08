@@ -1,5 +1,6 @@
 ﻿using InternshipApp.Core.Entities;
 using Microsoft.Fast.Components.FluentUI;
+using Microsoft.Fast.Components.FluentUI.DesignTokens;
 
 namespace InternshipApp.Portal.Views;
 
@@ -65,6 +66,10 @@ public static class SkillScoreExtension
         {
             Id = entity.Id,
 
+            SkillId = entity.AlternativeSkillId,
+            MasterSkillId = entity.SkillId,
+            MatchingType = entity.Matching.ToString(),
+            
         };
     }
 
@@ -75,6 +80,9 @@ public static class SkillScoreExtension
         {
             Id = viewModel.Id,
 
+            SkillId = viewModel.MasterSkillId,
+            AlternativeSkillId = viewModel.SkillId,
+            Matching = Enum.Parse<MatchingType>(viewModel.MatchingType),
         };
     }
     #endregion
@@ -94,7 +102,25 @@ public static class SkillScoreExtension
         // solution: ProjectOptions.Value: replace multiple spaces by single spaces before doing comparision
 
         var result = states.TypeOptions()
-                           .FirstOrDefault(x => x.Value.Trim().Equals(states.SkillScoreType, StringComparison.InvariantCultureIgnoreCase))?.Key;
+                           .FirstOrDefault(x => x.Value.Trim().Equals(states.MatchingType, StringComparison.InvariantCultureIgnoreCase))?.Key;
+        return result;
+    }
+
+    // Skill
+    public static List<Option<string>> SkillOptions(this SkillScoreFormViewStates states)
+    {
+        return states.Skills.ToOptionList(x => x.Id.ToString(), x => x.Name, null);
+    }
+
+    public static string GetSelectedSkillId(this SkillScoreFormViewStates states)
+    {
+        // Somehow the SelectedProjectOption and ProjectOptions.Value (DisplayedName) might be different due to spaces 
+        // ex: SelectedProjectOption: 'Roo - Koppeling DM'
+        //     ProjectOptions.Value : 'Roo  - Koppeling DM'
+        // solution: ProjectOptions.Value: replace multiple spaces by single spaces before doing comparision
+
+        var result = states.SkillOptions()
+                           .FirstOrDefault(x => x.Value.Trim().Equals(states.MatchingType, StringComparison.InvariantCultureIgnoreCase))?.Key;
         return result;
     }
     #endregion

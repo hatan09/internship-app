@@ -5,7 +5,7 @@ namespace InternshipApp.Portal.Views;
 public class SkillListViewStates : BaseViewModel
 {
     #region [ Fields ]
-    private List<Option> _options;
+    private List<JobFilterOption> _options;
     private List<SkillListRowViewStates> _items;
     private List<SkillListRowViewStates> _originalItems;
     #endregion
@@ -31,7 +31,7 @@ public class SkillListViewStates : BaseViewModel
         set { this.SetProperty(ref this._originalItems, value); }
     }
 
-    public List<Option> Options
+    public List<JobFilterOption> Options
     {
         get { return this._options; }
         set { this.SetProperty(ref this._options, value); }
