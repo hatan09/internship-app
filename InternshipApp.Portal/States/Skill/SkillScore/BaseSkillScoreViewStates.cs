@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using InternshipApp.Core.Entities;
+using RCode.UI.ViewModels;
 using RCode.ViewModels;
 
 namespace InternshipApp.Portal.Views;
@@ -15,13 +16,15 @@ public class BaseSkillScoreViewStates : BaseViewModel
     private ObservableCollection<Skill> _skills;
     private ObservableCollection<string> _types;
     private string _matchType;
+    private string _category;
 
     #endregion
 
     #region [ CTor ]
     public BaseSkillScoreViewStates()
     {
-        //_types = Enum.GetValues(typeof(SkillScoreType)).Cast<SkillScoreType>().Select(x => x.ToString()).ToList().ToObservableCollection();
+        _types = Enum.GetValues(typeof(MatchingType)).Cast<MatchingType>().Select(x => x.ToString()).ToList().ToObservableCollection();
+        _skills = new();
     }
     #endregion
 
@@ -79,6 +82,12 @@ public class BaseSkillScoreViewStates : BaseViewModel
     {
         get { return this._matchType; }
         set { this.SetProperty(ref this._matchType, value); }
+    }
+
+    public string Category
+    {
+        get { return this._category; }
+        set { this.SetProperty(ref this._category, value); }
     }
     #endregion
 }

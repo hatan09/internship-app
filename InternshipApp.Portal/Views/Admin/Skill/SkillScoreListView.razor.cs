@@ -6,6 +6,7 @@ using Wave5.UI.Forms;
 using Wave5.UI;
 using Wave5.UI.Blazor;
 using Microsoft.EntityFrameworkCore;
+using Syncfusion.Blazor.Lists;
 
 namespace InternshipApp.Portal.Views;
 
@@ -102,7 +103,8 @@ public partial class SkillScoreListView
     #region [ Event Handlers - DataList ]
     private void OnRowClicked(SkillScoreListRowViewStates rowItem)
     {
-        NavigationManager.NavigateTo($"admin-skill-details/{rowItem.Id}");
+        SkillScoreFormRequest = FormRequestFactory.EditRequest(rowItem.ToEntity());
+        StateHasChanged();
     }
 
     private void OnSelectionChanged()
@@ -123,6 +125,12 @@ public partial class SkillScoreListView
             Width = "3fr"
         };
 
+        var cate = new DataGridColumnDefinition<SkillScoreListRowViewStates>("Alternative Skill Category", x => x.Category)
+        {
+            ColumnDataKey = nameof(SkillScoreListRowViewStates.Category),
+            Width = "1fr"
+        };
+
         var type = new DataGridColumnDefinition<SkillScoreListRowViewStates>("Matching Type", x => x.MatchingType)
         {
             ColumnDataKey = nameof(SkillScoreListRowViewStates.MatchingType),
@@ -130,6 +138,7 @@ public partial class SkillScoreListView
         };
 
         ListContext.Columns.Definitions.Add(name);
+        ListContext.Columns.Definitions.Add(cate);
         ListContext.Columns.Definitions.Add(type);
     }
     #endregion
@@ -158,7 +167,10 @@ public partial class SkillScoreListView
 
     private void OnAddButtonClicked(EventArgs e)
     {
-        var item = new SkillScore();
+        var item = new SkillScore()
+        {
+            SkillId = int.Parse(SkillId)
+        };
         SkillScoreFormRequest = FormRequestFactory.AddRequest(item);
         StateHasChanged();
     }
@@ -248,6 +260,11 @@ public partial class SkillScoreListView
             StateHasChanged();
 
             var skill = await Skills.FindByIdAsync(int.Parse(SkillId));
+            if(skill == null)
+            {
+                return;
+            }
+            
             var items = await SkillScores.FindAll(x => x.SkillId == skill.Id).AsNoTracking().ToListAsync();
 
             var skills = await Skills.FindAll(x => items.Select(x => x.AlternativeSkillId).Contains(x.Id)).ToListAsync();
@@ -257,7 +274,9 @@ public partial class SkillScoreListView
             States.Items.ForEach(x =>
             {
                 x.MasterSkillName = skill.Name;
-                x.Name = skills.FirstOrDefault(y => y.Id == x.SkillId)?.Name;
+                skill = skills.FirstOrDefault(y => y.Id == x.SkillId);
+                x.Name = skill?.Name;
+                x.Category = skill?.Type.ToString();
             });
             ListContext.GetKey = (x => x.Id);
             ListContext.ItemsSource.Clear();

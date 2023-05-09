@@ -99,7 +99,6 @@ public partial class JobInfoView
         }
         var student = await Students.FindAll(x => x.Id == studentId)
             .AsTracking()
-            .Include(x => x.StudentSkills)
             .FirstOrDefaultAsync();
 
         return student;
@@ -145,7 +144,7 @@ public partial class JobInfoView
                 States.Address = company.Address;
             }
 
-            var matching = MatchingService.GetMatchingPoint(student.StudentSkills?.ToList(), item.JobSkills?.ToList());
+            var matching = await MatchingService.GetMatchingPointById(student.Id, item.Id);
             States.Matching = matching;
 
             var skills = await Skills.FindAll(x => skillIds.Contains(x.Id)).AsNoTracking().ToListAsync();

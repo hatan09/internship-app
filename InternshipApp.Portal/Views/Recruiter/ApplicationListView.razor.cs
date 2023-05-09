@@ -29,6 +29,9 @@ public partial class ApplicationListView : ComponentBase
     public IJobRepository Jobs { get; set; }
 
     [Inject]
+    public ISkillScoreRepository SkillScores { get; set; }
+
+    [Inject]
     public StudentManager Students { get; set; }
 
     [Inject]
@@ -273,7 +276,6 @@ public partial class ApplicationListView : ComponentBase
                 jobs = await Jobs.FindAll(x => x.CompanyId == companyId)
                                 .Include(x => x.StudentJobs
                                     .Where(x => x.Status != ApplyStatus.HIRED))
-                                .Include(x => x.JobSkills)
                                 .ToListAsync();
             }
             else
@@ -281,7 +283,6 @@ public partial class ApplicationListView : ComponentBase
                 jobs = await Jobs.FindAll(x => x.Id == int.Parse(JobId))
                                 .Include(x => x.StudentJobs
                                     .Where(x => x.Status != ApplyStatus.HIRED))
-                                .Include(x => x.JobSkills)
                                 .ToListAsync();
             }
             
@@ -294,13 +295,13 @@ public partial class ApplicationListView : ComponentBase
 
             States.Items = studentJobs.ToListRowList();
             var allStudents = await Students.FindAll(x => States.Items.Select(y => y.StudentId).Contains(x.Id))
-                                        .Include(x => x.StudentSkills)
                                         .ToListAsync();
 
+            var allSkillScores = await SkillScores.FindAll().AsNoTracking().ToListAsync();
             States.Items.ForEach(x => {
                 var student = allStudents.FirstOrDefault(y => y.Id == x.StudentId);
                 var job = jobs.FirstOrDefault(y => y.Id == x.JobId);
-                var matching = MatchingService.GetMatchingPoint(student?.StudentSkills?.ToList(), job?.JobSkills?.ToList());
+                var matching = MatchingService.GetMatchingPoint(student?.StudentSkills?.ToList(), job?.JobSkills?.ToList(), allSkillScores);
 
                 x.StudentName = student == null ? "" : student.FullName;
                 x.Year = student == null ? 1 : student.Year;

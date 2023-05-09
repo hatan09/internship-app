@@ -7,7 +7,25 @@
               OnValidSubmit="OnFormSubmit">
 
         <FormFieldsContainer>
-            
+            <Stack ClassName="formFieldContainer">
+                <FluentTextField @bind-Value=@States.MasterSkillName Readonly>
+                    <label>Skill Name</label>
+                </FluentTextField>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <label for="typeCombobox">Alternative Skill</label>
+                <FluentCombobox Id="typeCombobox"
+                    @bind-Value=@States.Name 
+                    Options=@States.SkillOptions() />
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
+                <label for="typeCombobox">Matching Type</label>
+                <FluentCombobox Id="typeCombobox"
+                    @bind-Value=@States.MatchingType 
+                    Options=@States.TypeOptions() />
+            </Stack>
         </FormFieldsContainer>
 
         <FormButtonsContainer>

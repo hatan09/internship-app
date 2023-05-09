@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
 using Wave5.UI.Forms;
 using Microsoft.EntityFrameworkCore;
+using System.Reactive.Linq;
+using RCode.UI.ViewModels;
 
 namespace InternshipApp.Portal.Views;
 
@@ -13,6 +15,8 @@ public partial class SkillScoreFormView
     [Inject]
     public ISkillScoreRepository SkillScores { get; private set; }
 
+    [Inject]
+    public ISkillRepository Skills { get; private set; }
     #endregion
 
     #region [ Properties - Parameters ]
@@ -34,8 +38,8 @@ public partial class SkillScoreFormView
     #region [ Event Handlers - Override ]
     protected override async Task OnInitializedAsync()
     {
-        this.States = new SkillScoreFormViewStates();
-        this.Context = new EditContext(this.States);
+        this.States = new ();
+        this.Context = new(this.States);
 
         await base.OnInitializedAsync();
     }
@@ -93,7 +97,30 @@ public partial class SkillScoreFormView
     {
         try
         {
+            if(FormRequest.Data.SkillId < 1)
+            {
+                return;
+            }
+
             this.States = this.FormRequest.Data.ToFormViewStates();
+            var existingSkillScores = await SkillScores.FindAll(x => x.SkillId == FormRequest.Data.SkillId).ToListAsync();
+            var allSkills = await Skills
+                .FindAll(x => !existingSkillScores.Select(x => x.AlternativeSkillId).Contains(x.Id))
+                .AsNoTracking()
+                .ToListAsync();
+            var skill = allSkills.FirstOrDefault(x => x.Id == FormRequest.Data.SkillId);
+            
+            allSkills.Remove(skill);
+            if (FormRequest.Action == FormAction.Add)
+            {
+                States.Skills = allSkills.ToObservableCollection();
+            }
+            else
+            {
+                var alternativeSkill = await Skills.FindByIdAsync(FormRequest.Data.AlternativeSkillId);
+                States.Name = alternativeSkill.Name;
+            }
+            States.MasterSkillName = skill.Name;
 
             switch (this.FormRequest.Action)
             {
@@ -133,6 +160,7 @@ public partial class SkillScoreFormView
         try
         {
             this.FormRequest.Data = this.States.ToEntity();
+            this.FormRequest.Data.AlternativeSkillId = int.Parse(States.GetSelectedSkillId());
             this.SkillScores.Add(this.FormRequest.Data);
             await SkillScores.SaveChangesAsync();
 
@@ -156,12 +184,12 @@ public partial class SkillScoreFormView
             {
                 return;
             }
-
+            skillScore.Matching = Enum.Parse<MatchingType>(States.GetSelectedTypeName());
             
             this.SkillScores.Update(skillScore);
             await SkillScores.SaveChangesAsync();
 
-            await this.InvokeFormResultCallbackAsync(FormResultState.Added);
+            await this.InvokeFormResultCallbackAsync(FormResultState.Updated);
         }
         catch (Exception ex)
         {

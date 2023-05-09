@@ -120,7 +120,7 @@ public static class SkillScoreExtension
         // solution: ProjectOptions.Value: replace multiple spaces by single spaces before doing comparision
 
         var result = states.SkillOptions()
-                           .FirstOrDefault(x => x.Value.Trim().Equals(states.MatchingType, StringComparison.InvariantCultureIgnoreCase))?.Key;
+                           .FirstOrDefault(x => x.Value.Trim().Equals(states.Name, StringComparison.InvariantCultureIgnoreCase))?.Key;
         return result;
     }
     #endregion

@@ -10,6 +10,7 @@
 
     <Stack VerticalAlign="Wave5.UI.Alignment.Start" Style="margin:5px">
         <FluentCombobox Id="skillCombobox"
+                        Autocomplete="ComboboxAutocomplete.Both"
                         style="min-width: 0px"
                         Options=States.SkillOptions()
                         @bind-Value=@States.SelectedSkill
@@ -19,6 +20,7 @@
     <EditForm EditContext="Context">
         <Stack HorizontalAlign="Wave5.UI.Alignment.Center" Style="margin:5px">
             <FluentCombobox Id="levelCombobox"
+                            Autocomplete="ComboboxAutocomplete.Both"
                             style="min-width: 0px"
                             Options="@States.LevelOptions()"
                             @bind-Value="@States.SelectedLevel"
