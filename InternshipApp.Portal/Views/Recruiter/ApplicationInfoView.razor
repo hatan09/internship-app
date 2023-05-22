@@ -1,4 +1,5 @@
 ﻿@namespace InternshipApp.Portal.Views
+@using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Popups
 
 <Stack Horizontal="false" Style="width:auto;margin:20px 40px">
@@ -17,7 +18,7 @@
             </h1>
 
             <h2>
-                Has applied to 
+                Has applied for 
                 <b>
                     @States.JobName
                 </b>
@@ -32,7 +33,7 @@
 
     <Stack>
         <Stack Style="margin-bottom:10px">
-            <h1>Current Status</h1>
+            <h2>&#x2705; Application Status</h2>
             <Stack Style="margin:10px">
                 <label>
                     @States.Status.ToString()
@@ -41,7 +42,7 @@
         </Stack>
 
         <Stack Style="margin-bottom:10px">
-            <h1>Introduction</h1>
+            <h2>&#x1F44B; Introduction</h2>
             <Stack Style="margin:10px">
                 <label>
                     @States.Bio
@@ -51,7 +52,7 @@
 
         <Stack Style="margin:10px">
             <h2>
-                Education
+                &#x1F4D6; Education
             </h2>
             <label>
                 International University, HCM National University
@@ -65,18 +66,51 @@
         </Stack>
 
         <Stack Style="margin-bottom:10px">
-        <h2>
-            Skills
-        </h2>
-        <SkillTagList StudentId="@StudentId">
+            <h2>
+                &#x1F947; Acchieved Skills
+            </h2>
+            <SkillTagList StudentId="@StudentId">
 
-        </SkillTagList>
-    </Stack>
+            </SkillTagList>
+        </Stack>
+
+        <Stack Style="margin:10px">
+            <h2>
+                &#x1F517; External Links
+            </h2>
+            <SfButton CssClass="github github-logo image" OnClick="OnOpenGithubProfile">
+
+            </SfButton>
+        </Stack>
+
+        <Stack Style="margin:10px">
+            <SfButton CssClass="opencv-btn" Content="See Student's CV" OnClick="OnOpenCvUrl">
+
+            </SfButton>
+        </Stack>
     </Stack>
 </Stack>
 
 
 <style>
+    h2{
+        margin-top:18px;
+    }
+
+    .opencv-btn{
+        max-width: 200px;
+    }
+
+    .github.github-logo{
+        width: 70px;
+        height: 70px;
+    }
+
+    .github.github-logo.image{
+        background-image: url("https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png");
+        background-size: contain;
+    }
+
     .matching-pane{
         flex: 1;
     }
@@ -95,7 +129,8 @@
     }
 
     .e-avatar.image {
-        background-image: url("https://i.imgur.com/xQQXVYs_d.webp?maxwidth=760&fidelity=grand");
+        background-image: url("@(string.IsNullOrEmpty(States.ImgUrl) ? "https://i.imgur.com/WxNkK7J_d.webp" : States.ImgUrl)");
+        background-size: contain;
     }
 
     .e-avatar.e-avatar-xlarge{

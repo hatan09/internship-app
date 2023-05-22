@@ -99,6 +99,20 @@ namespace InternshipApp.Core.Database
                 entity.HasKey(js => new { js.SkillId, js.JobId });
             });
 
+            modelBuilder.Entity<InternGroup>(entity =>
+            {
+                entity.HasOne(ig => ig.Instructor)
+                    .WithOne(ins => ins!.InternGroup)
+                    .IsRequired(false)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasMany(ig => ig.Students)
+                    .WithOne(stu => stu!.InternGroup)
+                    .HasForeignKey(stu => stu.InternGroupId)
+                    .IsRequired(false)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+
             modelBuilder.Entity<Message>(entity =>
             {
                 entity.HasOne(msg => msg.User)

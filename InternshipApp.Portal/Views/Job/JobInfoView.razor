@@ -47,7 +47,7 @@
             </b>
         </h1>
         <h3> At @States.CompanyName</h3>
-        <SfButton Content=@(States.HasApplied ? "Already Applied" : "Apply Now") CssClass="apply-btn" OnClick="OnApply" Disabled="@States.HasApplied">
+        <SfButton Content=@(States.IsAllowedApply ? "Apply Now" : HasApplied ? "Job Applied" : "Cannot Apply") CssClass="apply-btn" OnClick="OnApply" Disabled="@(!States.IsAllowedApply)">
 
         </SfButton>
 
@@ -101,7 +101,7 @@
                     </h5>
                 </li>
                 <label>
-                        @States.Slots.ToString()
+                        @States.Remaining.ToString()
                 </label>
             </ul>
 
@@ -141,7 +141,7 @@
         color: black;
         background-color: #F8CECC
     }
-    .apply-btn:hover{
+    .apply-btn:not(:disabled):hover{
         font-size: larger;
         color: black;
         background-color: #FAD9D5

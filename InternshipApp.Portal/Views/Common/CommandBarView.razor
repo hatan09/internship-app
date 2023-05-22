@@ -49,6 +49,27 @@
             <SfButton IconCss="oi oi-script" CssClass="command-bar-button apply" OnClick="@ApplyListCallback" />
         </SfTooltip>
     }
+
+    @if (IsShowScoreButtonVisible)
+    {
+        <SfTooltip Content="Check progress">
+            <SfButton IconCss="oi oi-graph" CssClass="command-bar-button score" OnClick="@ShowScoreCallBack" />
+        </SfTooltip>
+    }
+
+    @if (IsFinishButtonVisible)
+    {
+        <SfTooltip Content="Finish intern program">
+            <SfButton IconCss="oi oi-circle-check" CssClass="command-bar-button finish" OnClick="@FinishCallback" />
+        </SfTooltip>
+    }
+
+    @if (IsViewResultButtonVisible)
+    {
+        <SfTooltip Content="View result">
+            <SfButton IconCss="oi oi-document" CssClass="command-bar-button result" OnClick="@ViewResultCallBack" />
+        </SfTooltip>
+    }
 </Stack>
 
 <style>
@@ -86,7 +107,19 @@
     }
 
     .oi-script.e-btn-icon {
-        color: gray;
+        color: steelblue;
+    }
+
+    .oi-graph.e-btn-icon {
+        color: forestgreen;
+    }
+
+    .oi-circle-check.e-btn-icon {
+        color: yellow;
+    }
+
+    .oi-circle-document.e-btn-icon {
+        color: white;
     }
 
     .command-bar-button{

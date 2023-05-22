@@ -1,6 +1,9 @@
-﻿using InternshipApp.Core.Entities;
+﻿using Blazored.LocalStorage;
+using InternshipApp.Contracts;
+using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 using RCode;
 using Wave5.UI;
@@ -11,15 +14,22 @@ namespace InternshipApp.Portal.Views;
 public partial class InfoView
 {
     #region [ Fields ]
+    public bool IsAdminViewing { get; set; }
 
+    public bool IsTeacherViewing { get; set; }
+
+    public bool IsHired { get; set; }
+
+    public bool IsModalOpen { get; set; }
+
+    public List<string> StudentIds { get; set; }
+
+    public PopupContext PopupContext { get; set; }
     #endregion
 
     #region [ Properties - Parameter ]
     [Parameter]
     public string StudentId { get; set; }
-
-    [Parameter]
-    public bool IsStudent { get; set; } = false;
     #endregion
 
     #region [ Properties - Inject ]
@@ -28,6 +38,18 @@ public partial class InfoView
 
     [Inject]
     public StudentManager Students { get; set; }
+
+    [Inject]
+    public IJobRepository Jobs { get; set; }
+
+    [Inject]
+    public IEvaluationRepository Evaluations { get; set; }
+
+    [Inject]
+    public ICompanyRepository Companies { get; set; }
+
+    [Inject]
+    public ILocalStorageService LocalStorage { get; set; }
 
     [Inject]
     public IJSRuntime JSRuntime { get; private set; }
@@ -60,6 +82,23 @@ public partial class InfoView
             await this.LoadDataAsync();
         }
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var role = await LocalStorage.GetItemAsStringAsync("role");
+        if (role.Contains("INSTRUCTOR"))
+        {
+            IsTeacherViewing = true;
+        }
+        else if (role.Contains("ADMIN"))
+        {
+            IsAdminViewing = true;
+        }
+        if(firstRender) {
+            StateHasChanged();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
     #endregion
 
     #region [ Private Methods - Data ]
@@ -69,15 +108,31 @@ public partial class InfoView
 
         try
         {
-            var item = await this.Students.FindByIdAsync(this.StudentId);
+            var student = await this.Students.FindAll(x => x.Id == StudentId).AsNoTracking().Include(x => x.StudentJobs.Where(x => x.Status == ApplyStatus.HIRED)).FirstOrDefaultAsync();
 
-            if (item is null)
+            if (student is null)
             {
                 this.States = null;
                 return;
             }
 
-            this.States = item.ToDetailsViewStates();
+            this.States = student.ToDetailsViewStates();
+
+            if(student.Stat == Stat.HIRED)
+            {
+                IsHired = true;
+                var studentJob = student.StudentJobs.FirstOrDefault();
+                if(studentJob != null)
+                {
+                    var job = await Jobs.FindAll(x => x.Id == (studentJob.JobId?? 0)).AsNoTracking().Include(x => x.Company).FirstOrDefaultAsync();
+                    if(job != null)
+                    {
+                        States.JobName = job.Title;
+                        States.CompanyName = job.Company?.Title;
+                    }
+                }
+            }
+
         }
         catch (Exception ex)
         {
@@ -132,6 +187,54 @@ public partial class InfoView
     public async void OnSendEmail()
     {
 
+    }
+
+    public void OnShowScore()
+    {
+        PopupContext = new() { 
+            IsOpen = true,
+            StudentId = StudentId
+        };
+    }
+
+    public async Task OnFinish()
+    {
+        var student = await Students.FindAll(x => x.Id == States.Id).Include(x => x.StudentJobs).AsTracking().FirstOrDefaultAsync();
+        if(student == null)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Can't mark as finished");
+            return;
+        }
+
+        var evaluations = await Evaluations.FindByStudentAsync(student.Id);
+        var score = evaluations.Average(x => x.Score);
+
+        student.Stat = Stat.FINISHED;
+        student.Score = (int) score;
+        student.StudentJobs.Clear();
+
+        var result = await Students.UpdateAsync(student);
+        if(!result.Succeeded)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Can't mark as finished");
+            return;
+        }
+        await LoadDataAsync();
+    }
+
+    public void OnToggleModal()
+    {
+        StudentIds = new()
+        {
+            States.Id
+        };
+        IsModalOpen = !IsModalOpen;
+    }
+
+    public async void OnUpdatedCallBack()
+    {
+        IsModalOpen = false;
+        await LoadDataAsync();
     }
 
     public async void OnOpenGithubProfile()

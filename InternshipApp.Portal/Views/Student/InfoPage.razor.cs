@@ -25,7 +25,7 @@ public partial class InfoPage
     {
         if(firstRender)
         {
-            var role = await StorageService.GetItemAsync<string>("role");
+            var role = await StorageService.GetItemAsStringAsync("role");
             if (role == "STUDENT") IsStudent = true;
 
             StateHasChanged();

@@ -7,6 +7,8 @@ public class BaseStudentViewStates : BaseViewModel
 {
     #region [ Fields ]
     private string _id;
+    private int _internGroupId;
+    private string _internGroupName;
     private string _studentId;
     private string _name;
     private int _year;
@@ -21,6 +23,8 @@ public class BaseStudentViewStates : BaseViewModel
     private string _imgUrl;
     private string _gitUrl;
     private string _cVUrl;
+    private string _jobName;
+    private string _companyName;
     #endregion
 
     #region [ CTor ]
@@ -34,6 +38,18 @@ public class BaseStudentViewStates : BaseViewModel
     {
         get { return this._id; }
         set { this.SetProperty(ref this._id, value); }
+    }
+
+    public int InternGroupId
+    {
+        get { return this._internGroupId; }
+        set { this.SetProperty(ref this._internGroupId, value); }
+    }
+
+    public string InternGroupName
+    {
+        get { return this._internGroupName; }
+        set { this.SetProperty(ref this._internGroupName, value); }
     }
 
     public string StudentId
@@ -118,6 +134,18 @@ public class BaseStudentViewStates : BaseViewModel
     {
         get { return this._cVUrl; }
         set { this.SetProperty(ref this._cVUrl, value); }
+    }
+
+    public string JobName
+    {
+        get { return this._jobName; }
+        set { this.SetProperty(ref this._jobName, value); }
+    }
+
+    public string CompanyName
+    {
+        get { return this._companyName; }
+        set { this.SetProperty(ref this._companyName, value); }
     }
     #endregion
 }

@@ -1,4 +1,5 @@
 ﻿@namespace InternshipApp.Portal.Views
+@using InternshipApp.Core.Entities;
 @using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.Buttons
 @using Wave5.UI
@@ -11,24 +12,78 @@
     <Stack>
         <h1>
             @States.Name
+            @if (IsTeacherViewing)
+            {
+                <span> (@States.StudentId)</span>
+            }
         </h1>
     </Stack>
-    <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnChat"/>
+
+    @if (IsAdminViewing && States.InternGroupId < 1)
+    {
+        <label>
+            <mark style="background-color: #FFFF00"><i>*This student is not added to any intern group!</i></mark>
+        </label>
+        <br />
+        <SfButton Content="Add to a group" OnClick="OnToggleModal">
+
+        </SfButton>
+        <br />
+    }
+
+    @if (IsTeacherViewing && IsHired)
+    {
+        <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" ShowScoreCallBack="OnShowScore" FinishCallback="OnFinish"/>
+    }
+    else
+    {
+        <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail"/>
+    }
 </Stack>
 
 <Stack Style="margin:10px">
     <Stack Style="margin:10px">
         <h2>
-            Introduction
+            &#x1F44B; Introduction
         </h2>
         <label>
             @States.Bio
         </label>
     </Stack>
 
+    @if (IsTeacherViewing)
+    {
+        <Stack Style="margin:10px">
+            <h2>
+                &#x2705; Status
+            </h2>
+            <label>
+                @States.Status
+            </label>
+            @if (IsHired)
+            {
+                <br />
+                <Stack Style="margin-left:28px;">
+                    <h5>
+                        <b>Working for</b>
+                    </h5>
+                    <label>
+                        @States.CompanyName
+                    </label>
+                    <h5>
+                        <b>In position</b>
+                    </h5>
+                    <label>
+                        @States.JobName
+                    </label>
+                </Stack>
+            }
+        </Stack>
+    }
+
     <Stack Style="margin:10px">
         <h2>
-            Education
+            &#x1F4D6; Education
         </h2>
         <label>
             International University, HCM National University
@@ -43,7 +98,7 @@
 
     <Stack Style="margin:10px">
         <h2>
-            Acchieved Skills
+            &#x1F947; Acchieved Skills
         </h2>
         <SkillTagList StudentId="@States.Id">
 
@@ -52,7 +107,7 @@
 
     <Stack Style="margin:10px">
         <h2>
-            External Links
+            &#x1F517; External Links
         </h2>
         <SfButton CssClass="github github-logo image" OnClick="OnOpenGithubProfile">
 
@@ -66,8 +121,29 @@
     </Stack>
 </Stack>
 
+<PopupView IsShowScoreView=true Context=@PopupContext />
+
+<SfDialog Height="30%" Width="30%" Target="#target" ShowCloseIcon="true" @bind-Visible="IsModalOpen">
+    <DialogTemplates>
+        <Header>
+            <div>Select Intern Group</div>
+        </Header>
+        <Content>
+            <ChooseGroupView StudentIds=@StudentIds UpdateCallBack="OnUpdatedCallBack">
+
+            </ChooseGroupView>
+        </Content>
+        <FooterTemplate>
+            <div>International University - Internship App</div>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
 
 <style>
+    h2{
+        margin-top:18px;
+    }
+
     .opencv-btn{
         max-width: 200px;
     }

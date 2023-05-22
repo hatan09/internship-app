@@ -11,6 +11,6 @@ public class EvaluationRepository : BaseRepository<Evaluation>, IEvaluationRepos
     {
     }
 
-    public Task<Evaluation?> FindByStudentAsync(string studentId)
-        => FindAll(x => x.StudentId == studentId).FirstOrDefaultAsync();
+    public Task<List<Evaluation>> FindByStudentAsync(string studentId)
+        => FindAll(x => x.StudentId == studentId).ToListAsync();
 }

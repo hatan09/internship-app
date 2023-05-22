@@ -3,6 +3,7 @@ using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.JSInterop;
 using Wave5.UI;
 
 namespace InternshipApp.Portal.Views;
@@ -11,9 +12,21 @@ public partial class Home
 {
     public bool Visible { get; set; }
 
+    public bool IsLogin { get; set; } = true;
+
+    public string StudentId { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+
     public string Username { get; set; }
 
     public string Password { get; set; }
+
+    public int Year { get; set; }
+    public double GPA { get; set; }
+    public int Credits { get; set; }
+
+    public string LoginMsg { get; set; }
 
     public User LoginUser { get; set; }
     public string Role { get; set; }
@@ -22,10 +35,19 @@ public partial class Home
     public ILocalStorageService LocalStorage { get; set; }
 
     [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+
+    [Inject]
     public UserManager Users { get; private set; }
 
     [Inject]
+    public StudentManager Students { get; private set; }
+
+    [Inject]
     public SignInManager<User> SignInManager { get; private set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; private set; }
 
     #region [ Protected Override Methods - Page ]
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -56,13 +78,48 @@ public partial class Home
         
         await base.OnAfterRenderAsync(firstRender);
     }
+
+    private void OnStudentIdChanged(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        var value = args.Value.ToString();
+        if (!string.IsNullOrEmpty(value))
+        {
+            StudentId = value;
+            Username = value;
+            StateHasChanged();
+        }
+    }
     #endregion
 
     #region [ Methods - Login ]
+    public void ToggleRegister()
+    {
+        LoginMsg = "";
+        IsLogin = !IsLogin;
+        StateHasChanged();
+    }
+
+    public void ToggleLogin()
+    {
+        IsLogin = true;
+        Visible = !Visible;
+        StateHasChanged();
+    }
+
     public async void OnLoginButtonClicked(EventArgs args)
     {
         var result = await Login();
         Visible = !result;
+        if (result)
+        {
+            NavigationManager.NavigateTo("/", result);
+        }
+    }
+
+    public async void OnRegisterButtonClicked(EventArgs args)
+    {
+        var result = await Register();
+        IsLogin = result;
         StateHasChanged();
     }
 
@@ -71,12 +128,14 @@ public partial class Home
         var user = await Users.FindByNameAsync(Username);
         if(user == null)
         {
+            LoginMsg = "Username or password is incorrect";
             return false;
         }
 
         var passwordCheck = await SignInManager.CheckPasswordSignInAsync(user, Password, false);
         if (!passwordCheck.Succeeded)
         {
+            LoginMsg = "Username or password is incorrect";
             return false;
         }
 
@@ -85,6 +144,7 @@ public partial class Home
 
         LoginUser = user;
         await LocalStorage.SetItemAsync("login-user-info", user);
+        ResetForm();
         return true;
     }
 
@@ -110,6 +170,66 @@ public partial class Home
             await this.LocalStorage.SetItemAsStringAsync("role", "GUEST");
             return "GUEST";
         }
+    }
+
+    private async Task<bool> Register()
+    {
+        var student = new Student() { 
+            FullName = this.Name,
+            StudentId = this.StudentId,
+            Email = this.Email,
+            Year = this.Year,
+            Credit = this.Credits,
+            GPA = this.GPA,
+            UserName = this.Username,
+            Stat = Stat.WAITING
+        };
+        var result = await Students.CreateAsync(student);
+        if(!result.Succeeded)
+        {
+            LoginMsg = "Can't create user";
+            StateHasChanged();
+            return false;
+        }
+
+        result = await Students.AddPasswordAsync(student, this.Password);
+        if (!result.Succeeded)
+        {
+            LoginMsg = "Can't provide user with password";
+            StateHasChanged();
+            return false;
+        }
+
+        result = await Students.AddToRoleAsync(student, "student");
+        if (!result.Succeeded)
+        {
+            LoginMsg = "Can't add role";
+            StateHasChanged();
+            return false;
+        }
+
+        await this.JSRuntime.InvokeVoidAsync("alert", "Account Created!");
+        ResetForm();
+        return true;
+    }
+
+    private void OnResetRegForm()
+    {
+        ResetForm();
+        Username = "";
+        StateHasChanged();
+    }
+
+    private void ResetForm()
+    {
+        StudentId = "";
+        Name = "";
+        Email = "";
+        Password = "";
+        Year = 0;
+        GPA = 0;
+        Credits = 0;
+        LoginMsg = "";
     }
     #endregion
 }

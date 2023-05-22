@@ -1,0 +1,19 @@
+﻿@namespace InternshipApp.Portal.Views
+
+@using Wave5.UI.DataGrids
+@using Wave5.UI
+@using Wave5.UI.Forms;
+
+<Panel IsOpen=@(IsOpen)
+        ShowCloseButton=@true
+        HeaderText="Form"
+        IsLightDismiss=@true
+        PanelType=PanelType.Small
+        OnDismissed=@OnPanelDismissed>
+
+   <PanelContentTemplate>
+        <InternGroupFormView FormRequest="@FormRequest" 
+            FormResultCallback="OnFormResultReceived"/>
+   </PanelContentTemplate>
+
+</Panel>

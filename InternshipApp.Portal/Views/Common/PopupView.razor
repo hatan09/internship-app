@@ -1,19 +1,46 @@
 ﻿@namespace InternshipApp.Portal.Views
 @using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Buttons
 
 <SfDialog Height="50%" Width="50%" Target="#target" ShowCloseIcon="true" @bind-Visible="Visible">
-    <DialogTemplates>
-        <Header>
-            <div>Edit Skills</div>
-        </Header>
-        <Content>
-            <EditableStudentSkillListView StudentId="@StudentId">
+    @if (IsEditSkillView)
+    {
+        <DialogTemplates>
+            <Header>
+                <div>Edit Skills</div>
+            </Header>
+            <Content>
+                <EditableStudentSkillListView StudentId="@Context.StudentId">
 
-            </EditableStudentSkillListView>
-        </Content>
-        <FooterTemplate>
-            <div>International University - Internship App</div>
-        </FooterTemplate>
-    </DialogTemplates>
-    @*<DialogEvents OnOpen="@BeforeDialogOpen" Closed="@DialogClosed"></DialogEvents>*@
+                </EditableStudentSkillListView>
+            </Content>
+            <FooterTemplate>
+                <div>*Notes: Unfocus an adjusted field will automatically update that row</div>
+            </FooterTemplate>
+        </DialogTemplates>
+    }
+    else if (IsShowScoreView)
+    {
+        <DialogTemplates>
+            <Header>
+                <div>Student's Reports From @Context.CompanyName</div>
+            </Header>
+            <Content>
+                <ManageEvaluationListView StudentId=@Context.StudentId>
+
+                </ManageEvaluationListView>
+            </Content>
+            <FooterTemplate>
+                <div>
+                    <SfButton Content="Finish Intern" OnClick=@OnFinishButtonClicked >
+                        
+                    </SfButton>
+                </div>
+            </FooterTemplate>
+        </DialogTemplates>
+    }
 </SfDialog>
+
+<style>
+
+</style>

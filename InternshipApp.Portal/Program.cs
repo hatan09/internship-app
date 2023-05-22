@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.JSInterop;
 using Services;
 using Syncfusion.Blazor;
 
@@ -101,9 +102,10 @@ builder.Services.AddTransient<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddTransient<IInternGroupRepository, InternGroupRepository>();
 builder.Services.AddTransient<ISkillRepository, SkillRepository>();
 builder.Services.AddTransient<IJobRepository, JobRepository>();
-builder.Services.AddTransient<IMatchingService, MatchingService>();
 builder.Services.AddTransient<IEvaluationRepository, EvaluationRepository>();
 builder.Services.AddTransient<ISkillScoreRepository, SkillScoreRepository>();
+builder.Services.AddTransient<IMatchingService, MatchingService>();
+builder.Services.AddTransient<IInternGroupServices, InternGroupServices>();
 
 //Services
 //builder.Services.AddTransient<IEmailService, EmailService>();

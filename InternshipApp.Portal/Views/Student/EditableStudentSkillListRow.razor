@@ -11,6 +11,7 @@
     <Stack VerticalAlign="Wave5.UI.Alignment.Start" Style="margin:5px">
         <FluentCombobox Id="skillCombobox"
                         Autocomplete="ComboboxAutocomplete.Both"
+                        Position=SelectPosition.Below
                         style="min-width: 0px"
                         Options=States.SkillOptions()
                         @bind-Value=@States.SelectedSkill
@@ -21,6 +22,7 @@
         <Stack HorizontalAlign="Wave5.UI.Alignment.Center" Style="margin:5px">
             <FluentCombobox Id="levelCombobox"
                             Autocomplete="ComboboxAutocomplete.Both"
+                            Position=SelectPosition.Below
                             style="min-width: 0px"
                             Options="@States.LevelOptions()"
                             @bind-Value="@States.SelectedLevel"
@@ -42,7 +44,7 @@
     <Stack VerticalAlign="Wave5.UI.Alignment.Center">
         <FluentDataGridCell GridColumn=3>
             <FluentButton @onclick=@(this.FormRequest?.Action == FormAction.Add?  OnAdd : OnDelete)>
-                @(this.FormRequest?.Action == FormAction.Add ? "Add" : "Delete")
+                @(this.FormRequest?.Action == FormAction.Add ? "Add" : "Remove")
             </FluentButton>
         </FluentDataGridCell>
     </Stack>

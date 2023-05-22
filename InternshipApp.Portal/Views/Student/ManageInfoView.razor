@@ -1,4 +1,5 @@
 ﻿@namespace InternshipApp.Portal.Views
+@using InternshipApp.Core.Entities;
 @using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.Buttons
 @using Wave5.UI
@@ -13,10 +14,40 @@
             @States.Name
         </h1>
     </Stack>
-    <CommandBarView EditCallback="OnEdit" ApplyListCallback="OnOpenApplyList"/>
+
+    @if (States.InternGroupId < 1)
+    {
+        <label>
+            <mark style="background-color: #FFFF00"><i>*You are not added to any intern group!</i></mark>
+        </label>
+        <label>
+            <mark style="background-color: #FFFF00">Please wait until the manager from your department add this account to an intern group to finish the registration process, then you can apply for jobs.</mark>
+        </label>
+    }
+
+    @if(IsFinished)
+    {
+        <CommandBarView ViewResultCallBack="OnViewResult"/>
+    }
+    else
+    {
+        <CommandBarView EditCallback="OnEdit" ApplyListCallback="OnOpenApplyList"/>
+    }
 </Stack>
 
 <Stack Style="margin:10px">
+    @if (IsFinished)
+    {
+        <Stack Style="margin:10px;background-color:#FFFF00;" HorizontalAlign="Wave5.UI.Alignment.Center">
+            <h2>
+                &#x1F38A Congratulation on your success of finishing internship program at International University! &#x1F389
+            </h2>
+            <h4>
+                You can now click the "View Result" button on Command Bar above to see your progress so far.
+            </h4>
+        </Stack>
+    }
+
     <Stack Style="margin:10px">
         <h2>
             Introduction
@@ -68,7 +99,7 @@
 
 <StudentInfoFormPanel FormRequest="StudentFormRequest" FormResultCallback="OnFormResultReceived"/>
 
-<PopupView IsEditSkillView=true StudentId="@States.Id" Context=PopupContext />
+<PopupView IsEditSkillView=true Context=PopupContext />
 
 <style>
     .opencv-btn {

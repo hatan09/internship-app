@@ -11,7 +11,7 @@ namespace InternshipApp.Portal.Views;
 public partial class ManageInfoView
 {
     #region [ Fields ]
-
+    public bool IsFinished { get; set; }
     #endregion
 
     #region [ Properties - Parameter ]
@@ -93,7 +93,7 @@ public partial class ManageInfoView
                 this.States = null;
                 return;
             }
-
+            IsFinished = item.Stat == Stat.FINISHED;
             this.States = item.ToDetailsViewStates();
         }
         catch (Exception ex)
@@ -148,7 +148,10 @@ public partial class ManageInfoView
 
     public void OnEditSkill()
     {
-        this.PopupContext = new() { IsOpen= true };
+        this.PopupContext = new() {
+            IsOpen = true,
+            StudentId = States.Id
+        };
         //StateHasChanged();
     }
 
@@ -161,6 +164,11 @@ public partial class ManageInfoView
     public void OnOpenApplyList()
     {
         this.NavigationManager.NavigateTo($"apply-status/{States.Id}");
+    }
+
+    public void OnViewResult()
+    {
+
     }
 
     public async void OnOpenGithubProfile()

@@ -45,6 +45,9 @@ public partial class ManageEvaluationListView
 
     #region [ Properties - States - DataList ]
     protected EvaluationListViewStates States { get; private set; }
+
+    protected double AverageScore { get; private set; }
+    protected PerformanceRank AveragePerformance { get; private set; }
     #endregion
 
     #region [ Protected Override Methods - Page ]
@@ -261,8 +264,43 @@ public partial class ManageEvaluationListView
             this.States.Items.Clear();
             this.StateHasChanged();
 
-            var evaluations = await Evaluations.FindAll(x => x.JobId == int.Parse(JobId) && x.StudentId == StudentId).AsNoTracking().ToListAsync();
-            States.Items = evaluations.ToListRowList();
+            if(!string.IsNullOrEmpty(StudentId))
+            {
+                var evaluations = await Evaluations.FindAll(x => x.StudentId == StudentId).AsNoTracking().ToListAsync();
+                States.Items = evaluations.ToListRowList();
+            }
+            else if (!string.IsNullOrEmpty(JobId))
+            {
+                var evaluations = await Evaluations.FindAll(x => x.JobId == int.Parse(JobId)).AsNoTracking().ToListAsync();
+                States.Items = evaluations.ToListRowList();
+            }
+
+            AverageScore = States.Items.Sum(x => x.Score) / States.Items.Count;
+            var totalPerformScore = States.Items.Sum(x => (long)Enum.Parse<PerformanceRank>(x.Performance));
+            var averagePerformScore = totalPerformScore / States.Items.Count;
+            if(totalPerformScore == 0)
+            {
+                AveragePerformance = PerformanceRank.AVERAGE;
+            }
+            else
+            {
+                if (averagePerformScore < 1)
+                {
+                    AveragePerformance = PerformanceRank.POOR;
+                }
+                else if (averagePerformScore < 2)
+                {
+                    AveragePerformance = PerformanceRank.AVERAGE;
+                }
+                else if (averagePerformScore < 3)
+                {
+                    AveragePerformance = PerformanceRank.GOOD;
+                }
+                else
+                {
+                    AveragePerformance = PerformanceRank.EXCELLENT;
+                }
+            }
 
             this.ListContext.GetKey = x => x.Id;
             this.ListContext.ItemsSource.Clear();

@@ -1,0 +1,38 @@
+﻿@namespace InternshipApp.Portal.Views
+
+@using Wave5.ProjectPortal.Views;
+@using Wave5.UI
+
+<Stack>
+    <DetailsCardContainer CommandBarContext=@CommandBarContext
+                          ContainerContext=@DetailsContainerContext
+                          Title="Manage InternGroup">
+
+        @if (States == null)
+        {
+            <span>No data found.</span>
+        }
+        else
+        {
+            <Stack Style="font-family: var(--body-font);"
+               Horizontal=@true
+               Tokens=@(new StackTokens { Padding="15px 10px" })>
+                <Stack Style="width:100%" Horizontal=false>
+
+                    <FormDetailsField Label="Title" Value=@(States.Title) />
+                </Stack>
+            </Stack>
+        }
+
+    </DetailsCardContainer>
+</Stack>
+
+<Stack Style="margin-top:10px">
+    <StudentListView InternGroupId="@States.Id">
+
+    </StudentListView>
+</Stack>
+
+<InternGroupFormViewPanel FormRequest="@InternGroupFormRequest" FormResultCallback="OnFormResultReceived">
+
+</InternGroupFormViewPanel>

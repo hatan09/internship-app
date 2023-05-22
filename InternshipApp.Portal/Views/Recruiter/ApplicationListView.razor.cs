@@ -8,6 +8,7 @@ using InternshipApp.Contracts;
 using InternshipApp.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.Web;
+using Blazored.LocalStorage;
 
 namespace InternshipApp.Portal.Views;
 
@@ -35,7 +36,13 @@ public partial class ApplicationListView : ComponentBase
     public StudentManager Students { get; set; }
 
     [Inject]
+    public RecruiterManager Recruiters { get; set; }
+
+    [Inject]
     public IMatchingService MatchingService { get; set; }
+
+    [Inject]
+    public ILocalStorageService LocalStorage { get; set; }
     #endregion
 
     #region [ Properties - States - Contexts ]
@@ -253,7 +260,19 @@ public partial class ApplicationListView : ComponentBase
     #region [ Private Methods - Data ]
     private async Task<int> GetCompanyId()
     {
-        return 1;
+        var user = await LocalStorage.GetItemAsync<User>("login-user-info");
+        if(user == null)
+        {
+            NavigationManager.NavigateTo("/", true);
+        }
+
+        var recruiter = await Recruiters.FindByIdAsync(user.Id);
+        if(recruiter == null)
+        {
+            return 1;
+        }
+
+        return recruiter.CompanyId?? 1;
     }
 
     private async Task LoadDataAsync()
@@ -276,6 +295,7 @@ public partial class ApplicationListView : ComponentBase
                 jobs = await Jobs.FindAll(x => x.CompanyId == companyId)
                                 .Include(x => x.StudentJobs
                                     .Where(x => x.Status != ApplyStatus.HIRED))
+                                .Include(x => x.JobSkills)
                                 .ToListAsync();
             }
             else
@@ -283,6 +303,7 @@ public partial class ApplicationListView : ComponentBase
                 jobs = await Jobs.FindAll(x => x.Id == int.Parse(JobId))
                                 .Include(x => x.StudentJobs
                                     .Where(x => x.Status != ApplyStatus.HIRED))
+                                .Include(x => x.JobSkills)
                                 .ToListAsync();
             }
             
@@ -295,6 +316,7 @@ public partial class ApplicationListView : ComponentBase
 
             States.Items = studentJobs.ToListRowList();
             var allStudents = await Students.FindAll(x => States.Items.Select(y => y.StudentId).Contains(x.Id))
+                                        .Include(x => x.StudentSkills)
                                         .ToListAsync();
 
             var allSkillScores = await SkillScores.FindAll().AsNoTracking().ToListAsync();

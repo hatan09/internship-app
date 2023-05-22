@@ -1,5 +1,6 @@
 ﻿@namespace InternshipApp.Portal.Views
 @using Wave5.UI.Forms;
+@using Syncfusion.Blazor.Inputs;
 
 <Stack ClassName="formContainer">
 
@@ -9,13 +10,13 @@
         <FormFieldsContainer>
             <h2> Basic Info </h2>
             <Stack ClassName="formFieldContainer">
-                <FluentTextField @bind-Value=@this.States.Name>
+                <FluentTextField @bind-Value=@this.States.Name Required>
                     <label>Full Name</label>
                 </FluentTextField>
             </Stack>
 
             <Stack ClassName="formFieldContainer">
-                <FluentTextField @bind-Value=@this.States.StudentId>
+                <FluentTextField @bind-Value=@this.States.StudentId Required>
                     <label>Student Id</label>
                 </FluentTextField>
             </Stack>
@@ -39,7 +40,7 @@
             </Stack>
             
             <Stack ClassName="formFieldContainer">
-                <FluentTextField @bind-Value=@this.States.Password TextFieldType="TextFieldType.Password" Disabled=@(FormRequest?.Action == FormAction.Edit)>
+                <FluentTextField @bind-Value=@this.States.Password TextFieldType="TextFieldType.Password" Disabled=@(FormRequest?.Action == FormAction.Edit) Required>
                     <label>Password</label>
                 </FluentTextField>
             </Stack>
@@ -47,15 +48,19 @@
 
             <h2> Detailed Info </h2>
             <Stack ClassName="formFieldContainer">
-                <FluentNumberField @bind-Value=@this.States.Credits>
-                    <label>Acchieved Credits</label>
-                </FluentNumberField>
+                <label for="credits">
+                    Acchieved Credits
+                </label>
+                <SfNumericTextBox TValue="int" @bind-Value=@States.Credits ID="credits"> 
+                </SfNumericTextBox>
             </Stack>
 
             <Stack ClassName="formFieldContainer">
-                <FluentNumberField @bind-Value=@this.States.Gpa>
-                    <label>Gpa</label>
-                </FluentNumberField>
+                <label for="gpa">
+                    Acchieved Gpa
+                </label>
+                <SfNumericTextBox TValue="double" @bind-Value=@States.Gpa ID="gpa">
+                </SfNumericTextBox>
             </Stack>
 
             <Stack ClassName="formFieldContainer">

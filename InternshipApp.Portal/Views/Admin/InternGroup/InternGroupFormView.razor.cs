@@ -1,45 +1,45 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components;
-using Wave5.UI.Forms;
-using Wave5.UI;
+﻿using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
-using InternshipApp.Core.Entities;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
+using Wave5.UI.Forms;
+using InternshipApp.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
 
-public partial class StudentInfoFormView
+public partial class InternGroupFormView
 {
     #region [ Properties - Inject ]
     [Inject]
-    public StudentManager Students { get; private set; }
+    public InstructorManager Instructors { get; set; }
 
     [Inject]
-    public RoleManager<Role> Roles { get; private set; }
+    public IInternGroupRepository InternGroups { get; private set; }
 
     #endregion
 
     #region [ Properties - Parameters ]
     [EditorRequired]
     [Parameter]
-    public FormRequest<FormAction, Student> FormRequest { get; set; }
+    public FormRequest<FormAction, InternGroup> FormRequest { get; set; }
 
     [EditorRequired]
     [Parameter]
-    public EventCallback<FormResult<Student>> FormResultCallback { get; set; }
+    public EventCallback<FormResult<InternGroup>> FormResultCallback { get; set; }
     #endregion
 
     #region [ Properties - Data ]
     protected EditContext Context { get; private set; }
 
-    protected StudentFormViewStates States { get; private set; }
+    protected InternGroupFormViewStates States { get; private set; }
     #endregion
 
     #region [ Event Handlers - Override ]
     protected override async Task OnInitializedAsync()
     {
-        this.States = new();
+        this.States = new InternGroupFormViewStates();
         this.Context = new EditContext(this.States);
 
         await base.OnInitializedAsync();
@@ -47,7 +47,7 @@ public partial class StudentInfoFormView
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        var newFormRequest = parameters.GetValueOrDefault<FormRequest<FormAction, Student>>(nameof(this.FormRequest));
+        var newFormRequest = parameters.GetValueOrDefault<FormRequest<FormAction, InternGroup>>(nameof(this.FormRequest));
         var currentFormRequest = this.FormRequest;
 
         await base.SetParametersAsync(parameters);
@@ -70,11 +70,11 @@ public partial class StudentInfoFormView
     #region [ Event Handlers - Form ]
     private void OnFieldChanged(object sender, FieldChangedEventArgs e)
     {
-        if (e.FieldIdentifier.FieldName.Equals(nameof(States.StudentId)))
+        if (e.FieldIdentifier.FieldName.Equals(nameof(States.InstructorName)))
         {
-            if(string.IsNullOrWhiteSpace(States.Username) && !string.IsNullOrWhiteSpace(States.StudentId))
+            if (string.IsNullOrWhiteSpace(States.Title) && !string.IsNullOrWhiteSpace(States.InstructorName))
             {
-                States.Username = States.StudentId;
+                States.Title = States.InstructorName + "_Group";
             }
         }
         this.StateHasChanged();
@@ -84,18 +84,11 @@ public partial class StudentInfoFormView
     {
         switch (this.FormRequest.Action)
         {
-            case FormAction.Add:
-                await AddedAsync();
-                break;
             case FormAction.Edit:
-                if (!this.Context.IsModified())
-                {
-                    await this.CanceledAsync();
-                }
-                else
-                {
-                    await this.UpdatedAsync();
-                }
+                await this.UpdatedAsync();
+                break;
+            case FormAction.Add:
+                await this.AddedAsync();
                 break;
         }
     }
@@ -111,22 +104,23 @@ public partial class StudentInfoFormView
     {
         try
         {
-            var student = await Students.FindAll(x => x.Id == FormRequest.Data.Id).AsNoTracking().FirstOrDefaultAsync();
-            if(student != null)
-            {
-                States = student.ToFormViewStates();
-            }
+            this.States = this.FormRequest.Data.ToFormViewStates();
 
             switch (this.FormRequest.Action)
             {
                 case FormAction.Add:
                     {
-                        States = FormRequest.Data.ToFormViewStates();
+                        var allInstructors = await Instructors.FindAll(x => x.InternGroup == null).AsNoTracking().ToListAsync();
+                        States.Instructors.AddRange(allInstructors!);
                         break;
                     }
                 case FormAction.Edit:
                     {
-                        // Edit action logic
+                        var instructor = await Instructors.FindByIdAsync(States.InstructorId);
+                        if(instructor != null)
+                        {
+                            States.InstructorName = instructor.FullName;
+                        }
                         break;
                     }
                 case FormAction.Delete:
@@ -154,25 +148,17 @@ public partial class StudentInfoFormView
     {
         try
         {
-            States.Status = Stat.WAITING.ToString();
-            var student = States.ToEntity();
-            //student.Id = Guid.NewGuid().ToString();
-            var result = await Students.CreateAsync(student, States.Password);
-            if (!result.Succeeded)
-            {
-                return;
-            }
+            this.FormRequest.Data = this.States.ToEntity();
+            var insId = States.GetSelectedInstructorId();
+            this.FormRequest.Data.InstructorId = insId;
+            this.InternGroups.Add(this.FormRequest.Data);
+            await InternGroups.SaveChangesAsync();
 
-            result = await Students.AddToRoleAsync(student, "student");
-            if (!result.Succeeded)
-            {
-                return;
-            }
-
-            await this.InvokeFormResultCallbackAsync(FormResultState.Updated);
+            await this.InvokeFormResultCallbackAsync(FormResultState.Added);
         }
         catch (Exception ex)
         {
+
         }
         finally
         {
@@ -183,28 +169,18 @@ public partial class StudentInfoFormView
     {
         try
         {
-            var student = await Students.FindAll(x => x.Id == FormRequest.Data.Id).AsTracking().FirstOrDefaultAsync();
-            
-            if (student != null)
-            {
-                student.Credit = States.Credits;
-                student.GPA = States.Gpa;
-                student.Bio = States.Bio;
-                student.Email = States.Email;
-                student.Year = States.Year;
-                student.GitProfileUrl = States.GitUrl;
-                student.CVUrl = States.CVUrl;
-                student.ImgUrl = States.ImgUrl;
-            }
-            await this.Students.UpdateAsync(student);
+            this.FormRequest.Data = this.States.ToEntity();
+            this.InternGroups.Update(FormRequest.Data);
+            await InternGroups.SaveChangesAsync();
 
-            await this.InvokeFormResultCallbackAsync(FormResultState.Updated);
+            await this.InvokeFormResultCallbackAsync(FormResultState.Added);
         }
         catch (Exception ex)
         {
+
         }
         finally
-        { 
+        {
         }
     }
 
@@ -215,21 +191,10 @@ public partial class StudentInfoFormView
 
     private void Reset()
     {
-        this.States = new Student().ToFormViewStates();
+        this.States = new InternGroup().ToFormViewStates();
         this.Context = new EditContext(this.States);
 
         this.StateHasChanged();
-    }
-
-    private void OnGpaChanged(ChangeEventArgs args)
-    {
-        var value = args.Value.ToString();
-        var isDouble = double.TryParse(value, out var doubleValue);
-        if(isDouble)
-        {
-            this.States.Gpa = doubleValue;
-        }
-        StateHasChanged();
     }
     #endregion
 

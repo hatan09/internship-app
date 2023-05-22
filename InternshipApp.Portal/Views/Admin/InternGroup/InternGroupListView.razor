@@ -1,0 +1,40 @@
+﻿@using Wave5.UI.DataGrids
+@using Wave5.UI
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Buttons
+
+@namespace InternshipApp.Portal.Views
+
+<DetailsListContainer ContainerContext=@ListContainerContext
+                      CommandBarContext=@CommandBarContext
+                      SearchContext=@SearchContext
+                      TItem="InternGroupListRowViewStates"
+                      Title="@(IsTeacherViewing?"Manage Your Groups":"Manage Intern Groups")">
+
+    <DetailsList DetailsListContext=@ListContext />
+
+</DetailsListContainer>
+
+<InternGroupFormViewPanel FormRequest="InternGroupFormRequest" FormResultCallback="@OnFormResultReceived"> 
+
+</InternGroupFormViewPanel>
+
+<SfDialog Height="30%" Width="40%" Target="#target" ShowCloseIcon="true" @bind-Visible="IsModalOpen">
+    <DialogTemplates>
+        <Header>
+            <div>Create Group Options</div>
+        </Header>
+        <Content>
+            <FluentNumberField TValue="@int" @bind-Value=@MaxAmount>
+                <label>
+                    Max amout of students per group
+                </label>
+            </FluentNumberField>
+            <br />
+            <SfButton Content="Proceed" OnClick="@AutoCreateAndAssign"/>
+        </Content>
+        <FooterTemplate>
+            <div>*Notes: Exessive Students must be added manually. Let Max Amount = 0 to automatically create and add all existing students.</div>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>

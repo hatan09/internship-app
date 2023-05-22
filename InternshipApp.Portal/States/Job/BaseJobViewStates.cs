@@ -10,6 +10,7 @@ public class BaseJobViewStates : BaseViewModel
     private int _credit;
     private double _gpa;
     private int _slots;
+    private int _remaining;
     private string _title;
     private int _year;
     private string _description;
@@ -17,7 +18,7 @@ public class BaseJobViewStates : BaseViewModel
     private double _matching;
     private List<JobSkill> _jobSkills;
     private List<Skill> _skills;
-    private bool _hasApplied;
+    private bool _isAllowedApply;
     private string _address;
 
     #endregion
@@ -47,6 +48,12 @@ public class BaseJobViewStates : BaseViewModel
     {
         get { return this._gpa; }
         set { this.SetProperty(ref this._gpa, value); }
+    }
+
+    public int Remaining
+    {
+        get { return this._remaining; }
+        set { this.SetProperty(ref this._remaining, value); }
     }
 
     public int Slots
@@ -97,10 +104,10 @@ public class BaseJobViewStates : BaseViewModel
         set { this.SetProperty(ref this._skills, value); }
     }
 
-    public bool HasApplied
+    public bool IsAllowedApply
     {
-        get { return this._hasApplied; }
-        set { this.SetProperty(ref this._hasApplied, value); }
+        get { return this._isAllowedApply; }
+        set { this.SetProperty(ref this._isAllowedApply, value); }
     }
 
     public string Address

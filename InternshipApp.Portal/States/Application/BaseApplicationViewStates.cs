@@ -108,5 +108,26 @@ public class BaseApplicationViewStates : BaseViewModel
         get { return this._companyName; }
         set { this.SetProperty(ref this._companyName, value); }
     }
+
+    private string _gitHubUrl;
+    public string GitHubUrl
+    {
+        get { return this._gitHubUrl; }
+        set { this.SetProperty(ref this._gitHubUrl, value); }
+    }
+
+    private string _cvUrl;
+    public string CvUrl
+    {
+        get { return this._cvUrl; }
+        set { this.SetProperty(ref this._cvUrl, value); }
+    }
+
+    private string _imgUrl;
+    public string ImgUrl
+    {
+        get { return this._imgUrl; }
+        set { this.SetProperty(ref this._imgUrl, value); }
+    }
     #endregion
 }

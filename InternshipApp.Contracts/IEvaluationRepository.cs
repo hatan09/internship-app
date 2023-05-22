@@ -4,5 +4,5 @@ namespace InternshipApp.Contracts;
 
 public interface IEvaluationRepository : IBaseRepository<Evaluation>
 {
-    public Task<Evaluation?> FindByStudentAsync(string studentId);
+    public Task<List<Evaluation>> FindByStudentAsync(string studentId);
 }

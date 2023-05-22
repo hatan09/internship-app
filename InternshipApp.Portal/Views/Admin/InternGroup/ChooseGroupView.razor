@@ -1,0 +1,21 @@
+﻿@namespace InternshipApp.Portal.Views
+@using Syncfusion.Blazor.Buttons
+
+<Stack>
+    
+    <FluentTextField Readonly @bind-Value=@NoStudents>
+        <label>Number of students to be added</label>
+    </FluentTextField>
+
+    <label for="groupCombobox">Group Title (current amount of students in group)</label>
+    <FluentCombobox Id="groupCombobox"
+        Autocomplete=@ComboboxAutocomplete.Both
+        Position=@SelectPosition.Below
+        @bind-Value=@SelectedGroupName
+        Options=@GroupOptions() />
+
+    <Stack Style="max-width:100px;margin-top:12px;">
+        <SfButton Content="Add" OnClick=@OnAddButtonClicked/>
+
+    </Stack>
+</Stack>

@@ -1,8 +1,10 @@
-﻿using InternshipApp.Core.Entities;
+﻿using Blazored.LocalStorage;
+using InternshipApp.Contracts;
+using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
-using System.Xml.Linq;
 using Wave5.UI;
 using Wave5.UI.Blazor;
 using Wave5.UI.DataGrids;
@@ -12,12 +14,26 @@ namespace InternshipApp.Portal.Views;
 
 public partial class StudentListView : ComponentBase
 {
+    #region [ Properties ]
+    [Parameter]
+    public int? InternGroupId { get; set; }
+    #endregion
+
     #region [ Properties - Inject ]
+    [Inject]
+    public IInternGroupRepository Groups { get; set; }
+
     [Inject]
     public StudentManager Students { get; set; }
 
     [Inject]
+    public InstructorManager Instructors { get; set; }
+
+    [Inject]
     public NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    public ILocalStorageService LocalStorage { get; set; }
     #endregion
 
     #region [ Properties - States - Contexts ]
@@ -34,6 +50,7 @@ public partial class StudentListView : ComponentBase
 
     #region [ Properties - States - DataList ]
     protected StudentListViewStates States { get; private set; }
+    protected bool IsTeacherViewing { get; set; }
     #endregion
 
     #region [ Protected Override Methods - Page ]
@@ -46,9 +63,11 @@ public partial class StudentListView : ComponentBase
             this.SearchContext = new DataListSearchContext();
             this.ListContainerContext = new DetailsListContainerContext();
             this.ListContext = new DetailsListContext<StudentListRowViewStates>();
-            this.ListContext.SelectionMode = SelectionMode.Single;
+            this.ListContext.SelectionMode = SelectionMode.Multiple;
             this.ListContext.OnItemInvoked += this.OnRowClicked;
             this.ListContext.OnSelectionChanged += this.OnSelectionChanged;
+
+            IsTeacherViewing = (await LocalStorage.GetItemAsStringAsync("role")) == "INSTRUCTOR";
 
             this.InitializeCommandBar();
             this.InitializeColumn();
@@ -57,7 +76,7 @@ public partial class StudentListView : ComponentBase
         }
         catch (Exception ex)
         {
-            
+
         }
     }
 
@@ -129,8 +148,15 @@ public partial class StudentListView : ComponentBase
             Width = "1fr"
         };
 
+        var group = new DataGridColumnDefinition<StudentListRowViewStates>("Group", x => string.IsNullOrEmpty(x.InternGroupName) ? "No Group" : x.InternGroupName)
+        {
+            ColumnDataKey = nameof(StudentListRowViewStates.InternGroupName),
+            Width = "2fr"
+        };
+
         this.ListContext.Columns.Definitions.Add(id);
         this.ListContext.Columns.Definitions.Add(name);
+        this.ListContext.Columns.Definitions.Add(group);
         this.ListContext.Columns.Definitions.Add(status);
     }
     #endregion
@@ -144,8 +170,50 @@ public partial class StudentListView : ComponentBase
         // Items
         this.CommandBarContext = new CommandBarContext();
         this.CommandBarContext.Items.AddRefreshButton(this.OnRefreshButtonClicked);
-        this.CommandBarContext.Items.AddAddButton(this.OnAddButtonClicked);
-        this.CommandBarContext.Items.AddDeleteButton(this.OnDeleteButtonClicked, false);
+        if (InternGroupId == null)
+        {
+            this.CommandBarContext.Items.AddAddButton(this.OnAddButtonClicked);
+            this.CommandBarContext.Items.AddDeleteButton(this.OnDeleteButtonClicked, false);
+        }
+        
+        this.CommandBarContext.FarItems.AddFilterButton(new() {
+            CommandBarFactory.CreateMenuItemFilterAll(this.OnAllFilterButtonClicked),
+            CommandBarFactory.CreateMenuItem("HasGroup", "HasGroup", "", this.OnHasGroupFilterButtonClicked),
+            CommandBarFactory.CreateMenuItem("NoGroup", "NoGroup", "", this.OnNoGroupFilterButtonClicked),
+        });
+    }
+    #endregion
+
+    #region [ Event Handlers - CommandBars - Filters ]
+    private void OnAllFilterButtonClicked(MouseEventArgs obj)
+    {
+        this.OnFilterDataList(this.States.Items, MenuItemNames.FilterAll);
+    }
+
+    private void OnHasGroupFilterButtonClicked(MouseEventArgs obj)
+    {
+        this.OnFilterDataList(this.States.Items.Where(x => x.InternGroupId > 0), "HasGroup");
+    }
+
+    private void OnNoGroupFilterButtonClicked(MouseEventArgs obj)
+    {
+        this.OnFilterDataList(this.States.Items.Where(x => x.InternGroupId <= 0), "NoGroup");
+    }
+
+    private void OnFilterDataList(IEnumerable<StudentListRowViewStates> filtered, string filterName = "")
+    {
+        this.ListContext.ClearSelectedItems();
+
+        this.ListContext.ItemsSource.Clear();
+        this.ListContext.ItemsSource.AddRange(filtered);
+        this.ListContext.Columns.Definitions.ForEach(x => x.IsSorted = false);
+        this.ListContainerContext.HasData = this.ListContext.ItemsSource.Any();
+
+        if (!string.IsNullOrEmpty(filterName))
+        {
+            this.CommandBarContext.FarItems.SetItemLabel(ButtonNames.FilterButton, filterName);
+        }
+        this.StateHasChanged();
     }
     #endregion
 
@@ -180,7 +248,7 @@ public partial class StudentListView : ComponentBase
         }
         catch (Exception ex)
         {
-            
+
         }
     }
 
@@ -197,7 +265,7 @@ public partial class StudentListView : ComponentBase
             foreach (var item in selectedItem)
             {
                 var student = await Students.FindByIdAsync(item.Id);
-                if(student != null)
+                if (student != null)
                 {
                     await Students.DeleteAsync(student);
                 }
@@ -237,6 +305,17 @@ public partial class StudentListView : ComponentBase
     #endregion
 
     #region [ Private Methods - Data ]
+    private async Task<Instructor> GetInstructorAsync()
+    {
+        var user = await LocalStorage.GetItemAsync<User>("login-user-info");
+        if (user == null)
+        {
+            return null;
+        }
+
+        return await Instructors.FindByIdAsync(user.Id);
+    }
+
     private async Task LoadDataAsync()
     {
         try
@@ -249,14 +328,55 @@ public partial class StudentListView : ComponentBase
 
             this.StateHasChanged();
 
-            var studentList = new List<Student>();
-            var students = await Students.FindAll().AsNoTracking().ToListAsync();
-            studentList.AddRange(students);
+            if (IsTeacherViewing)
+            {
+                var instructor = await GetInstructorAsync();
+                if (instructor == null)
+                {
+                    return;
+                }
+                var studentList = new List<Student>();
+                var group = await Groups.FindAll(x => x.InstructorId == instructor.Id).Include(x => x.Students).AsNoTracking().FirstOrDefaultAsync();
+                if (group == null)
+                {
+                    return;
+                }
+                studentList.AddRange(group.Students);
+                States.Items.AddRange(studentList.ToListRowList());
+                States.Items.ForEach(x =>
+                {
+                    x.InternGroupName = group.Title;
+                });
+            }
+            else
+            {
+                if (InternGroupId == null)
+                {
+                    var studentList = new List<Student>();
+                    var students = await Students.FindAll().AsNoTracking().Include(x => x.InternGroup).ToListAsync();
+                    students.ForEach(x =>
+                    {
+                        var row = x.ToListRow();
+                        row.InternGroupName = x.InternGroup?.Title;
+                        this.States.Items.Add(row);
+                    });
+                }
+                else
+                {
+                    var students = await Students.FindAll(x => x.InternGroupId == (InternGroupId?? 0)).AsNoTracking().Include(x => x.InternGroup).ToListAsync();
+                    students.ForEach(x =>
+                    {
+                        var row = x.ToListRow();
+                        row.InternGroupName = x.InternGroup?.Title;
+                        this.States.Items.Add(row);
+                    });
+                }
+            }
 
-            this.States.Items.AddRange(studentList.ToListRowList());
+
             this.ListContext.GetKey = x => x.Id;
             this.ListContext.ItemsSource.Clear();
-            this.ListContext.ItemsSource.AddRange(this.States.Items);
+            this.OnFilterDataList(this.States.Items, MenuItemNames.FilterAll);
         }
         catch (Exception ex)
         {

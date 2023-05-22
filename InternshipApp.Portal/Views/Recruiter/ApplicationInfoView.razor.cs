@@ -3,6 +3,7 @@ using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.JSInterop;
 using RCode;
 using Wave5.UI.Forms;
 
@@ -17,7 +18,10 @@ public partial class ApplicationInfoView
     public string JobId { get; set; }
     #endregion
 
-    #region [ Properties - Inject]
+    #region [ Properties - Inject ]
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
@@ -79,7 +83,6 @@ public partial class ApplicationInfoView
 
             var student = await this.Students
                 .FindAll(x => x.Id == StudentId)
-                .Include(x => x.StudentSkills)
                 .Include(x => x.StudentJobs.Where(x => x.JobId == int.Parse(JobId)))
                 .FirstOrDefaultAsync();
             var item = student.StudentJobs.FirstOrDefault();
@@ -89,7 +92,6 @@ public partial class ApplicationInfoView
                 return;
             }
 
-            //AllSkills = await Skills.FindAll().AsNoTracking().ToListAsync();
 
             this.States = item.ToDetailsViewStates();
             States.StudentName = student.FullName;
@@ -98,6 +100,9 @@ public partial class ApplicationInfoView
             States.Gpa = student.GPA;
             States.Bio = student.Bio;
             States.Matching = await MatchingService.GetMatchingPointById(StudentId, int.Parse(JobId));
+            States.GitHubUrl = student.GitProfileUrl;
+            States.CvUrl = student.CVUrl;
+            States.ImgUrl = student.ImgUrl;
             States.JobName = job.Title;
             
         }
@@ -146,7 +151,23 @@ public partial class ApplicationInfoView
         }
     }
 
+    public async void OnOpenGithubProfile()
+    {
+        if (string.IsNullOrEmpty(States.GitHubUrl)) return;
 
+        if (!States.GitHubUrl.Contains("http://") && !States.GitHubUrl.Contains("https://"))
+            States.GitHubUrl = "https://" + States.GitHubUrl;
+        await JSRuntime.InvokeVoidAsync("open", States.GitHubUrl, "_blank");
+    }
+
+    public async void OnOpenCvUrl()
+    {
+        if (string.IsNullOrEmpty(States.CvUrl)) return;
+
+        if (!States.CvUrl.Contains("http://") && !States.CvUrl.Contains("https://"))
+            States.CvUrl = "https://" + States.CvUrl;
+        await JSRuntime.InvokeVoidAsync("open", States.CvUrl, "_blank");
+    }
     #endregion
 
     #region [ Protected Methods - CommandBar ]
@@ -156,25 +177,47 @@ public partial class ApplicationInfoView
                             .Include(x => x.StudentJobs.Where(x => x.StudentId == StudentId))
                             .FirstOrDefaultAsync();
 
-        if (job == null)
+        if (job == null)    // can't find job
         {
             return;
         }
 
-        if(job.StudentJobs.Count < 1)
+        if(job.StudentJobs.Count < 1)   // student hasn't applied for this job
+        {
+            return;
+        }
+
+        if(job.Slots <= job.StudentJobs.Where(x => x.Status == ApplyStatus.HIRED).Count())  // no vacancy left
         {
             return;
         }
 
         if(job.StudentJobs.First().Status == ApplyStatus.WAITING)
         {
+            var student = await Students.FindAll(x => x.Id == StudentId)
+                .AsTracking()
+                .FirstOrDefaultAsync();
+            if(student.Stat == Stat.WAITING)
+            {
+                student.Stat = Stat.APPLIED;
+                await Students.UpdateAsync(student);
+            }
             job.StudentJobs.First().Status = ApplyStatus.ACCEPTED;
 
         }
         else if(job.StudentJobs.First().Status == ApplyStatus.ACCEPTED)
         {
             job.StudentJobs.First().Status = ApplyStatus.HIRED;
-
+            var student = await Students.FindAll(x => x.Id == StudentId)
+                .Include(x => x.StudentJobs.Where(x => x.JobId != job.Id && x.Status != ApplyStatus.REJECTED))
+                .AsTracking()
+                .FirstOrDefaultAsync();
+            student.Stat = Stat.HIRED;
+            foreach(var x in student.StudentJobs)
+            {
+                x.Status = ApplyStatus.MISSED;
+            }
+            await Students.UpdateAsync(student);
         }
         Jobs.Update(job);
         await Jobs.SaveChangesAsync();

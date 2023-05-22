@@ -65,6 +65,7 @@ public static class StudentExtension
         return new TBaseViewModel()
         {
             Id = entity.Id,
+            InternGroupId = entity.InternGroupId?? 0,
 
             Name = entity.FullName,
             Bio = entity.Bio,
@@ -88,13 +89,14 @@ public static class StudentExtension
         return new TEntity()
         {
             Id = viewModel.Id,
+            InternGroupId = viewModel.InternGroupId > 0 ? viewModel.InternGroupId : null,
 
             FullName = viewModel.Name,
             Bio = viewModel.Bio,
             Year = viewModel.Year,
             GPA = viewModel.Gpa,
             Credit = viewModel.Credits,
-            Stat = (Stat)Enum.Parse(typeof(Stat), viewModel.Status, true),
+            Stat = (Stat)Enum.Parse(typeof(Stat), viewModel.Status?? Stat.WAITING.ToString(), true),
             Email = viewModel.Email,
             StudentId = viewModel.StudentId,
             ImgUrl = viewModel.ImgUrl,

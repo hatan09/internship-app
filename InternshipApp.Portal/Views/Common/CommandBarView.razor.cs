@@ -4,6 +4,7 @@ namespace InternshipApp.Portal.Views;
 
 public partial class CommandBarView
 {
+    #region [ Properties - Param ]
     [Parameter]
     public EventCallback EditCallback { get; set; }
 
@@ -22,13 +23,29 @@ public partial class CommandBarView
     [Parameter]
     public EventCallback ApplyListCallback { get; set; }
 
+    [Parameter]
+    public EventCallback ShowScoreCallBack { get; set; }
+
+    [Parameter]
+    public EventCallback FinishCallback { get; set; }
+
+    [Parameter]
+    public EventCallback ViewResultCallBack { get; set; }
+    #endregion
+
+    #region [ Properties ]
     public bool IsEditButtonVisible { get; set; }
     public bool IsChatButtonVisible { get; set; }
     public bool IsSendEmailButtonVisible { get; set; }
     public bool IsAcceptButtonVisible { get; set; }
     public bool IsRejectButtonVisible { get; set; }
     public bool IsApplyListButtonVisible { get; set; }
+    public bool IsShowScoreButtonVisible { get; set; }
+    public bool IsFinishButtonVisible { get; set; }
+    public bool IsViewResultButtonVisible { get; set; }
+    #endregion
 
+    #region [ Methods - Page ]
     protected override async Task OnInitializedAsync()
     {
         IsEditButtonVisible = EditCallback.HasDelegate;
@@ -37,7 +54,11 @@ public partial class CommandBarView
         IsAcceptButtonVisible = AcceptCallback.HasDelegate;
         IsRejectButtonVisible = RejectCallback.HasDelegate;
         IsApplyListButtonVisible = ApplyListCallback.HasDelegate;
+        IsShowScoreButtonVisible = ShowScoreCallBack.HasDelegate;
+        IsFinishButtonVisible = FinishCallback.HasDelegate;
+        IsViewResultButtonVisible = ViewResultCallBack.HasDelegate;
 
         await base.OnInitializedAsync();
     }
+    #endregion
 }
