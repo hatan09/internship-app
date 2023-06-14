@@ -13,5 +13,6 @@ public class ChatModel
 	public string Avatar { get; set; }
 	public string Name { get; set; }
 	public bool IsSender { get; set; }
+	public DateTime CreatedAt { get; set; } = DateTime.Now;
 	#endregion
 }

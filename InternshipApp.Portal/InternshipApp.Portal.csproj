@@ -8,12 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Views\Chat\ChatPage.razor.cs" />
     <Compile Remove="Views\Chat\GroupChat.razor.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Views\Chat\ChatPage.razor.cs" />
     <Content Include="Views\Chat\GroupChat.razor.cs" />
   </ItemGroup>
 
@@ -21,7 +19,6 @@
     <Folder Include="Data\Extensions\" />
     <Folder Include="Data\HttpClients\" />
     <Folder Include="Data\Settings\" />
-    <Folder Include="Views\Instructor\" />
   </ItemGroup>
 
   <ItemGroup>

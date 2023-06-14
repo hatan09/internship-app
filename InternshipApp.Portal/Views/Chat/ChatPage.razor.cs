@@ -1,5 +1,9 @@
-﻿<h3>ChatPage</h3>
+﻿using Microsoft.AspNetCore.Components;
 
-@code {
+namespace InternshipApp.Portal.Views;
 
+public partial class ChatPage
+{
+    [Parameter]
+    public string ReceiverId { get; set; }
 }

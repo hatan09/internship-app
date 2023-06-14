@@ -226,6 +226,7 @@ public partial class ApplicationInfoView
 
     public async void OnChat()
     {
+        NavigationManager.NavigateTo($"/chat/{States.Id}");
 
     }
 

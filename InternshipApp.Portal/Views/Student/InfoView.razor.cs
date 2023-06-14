@@ -94,7 +94,7 @@ public partial class InfoView
         {
             IsAdminViewing = true;
         }
-        if(firstRender) {
+        if (firstRender) {
             StateHasChanged();
         }
         await base.OnAfterRenderAsync(firstRender);
@@ -118,14 +118,14 @@ public partial class InfoView
 
             this.States = student.ToDetailsViewStates();
 
-            if(student.Stat == Stat.HIRED)
+            if (student.Stat == Stat.HIRED)
             {
                 IsHired = true;
                 var studentJob = student.StudentJobs.FirstOrDefault();
-                if(studentJob != null)
+                if (studentJob != null)
                 {
-                    var job = await Jobs.FindAll(x => x.Id == (studentJob.JobId?? 0)).AsNoTracking().Include(x => x.Company).FirstOrDefaultAsync();
-                    if(job != null)
+                    var job = await Jobs.FindAll(x => x.Id == (studentJob.JobId ?? 0)).AsNoTracking().Include(x => x.Company).FirstOrDefaultAsync();
+                    if (job != null)
                     {
                         States.JobName = job.Title;
                         States.CompanyName = job.Company?.Title;
@@ -146,7 +146,7 @@ public partial class InfoView
 
     public string GetOrderFromInt(int order)
     {
-        switch(order)
+        switch (order)
         {
             case 1:
                 {
@@ -181,7 +181,7 @@ public partial class InfoView
 
     public async void OnChat()
     {
-
+        NavigationManager.NavigateTo($"/chat/{States.Id}");
     }
 
     public async void OnSendEmail()
@@ -191,10 +191,15 @@ public partial class InfoView
 
     public void OnShowScore()
     {
-        PopupContext = new() { 
+        PopupContext = new() {
             IsOpen = true,
             StudentId = StudentId
         };
+    }
+
+    public async Task OnAddToGroup()
+    {
+
     }
 
     public async Task OnFinish()

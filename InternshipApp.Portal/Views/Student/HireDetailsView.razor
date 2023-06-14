@@ -1,0 +1,32 @@
+﻿@namespace InternshipApp.Portal.Views
+
+<Stack>
+    <DetailsCardContainer CommandBarContext=@CommandBarContext
+                          ContainerContext=@DetailsContainerContext
+                          Title="Job Info">
+
+        @if (States == null)
+        {
+                    <span><i>Student is not accpeted to take any job yet!</i></span>
+        }
+        else
+        {
+                <Stack Style="font-family: var(--body-font);"
+               Horizontal
+               Tokens=@(new StackTokens { Padding="15px 10px" })>
+                    <Stack Style="width:100%" Horizontal=false>
+                        <FormDetailsField Label="Job's Title" Value=@(States.JobName) />
+                        <FormDetailsField Label="Student's Fullname" Value=@(States.StudentName) />
+                    </Stack>
+                </Stack>
+        }
+
+    </DetailsCardContainer>
+</Stack>
+
+@if(!this.IsHired)
+{
+    <Stack>
+        <ApplyListView StudentId=@this.StudentId/>    
+    </Stack>
+}

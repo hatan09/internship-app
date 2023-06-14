@@ -48,6 +48,8 @@ public partial class ManageEvaluationListView
 
     protected double AverageScore { get; private set; }
     protected PerformanceRank AveragePerformance { get; private set; }
+
+    protected bool IsEditable { get; private set; }
     #endregion
 
     #region [ Protected Override Methods - Page ]
@@ -108,15 +110,22 @@ public partial class ManageEvaluationListView
     #region [ Event Handlers - DataList ]
     private void OnRowClicked(EvaluationListRowViewStates rowItem)
     {
-        EvaluationFormRequest = FormRequestFactory.EditRequest(rowItem.ToEntity());
-        this.StateHasChanged();
+        if (IsEditable)
+        {
+            EvaluationFormRequest = FormRequestFactory.EditRequest(rowItem.ToEntity());
+            this.StateHasChanged();
+        }
+        else
+        {
+            EvaluationFormRequest = FormRequestFactory.EditRequest(rowItem.ToEntity());
+        }
     }
 
     private void OnSelectionChanged()
     {
         var value = this.ListContext.GetSelectedItems().Any();
-        this.CommandBarContext.SetItemIsVisible(ButtonNames.EditButton, value);
-        this.CommandBarContext.SetItemIsVisible(ButtonNames.DeleteButton, value);
+        this.CommandBarContext.SetItemIsVisible(ButtonNames.EditButton, value && IsEditable);
+        this.CommandBarContext.SetItemIsVisible(ButtonNames.DeleteButton, value && IsEditable);
         this.StateHasChanged();
     }
 
@@ -264,15 +273,22 @@ public partial class ManageEvaluationListView
             this.States.Items.Clear();
             this.StateHasChanged();
 
-            if(!string.IsNullOrEmpty(StudentId))
+            if (!string.IsNullOrEmpty(JobId))
             {
+                IsEditable = true;
+                var evaluations = await Evaluations.FindAll(x => x.JobId == int.Parse(JobId)).AsNoTracking().ToListAsync();
+                States.Items = evaluations.ToListRowList();
+            }
+            else if(!string.IsNullOrEmpty(StudentId))
+            {
+                IsEditable = false;
+                this.CommandBarContext.SetItemIsVisible(ButtonNames.AddButton, false);
                 var evaluations = await Evaluations.FindAll(x => x.StudentId == StudentId).AsNoTracking().ToListAsync();
                 States.Items = evaluations.ToListRowList();
             }
-            else if (!string.IsNullOrEmpty(JobId))
+            else
             {
-                var evaluations = await Evaluations.FindAll(x => x.JobId == int.Parse(JobId)).AsNoTracking().ToListAsync();
-                States.Items = evaluations.ToListRowList();
+                return;
             }
 
             AverageScore = States.Items.Sum(x => x.Score) / States.Items.Count;

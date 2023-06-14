@@ -13,6 +13,9 @@
         public string GitProfileUrl { get; set; } = string.Empty;
 
         public int Score { get; set; } = 0;
+        //public bool HasNewMessage { get; set; } = false;
+        //added to group, approved by ins, accepted to interview, hired, finished
+        //public string Message { get; set; } = string.Empty;
 
         //[Required]
         public Department? Department { get; set; }
@@ -27,6 +30,6 @@
 
     }
 
-    public enum Stat { WAITING, APPLIED, ACCEPTED, HIRED, FINISHED }
+    public enum Stat { WAITING, APPLIED, HIRED, FINISHED, ACCEPTED, REJECTED }
 
 }

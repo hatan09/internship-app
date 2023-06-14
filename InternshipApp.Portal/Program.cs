@@ -103,6 +103,8 @@ builder.Services.AddTransient<IInternGroupRepository, InternGroupRepository>();
 builder.Services.AddTransient<ISkillRepository, SkillRepository>();
 builder.Services.AddTransient<IJobRepository, JobRepository>();
 builder.Services.AddTransient<IEvaluationRepository, EvaluationRepository>();
+builder.Services.AddTransient<IConversationRepository, ConversationRepository>();
+builder.Services.AddTransient<IMessageRepository, MessageRepository>();
 builder.Services.AddTransient<ISkillScoreRepository, SkillScoreRepository>();
 builder.Services.AddTransient<IMatchingService, MatchingService>();
 builder.Services.AddTransient<IInternGroupServices, InternGroupServices>();

@@ -1,15 +1,15 @@
 ﻿using InternshipApp.Contracts;
+using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using RCode;
 using Wave5.UI;
 using Wave5.UI.Blazor;
-using Wave5.UI.Navigation;
 
 namespace InternshipApp.Portal.Views;
 
-public partial class ManageInternView
+public partial class HireDetailsView
 {
     #region [ Properties - Inject ]
     [Inject]
@@ -17,13 +17,9 @@ public partial class ManageInternView
 
     [Inject]
     public IJobRepository Jobs { get; set; }
-
     #endregion
 
     #region [ Properties - Parameter ]
-    [Parameter]
-    public string JobId { get; set; }
-
     [Parameter]
     public string StudentId { get; set; }
     #endregion
@@ -32,6 +28,8 @@ public partial class ManageInternView
     protected CommandBarContext CommandBarContext { get; private set; }
 
     protected DetailsCardContainerContext DetailsContainerContext { get; private set; }
+
+    protected bool IsHired { get; set; }
     #endregion
 
     #region [ Properties - Data ]
@@ -51,14 +49,12 @@ public partial class ManageInternView
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        var currentJobId = this.JobId;
-        var parameterJobId = parameters.GetValueOrDefault<string>(nameof(this.JobId));
         var currentStudentId = this.StudentId;
         var parameterStudentId = parameters.GetValueOrDefault<string>(nameof(this.StudentId));
 
         await base.SetParametersAsync(parameters);
 
-        if (currentJobId != parameterJobId || currentStudentId != parameterStudentId)
+        if (currentStudentId != parameterStudentId)
         {
             await this.LoadDataAsync();
         }
@@ -82,7 +78,6 @@ public partial class ManageInternView
     #region [ Private Methods - Data ]
     private async Task LoadDataAsync()
     {
-        Guard.ParamIsNullOrEmpty(this.JobId, nameof(this.JobId));
         Guard.ParamIsNullOrEmpty(this.StudentId, nameof(this.StudentId));
 
         try
@@ -92,29 +87,34 @@ public partial class ManageInternView
 
             this.StateHasChanged();
 
-            var job = await Jobs.FindByIdAsync(int.Parse(JobId));
-            var student = await Students.FindByIdAsync(StudentId);
-            if (job == null || student == null)
+            var student = await Students
+                .FindAll(x => x.Id == StudentId)
+                .Include(x => x.StudentJobs.FirstOrDefault(x => x.Status == ApplyStatus.HIRED))
+                .FirstOrDefaultAsync();
+            if (student == null)
             {
                 this.States = null;
                 return;
             }
 
-            var item = new ApplicationDetailsViewStates()
+            IsHired = student.StudentJobs.Count == 1;
+            if (IsHired)
             {
-                StudentId = student.Id,
-                JobId = job.Id,
-                StudentName = student.FullName,
-                JobName = job.Title
-            };
+                var job = await Jobs.FindByIdAsync(student.StudentJobs.First().JobId?? 0);
+                if(job == null)
+                {
+                    this.States = null; 
+                    return;
+                }
 
-            if (item == null)
-            {
-                this.States = null;
-                return;
+                States = new ApplicationDetailsViewStates()
+                {
+                    StudentId = student.Id,
+                    JobId = job.Id,
+                    StudentName = student.FullName,
+                    JobName = job.Title
+                };
             }
-
-            this.States = item;
         }
         catch (Exception ex)
         {

@@ -6,38 +6,48 @@
 @namespace InternshipApp.Portal.Views
 
 <div id="container">
-    <div id="sample">
+    <Stack ClassName="sticky top" Style="width:100%" Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+        <span class="e-avatar e-avatar-circle receiver image"></span>
+        <b style="margin-left:8px">
+            @(Receiver?.FullName)
+        </b>
+    </Stack>
+    <div id="chat">
         <SfListView ID="list"
                      DataSource="@Chat"
-                     ShowHeader="true"
-                     HeaderTitle="IsSender">
-            <ListViewFieldSettings TValue="ChatModel" Id="Id" Text="Name"></ListViewFieldSettings>
+                     ShowHeader="false"
+                     HeaderTitle="">
             <ListViewTemplates TValue="ChatModel">
                 <Template>
                     @{
                         var currentData = context as ChatModel;
 
-                        <div class="flex item__container">
-                            <div class="flex flex__1 vertical__center flex__center @(currentData.IsSender ? "flex__order__2" : "")">
-                                @if (currentData.Avatar != "")
-                                {
-                                    <span class="e-avatar e-avatar-circle">@currentData.Avatar</span>
-                                }
-                                else
-                                {
-                                    <span class="@currentData.Avatar e-avatar e-avatar-circle"></span>
-                                }
+                        if(currentData.Name == "break")
+                        {
+                            <Stack Horizontal=false HorizontalAlign="Wave5.UI.Alignment.Center">
+                                <hr style="width:100%" />
+                                <div class="small__font gray">@currentData.CreatedAt.ToShortDateString()</div>
+                            </Stack>
+                        }
+                        else
+                        {
+                            <div class="flex item__container">
+                                <div class="flex flex__1 vertical__center flex__center @(currentData.IsSender ? "flex__order__2" : "")">
+                                    <span class="e-avatar e-avatar-circle @(currentData.IsSender ? "sender" : "receiver") image"></span>
+                                </div>
+                                <div class="flex content__container flex__8 vertical padding @(currentData.IsSender ? "right__align" : "left__align")">
+                                    <div class="bold">@currentData.Name</div>
+                                    <div class="small__font">@currentData.ChatMessage</div>
+                                    <div class="small__font gray">@currentData.CreatedAt.ToShortDateString()</div>
+                                </div>
                             </div>
-                            <div class="flex content__container flex__8 vertical padding @(currentData.IsSender ? "right__align" : "left__align")">
-                                <div class="bold">@currentData.Name</div>
-                                <div class="small__font">@currentData.ChatMessage</div>
-                            </div>
-                        </div>
+                        }
+                        
                     }
                 </Template>
             </ListViewTemplates>
         </SfListView>
-        <Stack Style="width:100%" Horizontal>
+        <Stack Style="width:86%" Horizontal ClassName="sticky bottom">
             <div class="flex__8 padding">
                 <SfTextBox Placeholder="Type your message"
                             @ref=@(SfTextBox) />
@@ -59,8 +69,9 @@
         width: 100%;
     }
 
-    #sample {
-
+    #chat {
+        margin-top:50px;
+        margin-bottom:50px;
         display: block;
     }
 
@@ -69,22 +80,21 @@
         border: 1px solid #ccc;
     }
 
-        #list .e-list-item {
-            height: auto;
-            cursor: pointer;
-            line-height: 22px;
-            padding: 8px;
-        }
+    #list .e-list-item {
+        height: auto;
+        cursor: pointer;
+        line-height: 22px;
+        padding: 8px;
+    }
 
-        #list.e-listview .e-list-header {
-            background-color: #0278d7;
-            color: white;
-        }
+    #list.e-listview .e-list-header {
+        background-color: #0278d7;
+        color: white;
+    }
 
-        #list .e-list-item.e-active {
-            background-color: transparent;
-        }
-
+    #list .e-list-item.e-active {
+        background-color: transparent;
+    }
 
     .padding {
         padding: 4px;
@@ -162,4 +172,43 @@
         font-size: 13px;
         margin: 2px 0;
     }
+
+    .e-avatar.image.sender {
+        background-image: url("@(string.IsNullOrEmpty(SenderAvatar) ? "https://i.imgur.com/WxNkK7J_d.webp" : SenderAvatar)");
+        background-size: contain;
+    }
+
+    .e-avatar.image.receiver {
+        background-image: url("@(string.IsNullOrEmpty(ReceiverAvatar) ? "https://i.imgur.com/WxNkK7J_d.webp" : ReceiverAvatar)");
+        background-size: contain;
+    }
+
+    .sticky.bottom{
+        position:fixed;
+        bottom: 0px;
+        left: 250px;
+        z-index:999;
+    }
+
+    .sticky.top{
+        height:30px;
+        padding:8px 8px 8px 38px;
+        position:fixed;
+        top: 0px;
+        left: 250px;
+        width: 86%;
+        background-color:white;
+        z-index:999;
+        box-shadow: 0px 0px 3px 0px;
+    }
+
+    .gray{
+        color: dimgrey;
+    }
+
+    .e-list-view .e-list-item.e-focused{
+        color: black;
+    }
+
+
 </style>
