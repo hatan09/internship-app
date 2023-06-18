@@ -9,6 +9,7 @@ using InternshipApp.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Fast.Components.FluentUI;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.JSInterop;
 using Services;
@@ -122,6 +123,7 @@ builder.Services.AddTransient<IInternGroupServices, InternGroupServices>();
 //IMapper mapper = mapperConfig.CreateMapper();
 //builder.Services.AddSingleton(mapper);
 
+builder.Services.AddFluentUIComponents();
 builder.Services.AddSyncfusionBlazor();
 
 builder.Services.AddRazorPages();

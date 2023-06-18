@@ -4,6 +4,7 @@ public class InternshipSettings : BaseEntity<int>
 {
     public DateTime StartTime { get; set; }
     public DateTime CloseRegistrationTime { get; set; }
+    public DateTime JobDealine { get; set; }
     public DateTime SummaryTime { get; set; }
     public DateTime EndTime { get; set; }
     public int MaximumStudents { get; set; }

@@ -1,11 +1,9 @@
 ﻿using InternshipApp.Contracts;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
 using RCode;
 using Wave5.UI;
 using Wave5.UI.Blazor;
-using Wave5.UI.Navigation;
 
 namespace InternshipApp.Portal.Views;
 
@@ -18,6 +16,8 @@ public partial class ManageInternView
     [Inject]
     public IJobRepository Jobs { get; set; }
 
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
     #endregion
 
     #region [ Properties - Parameter ]
@@ -70,12 +70,18 @@ public partial class ManageInternView
     {
         await LoadDataAsync();
     }
+
+    protected void OnFinalReportButtonClicked(EventArgs args)
+    {
+        NavigationManager.NavigateTo($"manage-student-forms/{States.StudentId}");
+    }
     #endregion
 
     #region [ Private Methods - CommandBars ]
     private void InitializeCommandBars()
     {
         this.CommandBarContext.Items.AddRefreshButton(this.OnRefreshButtonClicked);
+        this.CommandBarContext.Items.AddButton("FinalReportButton", "Final Reports", "TextDocument", this.OnFinalReportButtonClicked);
     }
     #endregion
 

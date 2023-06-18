@@ -16,7 +16,15 @@ public class BaseApplicationViewStates : BaseViewModel
     private string _jobName;
     private double _matching;
     private string _companyName;
-
+    private ApplyStatus _status;
+    private List<int> _skillIds;
+    private string _bio;
+    private string _gitHubUrl;
+    private string _cvUrl;
+    private string _imgUrl;
+    private int _studentFormId;
+    private int _courseFormId;
+    private bool _isFormsCompleted;
     #endregion
 
     #region [ CTor ]
@@ -82,21 +90,18 @@ public class BaseApplicationViewStates : BaseViewModel
         set { this.SetProperty(ref this._matching, value); }
     }
 
-    private ApplyStatus _status;
     public ApplyStatus Status
     {
         get { return this._status; }
         set { this.SetProperty(ref this._status, value); }
     }
 
-    private List<int> _skillIds;
     public List<int> SkillIds
     {
         get { return this._skillIds; }
         set { this.SetProperty(ref this._skillIds, value); }
     }
 
-    private string _bio;
     public string Bio
     {
         get { return this._bio; }
@@ -109,25 +114,40 @@ public class BaseApplicationViewStates : BaseViewModel
         set { this.SetProperty(ref this._companyName, value); }
     }
 
-    private string _gitHubUrl;
     public string GitHubUrl
     {
         get { return this._gitHubUrl; }
         set { this.SetProperty(ref this._gitHubUrl, value); }
     }
 
-    private string _cvUrl;
     public string CvUrl
     {
         get { return this._cvUrl; }
         set { this.SetProperty(ref this._cvUrl, value); }
     }
 
-    private string _imgUrl;
     public string ImgUrl
     {
         get { return this._imgUrl; }
         set { this.SetProperty(ref this._imgUrl, value); }
+    }
+
+    public int StudentFormId
+    {
+        get { return this._studentFormId; }
+        set { this.SetProperty(ref this._studentFormId, value); }
+    }
+
+    public int CourseFormId
+    {
+        get { return this._courseFormId; }
+        set { this.SetProperty(ref this._courseFormId, value); }
+    }
+
+    public bool IsFormsCompleted
+    {
+        get { return this._isFormsCompleted; }
+        set { this.SetProperty(ref this._isFormsCompleted, value); }
     }
     #endregion
 }

@@ -14,7 +14,7 @@ namespace InternshipApp.Core.Entities
         public string Title { get; set; } = string.Empty;
         public int MinYear { get; set; }
         public string? Description { get; set; }
-
+        public string? JobPaths { get; set; }
         public Company Company { get; set; }
         public int CompanyId { get; set; }
 

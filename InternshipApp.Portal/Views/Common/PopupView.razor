@@ -39,6 +39,21 @@
             </FooterTemplate>
         </DialogTemplates>
     }
+    else if (IsNotifyView)
+    {
+        <DialogTemplates>
+            <Header>
+                <div>You have new message</div>
+            </Header>
+            <Content>
+                <div>@Context.Message</div>
+            </Content>
+            <FooterTemplate>
+                <div>International University - Internship App</div>
+            </FooterTemplate>
+        </DialogTemplates>
+    }
+
 </SfDialog>
 
 <style>

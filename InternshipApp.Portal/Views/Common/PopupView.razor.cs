@@ -14,6 +14,9 @@ public partial class PopupView
     public bool IsShowScoreView { get; set; }
 
     [Parameter]
+    public bool IsNotifyView { get; set; }
+
+    [Parameter]
     public PopupContext Context { get; set; }
 
     public bool Visible { get; set; }
@@ -41,6 +44,7 @@ public partial class PopupView
 public class PopupContext
 {
     public bool IsOpen { get; set; }
+    public string Message { get; set; }
     public string StudentId { get; set; }
     public string CompanyName { get; set; }
     public EventCallback OnFinishCallBack { get; set; }

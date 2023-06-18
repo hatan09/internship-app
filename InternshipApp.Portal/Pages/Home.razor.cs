@@ -2,6 +2,7 @@
 using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
 using Wave5.UI;
@@ -12,6 +13,7 @@ public partial class Home
 {
     public bool Visible { get; set; }
 
+    public bool IsRegisterOpen { get; set; } = true;
     public bool IsLogin { get; set; } = true;
 
     public string StudentId { get; set; }
@@ -19,7 +21,6 @@ public partial class Home
     public string Email { get; set; }
 
     public string Username { get; set; }
-
     public string Password { get; set; }
 
     public int Year { get; set; }
@@ -27,9 +28,16 @@ public partial class Home
     public int Credits { get; set; }
 
     public string LoginMsg { get; set; }
+    public bool IsDisable { get; set; }
+    public bool IsProcessing { get; set; }
 
     public User LoginUser { get; set; }
     public string Role { get; set; }
+    public string InternshipTitle { get; set; }
+    public DateTime StartTime { get; set; }
+    public DateTime CloseRegistrationTime { get; set; }
+    public DateTime SummaryTime { get; set; }
+    public DateTime EndTime { get; set; }
 
     [Inject]
     public ILocalStorageService LocalStorage { get; set; }
@@ -92,8 +100,14 @@ public partial class Home
     #endregion
 
     #region [ Methods - Login ]
-    public void ToggleRegister()
+    public async void ToggleRegister()
     {
+        if (!IsRegisterOpen)
+        {
+            IsLogin = true;
+            await JSRuntime.InvokeVoidAsync("alert", "Out of registration time.");
+            return;
+        }
         LoginMsg = "";
         IsLogin = !IsLogin;
         StateHasChanged();
@@ -106,13 +120,38 @@ public partial class Home
         StateHasChanged();
     }
 
+    private void OnProcess()
+    {
+        IsDisable = true;
+        IsProcessing = true;
+        StateHasChanged();
+    }
+
+    private void OnAfterProcess()
+    {
+        IsDisable = false;
+        IsProcessing = false;
+        StateHasChanged();
+    }
+
+    public void EnterEventHandler(KeyboardEventArgs args)
+    {
+        if (args.Code == "Enter" || args.Code == "NumpadEnter")
+        {
+            OnLoginButtonClicked(null);
+        }
+    }
+
     public async void OnLoginButtonClicked(EventArgs args)
     {
+        OnProcess();
         var result = await Login();
+        OnAfterProcess();
         Visible = !result;
         if (result)
         {
             NavigationManager.NavigateTo("/", result);
+            ResetForm();
         }
     }
 
@@ -144,7 +183,6 @@ public partial class Home
 
         LoginUser = user;
         await LocalStorage.SetItemAsync("login-user-info", user);
-        ResetForm();
         return true;
     }
 

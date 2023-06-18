@@ -2,23 +2,6 @@
 @using Wave5.UI.DataGrids
 @using Wave5.UI
 
-<h1>
-    Statistics
-</h1>
-
-<h3>
-    Average Score:
-</h3>
-<label>
-    @AverageScore
-</label>
-
-<h3>
-    Average Performance:
-</h3>
-<label>
-    @AveragePerformance
-</label>
 <DetailsListContainer ContainerContext=@ListContainerContext
                       CommandBarContext=@CommandBarContext
                       SearchContext=@SearchContext
@@ -28,6 +11,32 @@
     <DetailsList DetailsListContext=@ListContext />
 
 </DetailsListContainer>
+
+<Stack Style="margin-top:20px;
+            padding: 28px;
+            border-radius: 2px;
+            background-clip: padding-box;
+            background: var(--fill-color);
+            box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132),0 .3px .9px 0 rgba(0,0,0,.108);">
+
+    <h1>
+        Statistics
+    </h1>
+
+    <h3>
+        Average Score:
+    </h3>
+    <label>
+        @AverageScore
+    </label>
+
+    <h3>
+        Average Performance:
+    </h3>
+    <label>
+        @AveragePerformance
+    </label>
+</Stack>
 
 <ManageEvaluationFormViewPanel FormRequest="EvaluationFormRequest" FormResultCallback="OnFormResultReceived"> 
 

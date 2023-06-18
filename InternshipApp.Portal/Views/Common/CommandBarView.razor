@@ -36,6 +36,13 @@
         </SfTooltip>
     }
 
+    @if (IsAddGroupButtonVisible)
+    {
+        <SfTooltip Content="Add this student to my group">
+            <SfButton IconCss="oi oi-plus" CssClass="command-bar-button add-group" OnClick="@AddGroupCallBack"/>
+        </SfTooltip>
+    }
+
     @if (IsRejectButtonVisible)
     {
         <SfTooltip Content="Reject this student">
@@ -96,6 +103,10 @@
 
     .oi-chat.e-btn-icon{
         color: gray; 
+    }
+
+    .oi-plus.e-btn-icon{
+        color: forestgreen; 
     }
 
     .oi-envelope-closed.e-btn-icon{

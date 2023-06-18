@@ -3,6 +3,7 @@
 @namespace InternshipApp.Portal.Views
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Spinner
 
 <PageTitle>Home</PageTitle>
 
@@ -11,19 +12,27 @@
     <h1>
         Hello!
     </h1>
-    <h6>Welcome to Internship App! Please login!</h6>
+    <h4>Welcome to Internship App! Please login!</h4>
     <button @onclick=@ToggleLogin>
         Login
     </button>
-
+    <br />
 }
 else
 {
     <h1>
         Hello @(LoginUser?.FullName)!
     </h1>
-    <h6>Welcome to Internship App!</h6>
+    <h4>Welcome to Internship App!</h4>
+    <br />
 }
+
+<p>
+    The internship <b>@InternshipTitle</b> begins and opens for registration of students at <b>@StartTime</b> until <b>@CloseRegistrationTime</b>. After this time, students will no longer be able to register.
+</p>
+<p>
+    Participants will work on this program until <b>@SummaryTime</b> which is the deadline to submit final reports and scores. Instructors will work on the submitted forms to evaluate students' work. Final result is expected to be available at <b>@EndTime</b>. 
+</p>
 
 <SfDialog Height="@(IsLogin? "35%" : "80%")" Width="35%" Target="#target" ShowCloseIcon="true" @bind-Visible="Visible" >
     <DialogTemplates>
@@ -31,6 +40,7 @@ else
             <div>@(IsLogin ? "Login" : "Register As Student")</div>
         </Header>
         <Content>
+            <SfSpinner Visible=@IsProcessing Label="Loging in..."/>
             <Stack Style="width:100%;height:100%">
                 @if (IsLogin)
                 {
@@ -38,7 +48,7 @@ else
                         <label>Username</label>
                     </FluentTextField>
 
-                    <FluentTextField @bind-Value=@Password TextFieldType="TextFieldType.Password" Placeholder="Your password">
+                    <FluentTextField @bind-Value=@Password TextFieldType="TextFieldType.Password" Placeholder="Your password" @onkeydown=@EnterEventHandler>
                         <label>Password</label>
                     </FluentTextField>
 
@@ -48,7 +58,7 @@ else
 
                     <br />
 
-                    <SfButton Content="Login" OnClick="OnLoginButtonClicked"/>
+                    <SfButton Content="Login" OnClick="OnLoginButtonClicked" Disabled=@IsDisable/>
 
                     <br />
 
@@ -114,7 +124,6 @@ else
                             Login
                         </button>
                     </span>
-                    
                 }
             </Stack>
         </Content>

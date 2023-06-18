@@ -33,7 +33,29 @@
 
     @if (IsTeacherViewing && IsHired)
     {
+
         <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" ShowScoreCallBack="OnShowScore" FinishCallback="OnFinish"/>
+
+    }
+    else if (IsTeacherViewing)
+    {
+        @if (States.InternGroupId < 1)
+        {
+            <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" AddGroupCallBack="OnAddToGroup"/>
+
+        }
+        else if(States.Status == Stat.WAITING.ToString())
+        {
+            <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" RejectCallback="OnReject"/>
+        }
+        else if (States.Status == Stat.REJECTED.ToString())
+        {
+            <CommandBarView ChatCallback="OnChat"/>
+        }
+        else
+        {
+            <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" ShowScoreCallBack="OnShowScore"/>
+        }
     }
     else
     {

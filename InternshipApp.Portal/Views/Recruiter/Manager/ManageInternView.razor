@@ -19,7 +19,8 @@
                Tokens=@(new StackTokens { Padding="15px 10px" })>
                 <Stack Style="width:100%" Horizontal=false>
                     <FormDetailsField Label="Job's Title" Value=@(States.JobName) />
-                    <FormDetailsField Label="Student's Fullname" Value=@(States.StudentName) />
+                    <FormDetailsField Label="Student's Name" Value=@(States.StudentName) />
+                    <FormDetailsField Label="Final Report" Value=@(States.IsFormsCompleted? "Complete!" : "Not completed. Please navigate to forms page to get more details.") />
                 </Stack>
             </Stack>
         }

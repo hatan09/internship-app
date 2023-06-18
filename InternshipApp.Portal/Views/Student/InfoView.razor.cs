@@ -40,6 +40,9 @@ public partial class InfoView
     public StudentManager Students { get; set; }
 
     [Inject]
+    public IInternGroupRepository Groups { get; set; }
+
+    [Inject]
     public IJobRepository Jobs { get; set; }
 
     [Inject]
@@ -179,7 +182,7 @@ public partial class InfoView
         }
     }
 
-    public async void OnChat()
+    public void OnChat()
     {
         NavigationManager.NavigateTo($"/chat/{States.Id}");
     }
@@ -187,6 +190,17 @@ public partial class InfoView
     public async void OnSendEmail()
     {
 
+    }
+
+    public async void OnReject()
+    {
+        var student = await Students.FindAll(x => x.Id == States.Id).AsTracking().FirstOrDefaultAsync();
+        if(student != null)
+        {
+            student.Stat = Stat.REJECTED;
+            States.Status = Stat.REJECTED.ToString();
+            StateHasChanged();
+        }
     }
 
     public void OnShowScore()
@@ -199,7 +213,21 @@ public partial class InfoView
 
     public async Task OnAddToGroup()
     {
+        var user = await LocalStorage.GetItemAsync<User>("login-user-info");
+        if(user == null)
+        {
+            NavigationManager.NavigateTo("/", true);
+            return;
+        }
 
+        var group = await Groups.FindAll(x => x.InstructorId == user.Id).Include(x => x.Students).AsTracking().FirstOrDefaultAsync();
+        var student = await Students.FindByIdAsync(States.Id);
+        if (group != null && student != null && student.Stat == Stat.WAITING)
+        {
+            group.Students.Add(student);
+            Groups.Update(group);
+            await Groups.SaveChangesAsync();
+        }
     }
 
     public async Task OnFinish()
