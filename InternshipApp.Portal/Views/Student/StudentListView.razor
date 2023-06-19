@@ -2,14 +2,54 @@
 @using Wave5.UI.DataGrids
 @using Wave5.UI
 
-<DetailsListContainer ContainerContext=@ListContainerContext
-                      CommandBarContext=@CommandBarContext
-                      SearchContext=@SearchContext
-                      TItem="StudentListRowViewStates"
-                      Title="Manage Students">
+<div>
+    <PageTitle> Manage Students</PageTitle>
+    <h1>Manage Students</h1>
+</div>
 
-    <DetailsList DetailsListContext=@ListContext />
 
-</DetailsListContainer>
+@if (IsTeacherViewing)
+{
+    <FluentTabs activeId="Manage Students">
+        <FluentTab id="Group">Your Group</FluentTab>
+        <FluentTab id="NoGroup">No Group</FluentTab>
+
+        <FluentTabPanel id="Group">
+            <DetailsListContainer ContainerContext=@ListContainerContext
+                    CommandBarContext=@CommandBarContext
+                    SearchContext=@SearchContext
+                    TItem="StudentListRowViewStates"
+                    Title="">
+
+                <DetailsList DetailsListContext=@ListContext />
+
+            </DetailsListContainer>
+        </FluentTabPanel>
+
+        <FluentTabPanel id="NoGroup">
+            <DetailsListContainer ContainerContext=@NoGroupListContainerContext
+                    CommandBarContext=@NoGroupCommandBarContext
+                    SearchContext=@NoGroupSearchContext
+                    TItem="StudentListRowViewStates"
+                    Title="">
+
+                <DetailsList DetailsListContext=@NoGroupListContext />
+
+            </DetailsListContainer>
+        </FluentTabPanel>
+    </FluentTabs>
+}
+else
+{
+    <DetailsListContainer ContainerContext=@ListContainerContext
+                        CommandBarContext=@CommandBarContext
+                        SearchContext=@SearchContext
+                        TItem="StudentListRowViewStates"
+                        Title="Manage Students">
+
+        <DetailsList DetailsListContext=@ListContext />
+
+    </DetailsListContainer>
+}
 
 <StudentInfoFormPanel FormRequest="@StudentFormRequest" FormResultCallback="@OnFormResultReceived" />
