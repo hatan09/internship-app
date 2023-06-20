@@ -34,6 +34,9 @@ public partial class CommandBarView
 
     [Parameter]
     public EventCallback AddGroupCallBack { get; set; }
+
+    [Parameter]
+    public EventCallback UndoCallBack { get; set; }
     #endregion
 
     #region [ Properties ]
@@ -47,6 +50,7 @@ public partial class CommandBarView
     public bool IsFinishButtonVisible { get; set; }
     public bool IsViewResultButtonVisible { get; set; }
     public bool IsAddGroupButtonVisible { get; set; }
+    public bool IsUndoButtonVisible { get; set; }
     #endregion
 
     #region [ Methods - Page ]
@@ -62,6 +66,7 @@ public partial class CommandBarView
         IsFinishButtonVisible = FinishCallback.HasDelegate;
         IsViewResultButtonVisible = ViewResultCallBack.HasDelegate;
         IsAddGroupButtonVisible = AddGroupCallBack.HasDelegate;
+        IsUndoButtonVisible = UndoCallBack.HasDelegate;
 
         await base.OnInitializedAsync();
     }

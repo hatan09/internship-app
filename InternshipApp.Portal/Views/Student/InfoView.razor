@@ -12,6 +12,7 @@
     <Stack>
         <h1>
             @States.Name
+
             @if (IsTeacherViewing)
             {
                 <span> (@States.StudentId)</span>
@@ -19,7 +20,7 @@
         </h1>
     </Stack>
 
-    @if (IsAdminViewing && States.InternGroupId < 1)
+    @if (IsAdminViewing && States.InternGroupId < 1 && States.Status != Stat.REJECTED.ToString())
     {
         <label>
             <mark style="background-color: #FFFF00"><i>*This student is not added to any intern group!</i></mark>
@@ -31,15 +32,13 @@
         <br />
     }
 
-    @if (IsTeacherViewing && IsHired)
+    @if (IsTeacherViewing)
     {
-
-        <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" ShowScoreCallBack="OnShowScore" FinishCallback="OnFinish"/>
-
-    }
-    else if (IsTeacherViewing)
-    {
-        @if (States.InternGroupId < 1)
+        @if (IsHired)
+        {
+            <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" ShowScoreCallBack="OnShowScore" FinishCallback="OnFinish"/>
+        }
+        else if (States.InternGroupId < 1)
         {
             <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" AddGroupCallBack="OnAddToGroup"/>
 
@@ -59,8 +58,16 @@
     }
     else
     {
-        <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail"/>
+        @if (States.Status == Stat.REJECTED.ToString())
+        {
+            <CommandBarView ChatCallback="OnChat" UndoCallBack="OnUndo"/>
+        }
+        else
+        {
+            <CommandBarView ChatCallback="OnChat"/>
+        }
     }
+    
 </Stack>
 
 <Stack Style="margin:10px">

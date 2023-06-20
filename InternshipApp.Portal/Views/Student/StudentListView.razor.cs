@@ -234,6 +234,7 @@ public partial class StudentListView : ComponentBase
                 CommandBarFactory.CreateMenuItemFilterAll(this.OnAllFilterButtonClicked),
                 CommandBarFactory.CreateMenuItem("HasGroup", "HasGroup", "SkypeCircleCheck", this.OnHasGroupFilterButtonClicked),
                 CommandBarFactory.CreateMenuItem("NoGroup", "NoGroup", "SkypeCircleMinus", this.OnNoGroupFilterButtonClicked),
+                CommandBarFactory.CreateMenuItem("Rejected", "Rejected", "UserWarning", this.OnRejectedFilterButtonClicked),
             });
         }
         else
@@ -279,6 +280,11 @@ public partial class StudentListView : ComponentBase
     private void OnNoGroupFilterButtonClicked(MouseEventArgs obj)
     {
         this.OnFilterDataList(this.States.Items.Where(x => x.InternGroupId <= 0), "NoGroup");
+    }
+
+    private void OnRejectedFilterButtonClicked(MouseEventArgs obj)
+    {
+        this.OnFilterDataList(this.States.Items.Where(x => x.Status == Stat.REJECTED.ToString()), "Rejected Students");
     }
 
     private void OnWaitingFilterButtonClicked(MouseEventArgs obj)
@@ -555,7 +561,7 @@ public partial class StudentListView : ComponentBase
 
             this.StateHasChanged();
 
-            var studentList = await Students.FindAll(x => x.InternGroup == null).AsNoTracking().ToListAsync();
+            var studentList = await Students.FindAll(x => x.InternGroup == null && x.Stat != Stat.REJECTED).AsNoTracking().ToListAsync();
             NoGroupStates.Items = studentList.ToListRowList();
 
             this.NoGroupListContext.GetKey = x => x.Id;

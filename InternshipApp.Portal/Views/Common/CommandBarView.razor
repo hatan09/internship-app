@@ -77,6 +77,13 @@
             <SfButton IconCss="oi oi-document" CssClass="command-bar-button result" OnClick="@ViewResultCallBack" />
         </SfTooltip>
     }
+
+    @if (IsUndoButtonVisible)
+    {
+        <SfTooltip Content="Re-validate this student">
+            <SfButton IconCss="oi oi-action-undo" CssClass="command-bar-button undo" OnClick="@UndoCallBack" />
+        </SfTooltip>
+    }
 </Stack>
 
 <style>
@@ -131,6 +138,10 @@
 
     .oi-circle-document.e-btn-icon {
         color: white;
+    }
+
+    .oi-action-undo.e-btn-icon {
+        color: steelblue;
     }
 
     .command-bar-button{

@@ -192,14 +192,27 @@ public partial class InfoView
 
     }
 
-    public async void OnReject()
+    public async Task OnReject()
     {
         var student = await Students.FindAll(x => x.Id == States.Id).AsTracking().FirstOrDefaultAsync();
-        if(student != null)
+        var group = await Groups.FindAll(x => x.Students.Contains(student)).Include(x => x.Students).AsTracking().FirstOrDefaultAsync();
+        if (student != null)
         {
+            if(group != null)
+            {
+                group.Students.Remove(student);
+                Groups.Update(group);
+                await Groups.SaveChangesAsync();
+            }
+
             student.Stat = Stat.REJECTED;
-            States.Status = Stat.REJECTED.ToString();
-            StateHasChanged();
+
+            var result = await Students.UpdateAsync(student);
+            if (result.Succeeded)
+            {
+                States.Status = Stat.REJECTED.ToString();
+                NavigationManager.NavigateTo("/students", true);
+            }
         }
     }
 
@@ -253,6 +266,22 @@ public partial class InfoView
             return;
         }
         await LoadDataAsync();
+    }
+
+    public async Task OnUndo()
+    {
+        var student = await Students.FindByIdAsync(States.Id);
+        student.Stat = Stat.WAITING;
+        var result = await Students.UpdateAsync(student);
+        if (result.Succeeded)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Student with ID {student.StudentId} has been recovered!");
+            await LoadDataAsync();
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Update was failed for student with ID {student.StudentId}.");
+        }
     }
 
     public void OnToggleModal()

@@ -27,7 +27,7 @@ public partial class Home
     public double GPA { get; set; }
     public int Credits { get; set; }
 
-    public string LoginMsg { get; set; }
+    public string Msg { get; set; }
     public bool IsDisable { get; set; }
     public bool IsProcessing { get; set; }
 
@@ -108,7 +108,7 @@ public partial class Home
             await JSRuntime.InvokeVoidAsync("alert", "Out of registration time.");
             return;
         }
-        LoginMsg = "";
+        Msg = "";
         IsLogin = !IsLogin;
         StateHasChanged();
     }
@@ -134,6 +134,14 @@ public partial class Home
         StateHasChanged();
     }
 
+    public void OnUpdatePassword(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return;
+        }
+        Password = value;
+    }
     public void EnterEventHandler(KeyboardEventArgs args)
     {
         if (args.Code == "Enter" || args.Code == "NumpadEnter")
@@ -162,19 +170,75 @@ public partial class Home
         StateHasChanged();
     }
 
+    public bool OnValidate()
+    {
+        var result = true;
+        Msg = "";
+        if (IsLogin)
+        {
+            if(string.IsNullOrEmpty(Username))
+            {
+                Msg += "Username cannot be empty. \n";
+                result = false;
+            }
+            if (string.IsNullOrEmpty(Password))
+            {
+                Msg += "Password cannot be empty. \n";
+                result = false;
+            }
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(Username))
+            {
+                Msg += "Username cannot be empty. \n";
+                result = false;
+            }
+            if (string.IsNullOrEmpty(Password))
+            {
+                Msg += "Password cannot be empty. \n";
+                result = false;
+            }
+            if (string.IsNullOrEmpty(StudentId))
+            {
+                Msg += "Student ID cannot be empty. \n";
+                result = false;
+            }
+            if (string.IsNullOrEmpty(Name))
+            {
+                Msg += "Name cannot be empty. \n";
+                result = false;
+            }
+            if (Year < 1 || Year > 10)
+            {
+                Msg += "Year must be larger than 0 and less than 10. \n";
+                result = false;
+            }
+        }
+
+        Msg = Msg.Trim();
+        return result;
+    }
+
     private async Task<bool> Login()
     {
+        var validatResult = OnValidate();
+        if (!validatResult)
+        {
+            return false;
+        }
+
         var user = await Users.FindByNameAsync(Username);
         if(user == null)
         {
-            LoginMsg = "Username or password is incorrect";
+            Msg = "Username or password is incorrect";
             return false;
         }
 
         var passwordCheck = await SignInManager.CheckPasswordSignInAsync(user, Password, false);
         if (!passwordCheck.Succeeded)
         {
-            LoginMsg = "Username or password is incorrect";
+            Msg = "Username or password is incorrect";
             return false;
         }
 
@@ -212,6 +276,11 @@ public partial class Home
 
     private async Task<bool> Register()
     {
+        var validatResult = OnValidate();
+        if (!validatResult)
+        {
+            return false;
+        }
         var student = new Student() { 
             FullName = this.Name,
             StudentId = this.StudentId,
@@ -225,7 +294,7 @@ public partial class Home
         var result = await Students.CreateAsync(student);
         if(!result.Succeeded)
         {
-            LoginMsg = "Can't create user";
+            Msg = "Can't create user";
             StateHasChanged();
             return false;
         }
@@ -233,7 +302,7 @@ public partial class Home
         result = await Students.AddPasswordAsync(student, this.Password);
         if (!result.Succeeded)
         {
-            LoginMsg = "Can't provide user with password";
+            Msg = "Can't provide user with password";
             StateHasChanged();
             return false;
         }
@@ -241,7 +310,7 @@ public partial class Home
         result = await Students.AddToRoleAsync(student, "student");
         if (!result.Succeeded)
         {
-            LoginMsg = "Can't add role";
+            Msg = "Can't add role";
             StateHasChanged();
             return false;
         }
@@ -267,7 +336,7 @@ public partial class Home
         Year = 0;
         GPA = 0;
         Credits = 0;
-        LoginMsg = "";
+        Msg = "";
     }
     #endregion
 }

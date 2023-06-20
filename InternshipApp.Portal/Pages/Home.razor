@@ -48,12 +48,12 @@ else
                         <label>Username</label>
                     </FluentTextField>
 
-                    <FluentTextField @bind-Value=@Password TextFieldType="TextFieldType.Password" Placeholder="Your password" @onkeydown=@EnterEventHandler>
+                        <FluentTextField Value=@Password TextFieldType="TextFieldType.Password" Placeholder="Your password" ValueChanged="OnUpdatePassword" @onkeydown=@EnterEventHandler>
                         <label>Password</label>
                     </FluentTextField>
 
-                    <label class="login-msg">
-                        @LoginMsg
+                    <label class="msg">
+                        @Msg
                     </label>
 
                     <br />
@@ -72,11 +72,11 @@ else
                 }
                 else
                 {
-                    <FluentTextField @bind-Value=@Name Placeholder="Your Name">
+                    <FluentTextField @bind-Value=@Name Placeholder="Your Name" Required>
                         <label>Name</label>
                     </FluentTextField>
 
-                    <FluentTextField Value=@StudentId Placeholder="Your Id" @onchange=@OnStudentIdChanged>
+                    <FluentTextField Value=@StudentId Placeholder="Your Id"  Required @onchange=@OnStudentIdChanged>
                         <label>Student Id</label>
                     </FluentTextField>
 
@@ -84,7 +84,7 @@ else
                         <label>Email</label>
                     </FluentTextField>
 
-                    <FluentNumberField TValue=@int @bind-Value=@Year Placeholder="Student Year">
+                    <FluentNumberField TValue=@int @bind-Value=@Year Placeholder="Student Year" Required>
                         <label>Year</label>
                     </FluentNumberField>
 
@@ -96,16 +96,16 @@ else
                         <label>Gpa</label>
                     </FluentNumberField>
 
-                    <FluentTextField @bind-Value=@Username Placeholder="Your Username">
+                    <FluentTextField @bind-Value=@Username Placeholder="Your Username" Required>
                         <label>Username</label>
                     </FluentTextField>
 
-                    <FluentTextField @bind-Value=@Password TextFieldType="TextFieldType.Password" Placeholder="Your password">
+                    <FluentTextField @bind-Value=@Password TextFieldType="TextFieldType.Password" Placeholder="Your password" Required>
                         <label>Password</label>
                     </FluentTextField>
 
-                    <label class="login-msg">
-                        @LoginMsg
+                    <label class="msg">
+                        @Msg
                     </label>
 
                     <br />
@@ -114,7 +114,7 @@ else
 
                     <br />
 
-                    <SfButton Content="Create Account" OnClick="OnRegisterButtonClicked"/>
+                    <SfButton Content="Create Account" OnClick="OnRegisterButtonClicked" />
 
                     <br />
 
@@ -134,7 +134,8 @@ else
 </SfDialog>
 
 <style>
-    .login-msg{
+    .msg{
+        white-space: pre-wrap;
         color:darkred;
     }
     .text-btn{
