@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 using RCode;
+using Syncfusion.Blazor.RichTextEditor;
 using Wave5.UI;
 using Wave5.UI.Forms;
 
@@ -59,7 +60,7 @@ public partial class InfoView
     #endregion
 
     #region [ Properties - Panel ]
-    protected FormRequest<FormAction, Student> ApplicationFormRequest { get; private set; }
+    public FormRequest<FormAction, Student> StudentFormRequest { get; private set; }
     #endregion
 
     #region [ Properties - Data ]
@@ -70,6 +71,7 @@ public partial class InfoView
     protected override async Task OnInitializedAsync()
     {
         States = new();
+
         await base.OnInitializedAsync();
     }
 
@@ -101,6 +103,25 @@ public partial class InfoView
             StateHasChanged();
         }
         await base.OnAfterRenderAsync(firstRender);
+    }
+    #endregion
+
+    #region [ Event Handlers - Panel ]
+    protected async Task OnFormResultReceived(FormResult<Student> result)
+    {
+        switch (result.State)
+        {
+            case FormResultState.Added:
+            case FormResultState.Updated:
+            case FormResultState.Deleted:
+                var tasks = new List<Task>
+                {
+                    this.LoadDataAsync()
+                };
+
+                await Task.WhenAll(tasks);
+                break;
+        }
     }
     #endregion
 
@@ -189,7 +210,19 @@ public partial class InfoView
 
     public async void OnSendEmail()
     {
+    }
 
+    public void OnEdit()
+    {
+        try
+        {
+            StudentFormRequest = FormRequestFactory.EditRequest(States.ToEntity());
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
 
     public async Task OnReject()

@@ -22,25 +22,108 @@ public class InternGroupServices : IInternGroupServices
     #endregion
 
     #region [ Methods - Assign ]
-    public Task AutoAssign(bool isDividedEqually = true)
+    public async Task AutoAssign(int maxAmount = 0, bool assignToFreeInstructor = true)
     {
-        throw new NotImplementedException();
+        var students = await _studentManager.FindAll(x => x.InternGroup == null).AsTracking().ToListAsync();
+        if (students == null || students.Count <= 0)
+        {
+            return;
+        }
+        else if(students.Count == 1) {
+            var student = students.FirstOrDefault();
+            if(student == null)
+            {
+                return;
+            }
+            var group = await _internGroupRepository.FindAll()
+                .OrderBy(x => x.Students.Count)
+                .Take(1)
+                .Include(x => x.Students)
+                .AsTracking()
+                .FirstOrDefaultAsync();
+
+            if(group == null)
+            {
+                return;
+            }
+
+            group.Students.Add(student);
+            _internGroupRepository.Update(group);
+            await _internGroupRepository.SaveChangesAsync();
+        }
+        else
+        {
+            if (assignToFreeInstructor)
+            {
+                var freeInstructors = await _instructorManager.FindAll(x => x.InternGroup == null).ToListAsync();
+
+                var requiredGroupAmount = Math.Min(freeInstructors.Count, students.Count);
+                for(var i = 0; i < requiredGroupAmount; i++)
+                {
+                    var instructor = freeInstructors.ElementAt(i);
+                    if(instructor == null)
+                    {
+                        break;
+                    }
+
+                    var newGroup = new InternGroup()
+                    {
+                        InstructorId = instructor.Id,
+                        Title = $"{instructor.FullName}_Group"
+                    };
+
+                    _internGroupRepository.Add(newGroup);
+                }
+                await _internGroupRepository.SaveChangesAsync();
+            }
+
+            var availableGroups = await _internGroupRepository.FindAll().Include(x => x.Students).AsTracking().ToListAsync();
+            var sortedAvailableGroups = availableGroups.OrderBy(x => x.Students.Count);
+
+            var amountPerGroup = 0;
+            while(students.Count > 0)
+            {
+                foreach (var group in sortedAvailableGroups)
+                {
+                    if(amountPerGroup > maxAmount || students.Count <= 0)
+                    {
+                        break;
+                    }
+
+                    if (amountPerGroup <= group.Students.Count)
+                    {
+                        amountPerGroup++;
+                        break;
+                    }
+
+                    var student = students.FirstOrDefault();
+                    if(student != null) {
+                        group.Students.Add(student);
+                        group.Students.Remove(student);
+                        _internGroupRepository.Update(group);
+                    }
+                }
+            }
+
+            await _internGroupRepository.SaveChangesAsync();
+        }
     }
 
     public async Task AutoCreateAndAssign(int maxAmount = 0)
     {
-        var totalStudentAmount = await CountStudent();
-        var totalInstructorAmount = await CountInstructor();
-        var amountPerGroup = totalStudentAmount / totalInstructorAmount;
-        var remain = totalStudentAmount % totalInstructorAmount;
-        if(maxAmount > 0 && amountPerGroup + 1 > maxAmount)
+        var totalNoGroupStudentAmount = await CountNoGroupStudent();
+        var totalFreeInstructorAmount = await CountFreeInstructor();
+
+        var amountPerGroup = totalNoGroupStudentAmount / totalFreeInstructorAmount;
+        var remain = totalNoGroupStudentAmount % totalFreeInstructorAmount;
+        if(maxAmount > 0 && amountPerGroup + (remain > 0 ? 1 : 0) > maxAmount)
         {
             amountPerGroup = maxAmount;
             remain = 0;
         }
 
         var students = await _studentManager.FindAll(x => x.InternGroup == null)
-            .Take(amountPerGroup + ((amountPerGroup < maxAmount && remain-- > 0)? 1 : 0))
+            .Take(amountPerGroup + ((remain-- > 0)? 1 : 0))
             .AsTracking()
             .ToListAsync();
 
@@ -60,11 +143,6 @@ public class InternGroupServices : IInternGroupServices
             _internGroupRepository.Add(newGroup);
             await _internGroupRepository.SaveChangesAsync();
 
-            //students.ForEach(x =>
-            //{
-            //    x.InternGroup = newGroup;
-            //});
-            
             newGroup = await _internGroupRepository.FindAll(x => x.InstructorId == instructor.Id).Include(x => x.Students).AsTracking().FirstOrDefaultAsync();
             if(newGroup == null)
             {
@@ -79,18 +157,18 @@ public class InternGroupServices : IInternGroupServices
             await _internGroupRepository.SaveChangesAsync();
 
             students = await _studentManager.FindAll(x => x.InternGroup == null)
-                .Take(amountPerGroup + ((amountPerGroup < maxAmount && remain-- > 0) ? 1 : 0))
+                .Take(amountPerGroup + ((remain-- > 0) ? 1 : 0))
                 .AsTracking()
                 .ToListAsync();
         }
     }
 
-    private Task<int> CountStudent()
+    private Task<int> CountNoGroupStudent()
     {
-        return _studentManager.FindAll(x => x.InternGroup == null).CountAsync();
+        return _studentManager.FindAll(x => x.InternGroup == null && x.Stat != Stat.REJECTED).CountAsync();
     }
 
-    private Task<int> CountInstructor()
+    private Task<int> CountFreeInstructor()
     {
         return _instructorManager.FindAll(x => x.InternGroup == null).CountAsync();
     }

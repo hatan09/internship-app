@@ -20,19 +20,32 @@
         </h1>
     </Stack>
 
-    @if (IsAdminViewing && States.InternGroupId < 1 && States.Status != Stat.REJECTED.ToString())
+    @if (IsAdminViewing)
     {
-        <label>
-            <mark style="background-color: #FFFF00"><i>*This student is not added to any intern group!</i></mark>
-        </label>
-        <br />
-        <SfButton Content="Add to a group" OnClick="OnToggleModal">
+        @if (States.Status == Stat.REJECTED.ToString())
+        {
+            <CommandBarView UndoCallBack="OnUndo" />
+        }
+        else if (States.InternGroupId < 1)
+        {
+            <label>
+                <mark style="background-color: #FFFF00"><i>*This student is not added to any intern group!</i></mark>
+            </label>
+            <br />
+            <SfButton Content="Add to a group" OnClick="OnToggleModal">
 
-        </SfButton>
-        <br />
+            </SfButton>
+            <br />
+
+            <CommandBarView EditCallback="OnEdit" />
+        }
+        else
+        {
+            <CommandBarView EditCallback="OnEdit" />
+        }
+
     }
-
-    @if (IsTeacherViewing)
+    else if (IsTeacherViewing)
     {
         @if (IsHired)
         {
@@ -58,16 +71,9 @@
     }
     else
     {
-        @if (States.Status == Stat.REJECTED.ToString())
-        {
-            <CommandBarView ChatCallback="OnChat" UndoCallBack="OnUndo"/>
-        }
-        else
-        {
-            <CommandBarView ChatCallback="OnChat"/>
-        }
+        <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail"/>
     }
-    
+
 </Stack>
 
 <Stack Style="margin:10px">
@@ -149,6 +155,8 @@
         </SfButton>
     </Stack>
 </Stack>
+
+<StudentInfoFormPanel FormRequest="@StudentFormRequest" FormResultCallback="@OnFormResultReceived" />
 
 <PopupView IsShowScoreView=true Context=@PopupContext />
 

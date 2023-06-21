@@ -12,6 +12,7 @@ public partial class ManageInfoView
 {
     #region [ Fields ]
     public bool IsFinished { get; set; }
+    public bool HasNewMessage { get; set; }
     #endregion
 
     #region [ Properties - Parameter ]

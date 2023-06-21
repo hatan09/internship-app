@@ -13,7 +13,7 @@
         public string GitProfileUrl { get; set; } = string.Empty;
 
         public int Score { get; set; } = 0;
-        //public bool HasNewMessage { get; set; } = false;
+
         //added to group, approved by ins, accepted to interview, hired, finished
         //public string Message { get; set; } = string.Empty;
 

@@ -31,7 +31,7 @@ builder.Services.AddBlazoredLocalStorage();
 //Add database
 builder.Services
     .AddDbContextPool<AppDbContext>(options => options.UseSqlServer(builder.Configuration
-                                                        .GetConnectionString("LocalConnection"))
+                                                        .GetConnectionString("StandardConnection"))
                                                         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                                                         .EnableSensitiveDataLogging(true));
 

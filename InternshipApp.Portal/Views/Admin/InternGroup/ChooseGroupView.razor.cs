@@ -5,6 +5,7 @@ using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Fast.Components.FluentUI;
+using Microsoft.JSInterop;
 using RCode.UI.ViewModels;
 
 namespace InternshipApp.Portal.Views;
@@ -31,6 +32,9 @@ public partial class ChooseGroupView
 
     [Inject]
     public IInternGroupRepository InternGroups { get; set; }
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
     #endregion
 
     #region [ Protected Methods - Override ]
@@ -53,17 +57,27 @@ public partial class ChooseGroupView
     #region [ Events Handlers ]
     public async void OnAddButtonClicked()
     {
-        await AddToGroup();
-        await UpdateCallBack.InvokeAsync();
+        var result = int.TryParse(GetSelectedGroupId(), out var groupId);
+        if(result && groupId > 0)
+        {
+            await AddToGroup(groupId);
+            await JSRuntime.InvokeVoidAsync("alert", $"{NoStudents} students have been added to {groupId}.");
+            await UpdateCallBack.InvokeAsync();
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "No group was selected.");
+        }
     }
     #endregion
 
     #region [ Methods - Data ]
-    public async Task AddToGroup()
+    public async Task AddToGroup(int groupId)
     {
-        var group = await InternGroups.FindAll(x => x.Id == int.Parse(GetSelectedGroupId())).Include(x => x.Students).AsTracking().FirstOrDefaultAsync();
+        var group = await InternGroups.FindAll(x => x.Id == groupId).Include(x => x.Students).AsTracking().FirstOrDefaultAsync();
         if(group == null)
         {
+            await JSRuntime.InvokeVoidAsync("alert", "No group was found.");
             return;
         }
 

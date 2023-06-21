@@ -5,6 +5,7 @@ using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.JSInterop;
 using Wave5.UI;
 using Wave5.UI.Blazor;
 using Wave5.UI.DataGrids;
@@ -34,6 +35,9 @@ public partial class StudentListView : ComponentBase
 
     [Inject]
     public ILocalStorageService LocalStorage { get; set; }
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
     #endregion
 
     #region [ Properties - States - Contexts ]
@@ -60,6 +64,7 @@ public partial class StudentListView : ComponentBase
     #endregion
 
     #region [ Properties - States - DataList ]
+    protected bool IsManagingGroup { get; set; }
     protected StudentListViewStates States { get; private set; }
     protected StudentListViewStates NoGroupStates { get; private set; }
     protected bool IsTeacherViewing { get; set; }
@@ -171,7 +176,7 @@ public partial class StudentListView : ComponentBase
     private void OnNoGroupSelectionChanged()
     {
         var value = this.NoGroupListContext.GetSelectedItems().Any();
-        this.NoGroupCommandBarContext.SetItemIsVisible("AddToGroupButton", value);
+        this.NoGroupCommandBarContext.SetItemIsVisible("AddToGroupButton", value && IsTeacherViewing && IsManagingGroup);
         this.StateHasChanged();
     }
     #endregion
@@ -412,6 +417,7 @@ public partial class StudentListView : ComponentBase
             var group = await Groups.FindAll(x => x.InstructorId == instructor.Id).Include(x => x.Students).AsTracking().FirstOrDefaultAsync();
             if(group == null)
             {
+                await JSRuntime.InvokeVoidAsync("alert", "Cannot find your group.");
                 return;
             }
 
@@ -466,7 +472,7 @@ public partial class StudentListView : ComponentBase
             return null;
         }
 
-        return await Instructors.FindByIdAsync(user.Id);
+        return await Instructors.FindAll(x => x.Id == user.Id).Include(x => x.InternGroup).FirstOrDefaultAsync();
     }
 
     private async Task LoadDataAsync()
@@ -482,6 +488,7 @@ public partial class StudentListView : ComponentBase
 
             this.StateHasChanged();
 
+            //instructor
             if (IsTeacherViewing)
             {
                 var instructor = await GetInstructorAsync();
@@ -490,20 +497,31 @@ public partial class StudentListView : ComponentBase
                     NavigationManager.NavigateTo("/", true);
                     return;
                 }
-                var studentList = new List<Student>();
-                var group = await Groups.FindAll(x => x.InstructorId == instructor.Id).Include(x => x.Students.Where(x => x.Stat != Stat.REJECTED)).AsNoTracking().FirstOrDefaultAsync();
-                if (group != null)
-                {
-                    studentList.AddRange(group.Students);
-                    States.Items.AddRange(studentList.ToListRowList());
-                    States.Items.ForEach(x =>
-                    {
-                        x.InternGroupName = group.Title;
-                    });
-                }
+                IsManagingGroup = instructor.InternGroup != null;
 
-                await LoadNoGroupDataAsync();
+                if (IsManagingGroup)
+                {
+                    var studentList = new List<Student>();
+                    var group = await Groups.FindAll(x => x.InstructorId == instructor.Id).Include(x => x.Students.Where(x => x.Stat != Stat.REJECTED)).AsNoTracking().FirstOrDefaultAsync();
+                    if (group != null)
+                    {
+                        studentList.AddRange(group.Students);
+                        States.Items.AddRange(studentList.ToListRowList());
+                        States.Items.ForEach(x =>
+                        {
+                            x.InternGroupName = group.Title;
+                        });
+                    }
+
+                    await LoadNoGroupDataAsync();
+                }
+                else
+                {
+                    this.NoGroupListContext.GetKey = x => x.Id;
+                    this.NoGroupListContext.ItemsSource.Clear();
+                }
             }
+            //admin
             else
             {
                 if (InternGroupId == null)

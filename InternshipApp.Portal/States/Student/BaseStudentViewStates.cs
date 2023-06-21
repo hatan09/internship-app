@@ -25,6 +25,7 @@ public class BaseStudentViewStates : BaseViewModel
     private string _cVUrl;
     private string _jobName;
     private string _companyName;
+    private string _newMessege;
     #endregion
 
     #region [ CTor ]
@@ -146,6 +147,12 @@ public class BaseStudentViewStates : BaseViewModel
     {
         get { return this._companyName; }
         set { this.SetProperty(ref this._companyName, value); }
+    }
+
+    public string NewMessege
+    {
+        get { return this._newMessege; }
+        set { this.SetProperty(ref this._newMessege, value); }
     }
     #endregion
 }

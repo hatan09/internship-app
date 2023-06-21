@@ -19,9 +19,18 @@
                     CommandBarContext=@CommandBarContext
                     SearchContext=@SearchContext
                     TItem="StudentListRowViewStates"
-                    Title="">
+                    Title="Manage Students In Your Group">
 
-                <DetailsList DetailsListContext=@ListContext />
+                @if (IsManagingGroup)
+                {
+                    <DetailsList DetailsListContext=@ListContext />
+                }
+                else
+                {
+                    <Stack Style="width:100%;" HorizontalAlign="Wave5.UI.Alignment.Center">
+                        <label>You have not been assigned to any group. Please contact administrators for assisstance!</label>
+                    </Stack>
+                }
 
             </DetailsListContainer>
         </FluentTabPanel>
@@ -31,9 +40,19 @@
                     CommandBarContext=@NoGroupCommandBarContext
                     SearchContext=@NoGroupSearchContext
                     TItem="StudentListRowViewStates"
-                    Title="">
+                    Title="Students Without Group">
 
-                <DetailsList DetailsListContext=@NoGroupListContext />
+                @if (IsManagingGroup)
+                {
+                    <DetailsList DetailsListContext=@NoGroupListContext />
+                }
+                else
+                {
+                    <Stack Style="width:100%;" HorizontalAlign="Wave5.UI.Alignment.Center">
+                        <label>You have not been assigned to any group. Please contact administrators for assisstance!</label>
+                    </Stack>
+                }
+                
 
             </DetailsListContainer>
         </FluentTabPanel>

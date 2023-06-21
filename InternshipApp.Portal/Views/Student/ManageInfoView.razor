@@ -15,7 +15,16 @@
         </h1>
     </Stack>
 
-    @if (States.InternGroupId < 1)
+    @if (States.Status == Stat.REJECTED.ToString())
+    {
+        <label>
+            <mark style="background-color: #FFFF00"><i>*You are not qualified to take this internship!</i></mark>
+        </label>
+        <label>
+            <mark style="background-color: #FFFF00">Please contact your department for assisstance and further information.</mark>
+        </label>
+    }
+    else if (States.InternGroupId < 1)
     {
         <label>
             <mark style="background-color: #FFFF00"><i>*You are not added to any intern group!</i></mark>
@@ -25,9 +34,13 @@
         </label>
     }
 
-    @if(IsFinished)
+    @if(States.Status == Stat.FINISHED.ToString())
     {
         <CommandBarView ViewResultCallBack="OnViewResult"/>
+    }
+    else if (States.Status == Stat.REJECTED.ToString())
+    {
+        
     }
     else
     {
