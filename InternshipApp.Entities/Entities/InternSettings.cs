@@ -1,6 +1,6 @@
 ﻿namespace InternshipApp.Core.Entities;
 
-public class InternshipSettings : BaseEntity<int>
+public class InternSettings : BaseEntity<int>
 {
     public DateTime StartTime { get; set; }
     public DateTime CloseRegistrationTime { get; set; }

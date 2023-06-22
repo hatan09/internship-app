@@ -1,6 +1,8 @@
-﻿namespace InternshipApp.Portal.Views;
+﻿using RCode.ViewModels;
 
-public class BaseCourseFormViewStates
+namespace InternshipApp.Portal.Views;
+
+public class BaseCourseFormViewStates : BaseViewModel
 {
     #region [ CTor ]
     public BaseCourseFormViewStates()

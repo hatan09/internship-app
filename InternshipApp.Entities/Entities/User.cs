@@ -8,6 +8,8 @@ namespace InternshipApp.Core.Entities
         public string FullName { get; set; } = string.Empty;
         public bool? Gender { get; set; }
         public DateTime Birthdate { get; set; }
+
+        public string? Message { get; set; }
         public bool IsDeleted { get; set; } = false;
 
         public virtual ICollection<UserRole> UserRoles { get; } = new HashSet<UserRole>();

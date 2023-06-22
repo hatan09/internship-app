@@ -1,6 +1,6 @@
 ﻿namespace InternshipApp.Portal.Views; 
 
-public class CourseFormFormViewStates 
+public class CourseFormFormViewStates : BaseCourseFormViewStates
 {
     #region [ CTor ]
     public CourseFormFormViewStates()

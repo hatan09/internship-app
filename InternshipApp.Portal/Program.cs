@@ -107,6 +107,7 @@ builder.Services.AddTransient<IEvaluationRepository, EvaluationRepository>();
 builder.Services.AddTransient<IConversationRepository, ConversationRepository>();
 builder.Services.AddTransient<IMessageRepository, MessageRepository>();
 builder.Services.AddTransient<ISkillScoreRepository, SkillScoreRepository>();
+builder.Services.AddTransient<IInternSettingsRepository, InternSettingsRepository>();
 builder.Services.AddTransient<IMatchingService, MatchingService>();
 builder.Services.AddTransient<IInternGroupServices, InternGroupServices>();
 
@@ -114,14 +115,6 @@ builder.Services.AddTransient<IInternGroupServices, InternGroupServices>();
 //builder.Services.AddTransient<IEmailService, EmailService>();
 
 //Authorization
-
-//AutoMapper
-//var mapperConfig = new MapperConfiguration(mc =>
-//{
-//    mc.AddProfile(new MappingProfile());
-//});
-//IMapper mapper = mapperConfig.CreateMapper();
-//builder.Services.AddSingleton(mapper);
 
 builder.Services.AddFluentUIComponents();
 builder.Services.AddSyncfusionBlazor();
