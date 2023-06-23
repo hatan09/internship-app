@@ -8,14 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Views\Chat\GroupChat.razor.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Views\Chat\GroupChat.razor.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Data\Extensions\" />
     <Folder Include="Data\HttpClients\" />
     <Folder Include="Data\Settings\" />

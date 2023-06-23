@@ -2,6 +2,20 @@
 
 @namespace InternshipApp.Portal.Views
 
-<ChatView ReceiverId=@ReceiverId>
+<div class="chat-container">
+    <ChatView ReceiverId=@ReceiverId>
 
-</ChatView>
+    </ChatView>
+
+    <ConversationListView>
+
+    </ConversationListView>
+</div>
+
+<style>
+    .chat-container{
+        display:flex;
+        flex-direction:column;
+        width:auto;
+    }
+</style>

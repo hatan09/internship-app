@@ -1,6 +1,5 @@
 ﻿namespace InternshipApp.Portal.Views;
 
-public partial class ChatView
+public class ChatContext
 {
-
 }

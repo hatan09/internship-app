@@ -14,8 +14,7 @@
 
         public int Score { get; set; } = 0;
 
-        //added to group, approved by ins, accepted to interview, hired, finished
-        //public string Message { get; set; } = string.Empty;
+        //public string? Comments { get; set; } = string.Empty;
 
         //[Required]
         public Department? Department { get; set; }
