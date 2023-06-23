@@ -9,6 +9,10 @@ namespace InternshipApp.Core.Entities
         public bool? Gender { get; set; }
         public DateTime Birthdate { get; set; }
 
+        //students: added to group, approved by ins, accepted to interview, hired, finished
+        //instructor: add to group, inform times
+        //recruiter: job accept, number of new application, inform times
+        //admin: out time
         //public string? Message { get; set; }
         public bool IsDeleted { get; set; } = false;
 
