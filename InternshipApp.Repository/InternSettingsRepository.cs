@@ -11,6 +11,6 @@ public class InternSettingsRepository : BaseRepository<InternSettings>, IInternS
     {
     }
 
-    public Task<List<InternSettings>> FindBySkillAsync(int settingId)
-        => FindAll(x => x.Id == settingId).ToListAsync();
+    public Task<InternSettings?> GetCurrentSemester()
+        => FindAll(x => x.StartTime <= DateTime.Today && x.EndTime >= DateTime.Today).FirstOrDefaultAsync();
 }

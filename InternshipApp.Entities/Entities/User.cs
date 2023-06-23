@@ -9,7 +9,7 @@ namespace InternshipApp.Core.Entities
         public bool? Gender { get; set; }
         public DateTime Birthdate { get; set; }
 
-        public string? Message { get; set; }
+        //public string? Message { get; set; }
         public bool IsDeleted { get; set; } = false;
 
         public virtual ICollection<UserRole> UserRoles { get; } = new HashSet<UserRole>();
