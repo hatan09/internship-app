@@ -1,4 +1,5 @@
-﻿using RCode.ViewModels;
+﻿using InternshipApp.Core.Entities;
+using RCode.ViewModels;
 
 namespace InternshipApp.Portal.Views;
 
@@ -26,6 +27,7 @@ public class BaseStudentViewStates : BaseViewModel
     private string _jobName;
     private string _companyName;
     private string _newMessege;
+    private List<StudentSkill> _studentSkills;
     #endregion
 
     #region [ CTor ]
@@ -153,6 +155,12 @@ public class BaseStudentViewStates : BaseViewModel
     {
         get { return this._newMessege; }
         set { this.SetProperty(ref this._newMessege, value); }
+    }
+
+    public List<StudentSkill> StudentSkills
+    {
+        get { return this._studentSkills; }
+        set { this.SetProperty(ref this._studentSkills, value); }
     }
     #endregion
 }

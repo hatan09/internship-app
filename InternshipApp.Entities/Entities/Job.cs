@@ -9,7 +9,7 @@
         public int MinYear { get; set; }
         public string? Description { get; set; }
         public string? JobPaths { get; set; }
-        //public bool IsAccepted { get; set; }
+        public bool IsAccepted { get; set; } = false;
         public Company Company { get; set; }
         public int CompanyId { get; set; }
 

@@ -3,31 +3,38 @@
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Lists
 
-<Stack Horizontal=true>
-    <SfTextBox CssClass="search-text-box">
+<Stack ClassName="list-container">
+    <Stack Horizontal=true>
+        <SfTextBox CssClass="search-text-box" Value="@SearchText" OnInput="@OnSearchHandler">
 
-    </SfTextBox>
+        </SfTextBox>
 
-    <SfMultiSelect @ref="SfMultiSelect" TValue="string[]" AllowFiltering="true" TItem="JobFilterOption" Mode="@VisualMode.CheckBox" Width="250px" Placeholder="Search for skills" DataSource="@this.States.Options" ShowSelectAll="@true"
-               EnableSelectionOrder="@true" FilterBarPlaceholder="Search for skills" EnableGroupCheckBox="@true" PopupHeight="350px">
-    <MultiSelectEvents TItem="JobFilterOption" TValue="string[]" ValueChange="@FilterChangeHandler"></MultiSelectEvents>
-    <MultiSelectFieldSettings GroupBy="Category" Value="Title"></MultiSelectFieldSettings>
-</SfMultiSelect>
+        <SfMultiSelect @ref="SfMultiSelect" TValue="string[]" AllowFiltering="true" TItem="JobFilterOption" Mode="@VisualMode.CheckBox" Width="250px" Placeholder="Search for skills" DataSource="@this.States.Options" ShowSelectAll="@true"
+                   EnableSelectionOrder="@true" FilterBarPlaceholder="Search for skills" EnableGroupCheckBox="@true" PopupHeight="350px">
+            <MultiSelectEvents TItem="JobFilterOption" TValue="string[]" ValueChange="@FilterChangeHandler"></MultiSelectEvents>
+            <MultiSelectFieldSettings GroupBy="Category" Value="Id" Text="Title"></MultiSelectFieldSettings>
+        </SfMultiSelect>
+    </Stack>
+
+    <SfListView TValue="JobListRowViewStates" ID="job-list" DataSource="@States.Items" HeaderTitle="Jobs" ShowHeader CssClass="e-list-template">
+        <ListViewEvents TValue="JobListRowViewStates" Clicked="OnRowSelect"></ListViewEvents> 
+        <ListViewTemplates TValue="JobListRowViewStates">
+            <Template>
+                <Stack Horizontal=false ClassName="list-view-item">
+                    <h3><b> @((context as JobListRowViewStates).Title) </b></h3>
+                    <lable> <b>Company's name:</b> @((context as JobListRowViewStates).CompanyName) </lable>
+                    <lable> &#x2022; @((context as JobListRowViewStates).Description) </lable>
+                    <SkillTagList 
+                        JobId="@((context as JobListRowViewStates).Id)" 
+                        JobSkills="@((context as JobListRowViewStates).JobSkills)" 
+                        AllSkills="@States.AllSkills">
+                    </SkillTagList>
+                </Stack>
+            </Template>
+        </ListViewTemplates>
+        <ListViewFieldSettings TValue="JobListRowViewStates" Id="Id"></ListViewFieldSettings>
+    </SfListView>
 </Stack>
-
-<SfListView TValue="JobListRowViewStates" ID="job-list" DataSource="@States.Items" HeaderTitle="Jobs" ShowHeader CssClass="e-list-template">
-    <ListViewEvents TValue="JobListRowViewStates" Clicked="OnRowSelect"></ListViewEvents> 
-    <ListViewTemplates TValue="JobListRowViewStates">
-        <Template>
-            <Stack Horizontal=false ClassName="list-view-item">
-                <h3><b> @((context as JobListRowViewStates).Title) </b></h3>
-                <lable> <b>Company's name:</b> @((context as JobListRowViewStates).CompanyName) </lable>
-                <lable> &#x2022; @((context as JobListRowViewStates).Description) </lable>
-            </Stack>
-        </Template>
-    </ListViewTemplates>
-    <ListViewFieldSettings TValue="JobListRowViewStates" Id="Id"></ListViewFieldSettings>
-</SfListView>
 
 <style>
     .list-view-item{
@@ -36,5 +43,11 @@
 
     .e-headertext{
         font-size: 20pt
+    }
+
+    .list-container{
+        border-radius:6px;
+        padding:24px;
+        background-color:white;
     }
 </style>

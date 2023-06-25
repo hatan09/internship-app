@@ -30,6 +30,12 @@ public partial class EditableStudentSkillListView
     #region [ Parameters ]
     [Parameter]
     public string StudentId { get; set; }
+
+    [Parameter]
+    public List<Skill> AllSkills { get; set; }
+
+    [Parameter]
+    public EventCallback EditSkillCallback { get; set; }
     #endregion
 
     #region [ Properties - States - Contexts ]
@@ -38,8 +44,6 @@ public partial class EditableStudentSkillListView
     protected DetailsListContext<StudentSkillListRowViewStates> ListContext { get; private set; }
 
     protected List<DataGridColumnDefinition<StudentSkillListRowViewStates>> Columns { get; private set; }
-
-    protected List<Skill> AllSkills { get; set; }
     #endregion
 
     #region [ Properties - States - DataList ]
@@ -104,6 +108,7 @@ public partial class EditableStudentSkillListView
         Guard.ParamIsNull(viewStates, nameof(viewStates));
         var entity = viewStates.ToEntity();
         await UpdateAsync(entity);
+        if(EditSkillCallback.HasDelegate) await EditSkillCallback.InvokeAsync();
     }
 
     public async Task OnAdd(StudentSkillListRowViewStates viewStates)
@@ -112,6 +117,7 @@ public partial class EditableStudentSkillListView
         var entity = viewStates.ToEntity();
 
         await AddAsync(entity);
+        if (EditSkillCallback.HasDelegate) await EditSkillCallback.InvokeAsync();
         await this.LoadDataAsync();
         OnToggleAdd(null);
     }
@@ -120,6 +126,7 @@ public partial class EditableStudentSkillListView
     {
         Guard.ParamIsNull(answerId, nameof(answerId));
         await DeleteAsync(answerId);
+        if (EditSkillCallback.HasDelegate) await EditSkillCallback.InvokeAsync();
         await this.LoadDataAsync();
     }
     #endregion
@@ -150,7 +157,10 @@ public partial class EditableStudentSkillListView
 
             this.StateHasChanged();
 
-            AllSkills = await Skills.FindAll().AsNoTracking().ToListAsync();
+            if(AllSkills == null || AllSkills.Count == 0)
+            {
+                AllSkills = await Skills.FindAll().AsNoTracking().ToListAsync();
+            }
 
             if (!string.IsNullOrEmpty(StudentId))
             {

@@ -1,4 +1,5 @@
-﻿using InternshipApp.Core.Entities;
+﻿using InternshipApp.Contracts;
+using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,9 @@ public partial class ManageInfoView
 
     [Inject]
     public StudentManager Students { get; set; }
+
+    [Inject]
+    public ISkillRepository Skills { get; set; }
 
     [Inject]
     public IJSRuntime JSRuntime { get; private set; }
@@ -87,7 +91,7 @@ public partial class ManageInfoView
 
         try
         {
-            var item = await this.Students.FindAll().AsNoTracking().Where(x => x.Id == this.StudentId).FirstOrDefaultAsync();
+            var item = await this.Students.FindAll().AsNoTracking().Include(x => x.StudentSkills).Where(x => x.Id == this.StudentId).FirstOrDefaultAsync();
 
             if (item is null)
             {
@@ -96,6 +100,10 @@ public partial class ManageInfoView
             }
             IsFinished = item.Stat == Stat.FINISHED;
             this.States = item.ToDetailsViewStates();
+            States.StudentSkills = item.StudentSkills.ToList();
+
+            var skills = await Skills.FindAll().AsNoTracking().ToListAsync();
+            States.AllSkills = skills;
         }
         catch (Exception ex)
         {
@@ -151,9 +159,8 @@ public partial class ManageInfoView
     {
         this.PopupContext = new() {
             IsOpen = true,
-            StudentId = States.Id
+            StudentId = States.Id,
         };
-        //StateHasChanged();
     }
 
     public void OnEdit()

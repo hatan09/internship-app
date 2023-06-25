@@ -13,7 +13,7 @@ namespace InternshipApp.Core.Entities
         //instructor: add to group, inform times
         //recruiter: job accept, number of new application, inform times
         //admin: out time
-        //public string? Message { get; set; }
+        public string? Message { get; set; }
         public bool IsDeleted { get; set; } = false;
 
         public virtual ICollection<UserRole> UserRoles { get; } = new HashSet<UserRole>();

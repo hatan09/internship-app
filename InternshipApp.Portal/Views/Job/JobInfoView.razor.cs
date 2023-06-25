@@ -89,13 +89,22 @@ public partial class JobInfoView
             JobId = int.Parse(JobId)
         };
 
-        await OnUpdateApplicationAsync(studentJob);
-        if(student.Stat == Stat.WAITING)
+        var isApplied = await OnUpdateApplicationAsync(studentJob);
+        if(isApplied)
         {
-            student.Stat = Stat.APPLIED;
-            await Students.UpdateAsync(student);
+            if (student.Stat == Stat.WAITING)
+            {
+                student.Stat = Stat.APPLIED;
+                await Students.UpdateAsync(student);
+            }
+            await LoadDataAsync();
+            return;
         }
-        await LoadDataAsync();
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "An error occured while applying fot job. Please try again later!");
+            return;
+        }
 
     }
 
@@ -114,12 +123,17 @@ public partial class JobInfoView
         return student;
     }
 
-    private async Task OnUpdateApplicationAsync(StudentJob studentJob)
+    private async Task<bool> OnUpdateApplicationAsync(StudentJob studentJob)
     {
         var job = await Jobs.FindAll(x => x.Id == int.Parse(JobId)).AsTracking().Include(x => x.StudentJobs).FirstOrDefaultAsync();
+        if(job == null || job.Slots - job.StudentJobs.Where(x => x.Status == ApplyStatus.HIRED).Count() <= 0)
+        {
+            return false;
+        }
         job?.StudentJobs.Add(studentJob);
         Jobs.Update(job);
         await Jobs.SaveChangesAsync();
+        return true;
     }
 
     private async Task LoadDataAsync()
@@ -155,17 +169,15 @@ public partial class JobInfoView
             States.JobSkills = job.JobSkills.ToList();
             var skillIds = job.JobSkills.Select(x => x.SkillId).ToList();
 
-            var company = job.Company;
-            if(company != null)
+            if(job.Company != null)
             {
-                States.CompanyName = company.Title;
-                States.Address = company.Address;
+                States.CompanyName = job.Company.Title;
+                States.Address = job.Company.Address;
             }
 
             States.Remaining = remaining;
 
-            var matching = await MatchingService.GetMatchingPointById(student.Id, job.Id);
-            States.Matching = matching;
+            States.Matching = await MatchingService.GetMatchingPointById(student.Id, job.Id);
 
             var skills = await Skills.FindAll(x => skillIds.Contains(x.Id)).AsNoTracking().ToListAsync();
             States.Skills.AddRange(skills);

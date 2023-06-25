@@ -14,7 +14,7 @@
 
         public int Score { get; set; } = 0;
 
-        //public string? Comments { get; set; } = string.Empty;
+        public string? Comments { get; set; } = string.Empty;
 
         //[Required]
         public Department? Department { get; set; }

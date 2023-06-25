@@ -1,10 +1,11 @@
-﻿using Blazored.LocalStorage;
-using InternshipApp.Contracts;
+﻿using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using Syncfusion.Blazor.DropDowns;
+using Syncfusion.Blazor.Inputs;
 using Syncfusion.Blazor.Lists;
 
 namespace InternshipApp.Portal.Views;
@@ -17,11 +18,11 @@ public partial class JobListView
     public JobListViewStates States { get; set; }
 
     public SfMultiSelect<string[], JobFilterOption> SfMultiSelect { get; set; }
+
+    public string SearchText { get; set; }
     #endregion
 
     #region [ Properties - Inject ]
-    [Inject]
-    public ILocalStorageService LocalStorage { get; set; }
 
     [Inject]
     public IJobRepository Jobs { get; set; }
@@ -68,32 +69,54 @@ public partial class JobListView
     #endregion
 
     #region [ Event Handlers - CommandBars - Filters ]
-    private async void FilterChangeHandler()
+    private void FilterChangeHandler()
     {
-        await OnFilterItems();
+        OnFilterItems();
     }
 
-    private List<JobListRowViewStates> GetItemsList(List<JobFilterOption> options)
+    private void OnSearchHandler(ChangeEventArgs args)
     {
+        var searchValue = args.Value.ToString();
+        SearchText = searchValue;
+        OnFilterItems();
+    }
+
+    private void OnFilterItems()
+    {
+        var items = this.SfMultiSelect.Value;
+        var filtered = GetItemsList(items, SearchText);
+        States.Items = filtered;
+        StateHasChanged();
+    }
+
+    private List<JobListRowViewStates> GetItemsList(string[] options = default, string search = default)
+    {
+        var filtered = new List<JobListRowViewStates>();
         var result = new List<JobListRowViewStates>();
-        options.ForEach(x =>
+
+        if (options == null || options.Length <= 0)
         {
-            result.AddRange(States.OriginalItems.Where(y => y.Id == int.Parse(x.Id)).ToList());
-        });
+            filtered = States.OriginalItems;
+        }
+        else
+        {
+            filtered.AddRange(States.OriginalItems.Where(y => y.JobSkills.Where(z => options.Contains(z.SkillId.ToString())).Any()));
+        }
+
+        if (string.IsNullOrWhiteSpace(search))
+        {
+            result = filtered;
+        }
+        else
+        {
+            // have to check the string is not null first
+            // for some reasons, the data can be null or blank
+            result = filtered.Where(x =>
+                (!string.IsNullOrEmpty(x.Title) && x.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase))
+            ).ToList();
+        }
 
         return result;
-    }
-
-    public async Task OnFilterItems()
-    {
-        var items = await this.SfMultiSelect.GetItemsAsync();
-        if (!items.Any())
-        {
-            States.Items = States.OriginalItems;
-            return;
-        }
-        var filtered = GetItemsList(items.ToList());
-        States.Items = filtered;
     }
     #endregion
 
@@ -118,8 +141,10 @@ public partial class JobListView
         {
             this.States.Items.Clear();
             this.States.Options.Clear();
+            this.States.OriginalItems.Clear();
+
             var jobList = new List<Job>();
-            jobList.AddRange(await Jobs.FindAll(x => string.IsNullOrEmpty(CompanyId) || x.CompanyId == int.Parse(CompanyId)).Include(x => x.Company).ToListAsync());
+            jobList.AddRange(await Jobs.FindAll(x => string.IsNullOrEmpty(CompanyId) || x.CompanyId == int.Parse(CompanyId)).Include(x => x.Company).Include(x => x.JobSkills).ToListAsync());
 
             var skills = await Skills.FindAll().ToListAsync();
             skills.ForEach(x =>
@@ -133,8 +158,18 @@ public partial class JobListView
                     }
                 );
             });
+            States.AllSkills = skills;
 
             this.States.Items = jobList.ToListRowList();
+            this.States.Items.ForEach(x =>
+            {
+                x.JobSkills = jobList.FirstOrDefault(y => y.Id == x.Id)?.JobSkills.ToList();
+            });
+            this.States.OriginalItems = jobList.ToListRowList();
+            this.States.OriginalItems.ForEach(x =>
+            {
+                x.JobSkills = jobList.FirstOrDefault(y => y.Id == x.Id)?.JobSkills.ToList();
+            });
         }
         catch (Exception ex)
         {

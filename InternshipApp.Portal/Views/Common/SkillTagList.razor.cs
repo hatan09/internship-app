@@ -17,10 +17,19 @@ public partial class SkillTagList
     public int? JobId { get; set; }
 
     [Parameter]
+    public List<JobSkill>? JobSkills { get; set; }
+
+    [Parameter]
+    public List<StudentSkill>? StudentSkills { get; set; }
+
+    [Parameter]
+    public List<Skill>? AllSkills { get; set; }
+
+    [Parameter]
     public bool IsEditable { get; set; } = false;
 
     [Parameter]
-    public EventCallback OnEditButtonClicked { get; set; }
+    public EventCallback OnEditButtonClickedCallback { get; set; }
 
     #region [ Properties - Inject ]
     [Inject]
@@ -34,10 +43,6 @@ public partial class SkillTagList
     #endregion
 
     #region [ Properties ]
-    public List<StudentSkill> StudentSkills { get; set; }
-    public List<JobSkill> JobSkills { get; set; }
-    public List<Skill> AllSkills { get; set; }
-
     public bool IsStudentSkills { get; set; }
     #endregion
 
@@ -57,13 +62,21 @@ public partial class SkillTagList
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
-        if (firstRender)
+        var newJobSkills = parameters.GetValueOrDefault<List<JobSkill>>(nameof(this.JobSkills));
+        var currentJobSkills = this.JobSkills;
+
+        var newStudentSkills = parameters.GetValueOrDefault<List<StudentSkill>>(nameof(this.StudentSkills));
+        var currentStudentSkills = this.StudentSkills;
+
+        await base.SetParametersAsync(parameters);
+
+        if ((newJobSkills != null && newJobSkills != currentJobSkills) || (newStudentSkills != null && newStudentSkills != currentStudentSkills))
         {
             await this.LoadDataAsync();
+            return;
         }
-        await base.OnAfterRenderAsync(firstRender);
     }
     #endregion
 
@@ -91,31 +104,21 @@ public partial class SkillTagList
     {
         try
         {
-            await Task.Delay(1000);
+            await Task.Delay(2000);
             var IsStudent = !string.IsNullOrEmpty(StudentId);
             var IsJob = JobId > 0;
             
-            if(IsStudent && IsJob == true || !IsStudent && !IsJob == true)
+            if((IsStudent && IsJob) || (!IsStudent && !IsJob))
             {
                 return;
             }
             else if (IsStudent)
             {
                 IsStudentSkills = true;
-
-                var student = await Students.FindAll(x => x.Id == StudentId).AsNoTracking().Include(x => x.StudentSkills).FirstOrDefaultAsync();
-                StudentSkills = student.StudentSkills.ToList();
-                var skills = await Skills.FindAll(x => student.StudentSkills.Select(x => x.SkillId).Contains(x.Id)).AsNoTracking().ToListAsync();
-                AllSkills = skills;
             }
             else if (IsJob)
             {
                 IsStudentSkills = false;
-
-                var job = await Jobs.FindAll(x => x.Id == (int) JobId).AsNoTracking().Include(x => x.JobSkills).FirstOrDefaultAsync();
-                JobSkills = job.JobSkills.ToList();
-                var skills = await Skills.FindAll(x => job.JobSkills.Select(x => x.SkillId).Contains(x.Id)).AsNoTracking().ToListAsync();
-                AllSkills = skills;
             }
         }
         catch (Exception ex)
@@ -130,7 +133,7 @@ public partial class SkillTagList
 
     public async void OnEdit()
     {
-        await OnEditButtonClicked.InvokeAsync();
+        await OnEditButtonClickedCallback.InvokeAsync();
     }
     #endregion
 }

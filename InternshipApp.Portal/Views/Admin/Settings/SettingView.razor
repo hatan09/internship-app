@@ -1,6 +1,62 @@
 ﻿@namespace InternshipApp.Portal.Views
-<Stack Style="padding:24px">
-    <Stack Horizontal>
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.Inputs
 
-    </Stack>
+<PageTitle>
+    Settings
+</PageTitle>
+
+<Stack Style="padding:24px;background-color:white;">
+    <h1>
+
+    </h1>
+
+    <label><b>Internship Title</b></label>
+    <SfTextBox @bind-Value=@States.Title ShowClearButton CssClass="half-width">
+    </SfTextBox>
+    <br />
+
+    <label><b>Start Day: @States.Start.ToShortDateString()</b></label>
+    <SfCalendar @bind-Value=@States.Start WeekNumber=true>
+    </SfCalendar>
+    <br />
+
+    <label><b>Close Registration Day: @States.CloseReg.ToShortDateString()</b></label>
+    <SfCalendar @bind-Value=@States.CloseReg WeekNumber=true>
+    </SfCalendar>
+    <br />
+
+    <label><b>Job Deadline Day: @States.JobDeadline.ToShortDateString()</b></label>
+    <SfCalendar @bind-Value=@States.JobDeadline WeekNumber=true>
+    </SfCalendar>
+    <br />
+
+    <label><b>Summary Start Day: @States.Summary.ToShortDateString()</b></label>
+    <SfCalendar @bind-Value=@States.Summary WeekNumber=true>
+    </SfCalendar>
+    <br />
+
+    <label><b>End Day: @States.End.ToShortDateString()</b></label>
+    <SfCalendar @bind-Value=@States.End WeekNumber=true>
+    </SfCalendar>
+    <br />
+
+    <SfButton Content="Save" CssClass="color" OnClick="@OnSave">
+    </SfButton>
 </Stack>
+
+<style>
+    label{
+        margin-top:10px;
+    }
+
+    .color{
+        background:var(--accent-fill-rest);
+        color:var(--foreground-on-accent-rest);
+    }
+
+    .half-width{
+        width:50%;
+    }
+</style>

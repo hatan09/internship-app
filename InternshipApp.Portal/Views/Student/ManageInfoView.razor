@@ -89,7 +89,11 @@
         <h2>
             Skills
         </h2>
-        <SkillTagList StudentId="@States.Id" IsEditable=true OnEditButtonClicked="OnEditSkill">
+        <SkillTagList StudentId="@States.Id" 
+            StudentSkills="@States.StudentSkills" 
+            AllSkills="@States.AllSkills" 
+            IsEditable=true 
+            OnEditButtonClickedCallback="OnEditSkill">
 
         </SkillTagList>
     </Stack>

@@ -47,6 +47,9 @@ public partial class InfoView
     public IJobRepository Jobs { get; set; }
 
     [Inject]
+    public ISkillRepository Skills { get; set; }
+
+    [Inject]
     public IEvaluationRepository Evaluations { get; set; }
 
     [Inject]
@@ -132,7 +135,7 @@ public partial class InfoView
 
         try
         {
-            var student = await this.Students.FindAll(x => x.Id == StudentId).AsNoTracking().Include(x => x.StudentJobs.Where(x => x.Status == ApplyStatus.HIRED)).FirstOrDefaultAsync();
+            var student = await this.Students.FindAll(x => x.Id == StudentId).AsNoTracking().Include(x => x.StudentSkills).Include(x => x.StudentJobs.Where(x => x.Status == ApplyStatus.HIRED)).FirstOrDefaultAsync();
 
             if (student is null)
             {
@@ -141,6 +144,10 @@ public partial class InfoView
             }
 
             this.States = student.ToDetailsViewStates();
+
+            var skills = await Skills.FindAll().AsNoTracking().ToListAsync();
+            States.AllSkills = skills;
+            States.StudentSkills = student.StudentSkills.ToList();
 
             if (student.Stat == Stat.HIRED)
             {

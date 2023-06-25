@@ -5,6 +5,7 @@ namespace InternshipApp.Portal.Views;
 public class BaseInternSettingsViewStates : BaseViewModel
 {
     #region [ Fields ]
+    private int _id;
     private string _title;
     private DateTime _start;
     private DateTime _closeReg;
@@ -21,6 +22,12 @@ public class BaseInternSettingsViewStates : BaseViewModel
     #endregion
 
     #region [ Properties ]
+    public int Id
+    {
+        get { return this._id; }
+        set { this.SetProperty(ref this._id, value); }
+    }
+
     public string Title
     {
         get { return this._title; }

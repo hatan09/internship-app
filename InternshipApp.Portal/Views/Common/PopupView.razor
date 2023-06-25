@@ -2,7 +2,8 @@
 @using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.Buttons
 
-<SfDialog Height="50%" Width="50%" Target="#target" ShowCloseIcon="true" @bind-Visible="Visible">
+<SfDialog Height="50%" Width="50%" Target="#target" ShowCloseIcon="true" @bind-Visible="Visible" CloseOnEscape>
+    <DialogEvents Closed="@OnCloseHandler" ></DialogEvents>
     @if (IsEditSkillView)
     {
         <DialogTemplates>
@@ -10,7 +11,7 @@
                 <div>Edit Skills</div>
             </Header>
             <Content>
-                <EditableStudentSkillListView StudentId="@Context.StudentId">
+                <EditableStudentSkillListView StudentId="@Context.StudentId" AllSkills="@Context.AllSkills" EditSkillCallback="@OnSkillEdit">
 
                 </EditableStudentSkillListView>
             </Content>

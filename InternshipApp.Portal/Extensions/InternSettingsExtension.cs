@@ -1,4 +1,5 @@
 ﻿using InternshipApp.Core.Entities;
+using Microsoft.Fast.Components.FluentUI.DesignTokens;
 
 namespace InternshipApp.Portal.Views;
 
@@ -63,7 +64,13 @@ public static class InternSettingsExtension
     {
         return new TBaseViewModel()
         {
-
+            Id = entity.Id,
+            Title = entity.Title,
+            Start = entity.StartTime,
+            CloseReg = entity.CloseRegistrationTime,
+            JobDeadline = entity.JobDeadline,
+            Summary = entity.SummaryTime,
+            End = entity.EndTime,
         };
     }
 
@@ -72,7 +79,13 @@ public static class InternSettingsExtension
     {
         return new TEntity()
         {
-
+            Id = viewModel.Id,
+            Title = viewModel.Title,
+            StartTime = viewModel.Start,
+            CloseRegistrationTime = viewModel.CloseReg,
+            JobDeadline = viewModel.JobDeadline,
+            SummaryTime = viewModel.Summary,
+            EndTime = viewModel.End,
         };
     }
     #endregion
