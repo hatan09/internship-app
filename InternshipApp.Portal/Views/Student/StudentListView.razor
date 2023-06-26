@@ -21,18 +21,14 @@
                     TItem="StudentListRowViewStates"
                     Title="Manage Students In Your Group">
 
-                @if (IsManagingGroup)
-                {
-                    <DetailsList DetailsListContext=@ListContext />
-                }
-                else
-                {
-                    <Stack Style="width:100%;" HorizontalAlign="Wave5.UI.Alignment.Center">
-                        <label>You have not been assigned to any group. Please contact administrators for assisstance!</label>
-                    </Stack>
-                }
-
+                <DetailsList DetailsListContext=@ListContext />
             </DetailsListContainer>
+            @if (!IsManagingGroup)
+            {
+                <Stack Style="width:100%;" HorizontalAlign="Wave5.UI.Alignment.End">
+                    <label>*You have not been assigned to any group. Please contact administrators for assisstance!</label>
+                </Stack>
+            }
         </FluentTabPanel>
 
         <FluentTabPanel id="NoGroup">
@@ -42,19 +38,14 @@
                     TItem="StudentListRowViewStates"
                     Title="Students Without Group">
 
-                @if (IsManagingGroup)
-                {
-                    <DetailsList DetailsListContext=@NoGroupListContext />
-                }
-                else
-                {
-                    <Stack Style="width:100%;" HorizontalAlign="Wave5.UI.Alignment.Center">
-                        <label>You have not been assigned to any group. Please contact administrators for assisstance!</label>
-                    </Stack>
-                }
-                
-
+                <DetailsList DetailsListContext=@NoGroupListContext />
             </DetailsListContainer>
+            @if (!IsManagingGroup)
+            {
+                <Stack Style="width:100%;" HorizontalAlign="Wave5.UI.Alignment.End">
+                    <label>*You have not been assigned to any group. Please contact administrators for assisstance!</label>
+                </Stack>
+            }
         </FluentTabPanel>
     </FluentTabs>
 }

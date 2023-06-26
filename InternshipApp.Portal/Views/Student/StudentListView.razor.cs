@@ -596,7 +596,7 @@ public partial class StudentListView : ComponentBase
             this.NoGroupListContext.SetProcessingStates(false);
             this.NoGroupSearchContext.SetProcessingStates(false);
             this.NoGroupCommandBarContext.SetProcessingStates(false);
-            this.NoGroupCommandBarContext.SetItemIsVisible("AddToGroupButton", this.ListContext.GetSelectedItems().Any());
+            this.NoGroupCommandBarContext.SetItemIsVisible("AddToGroupButton", false);
             this.StateHasChanged();
         }
     }
