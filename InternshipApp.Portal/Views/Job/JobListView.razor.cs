@@ -1,4 +1,5 @@
-﻿using InternshipApp.Contracts;
+﻿using Blazored.LocalStorage;
+using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,10 @@ public partial class JobListView
     public SfMultiSelect<string[], JobFilterOption> SfMultiSelect { get; set; }
 
     public string SearchText { get; set; }
+
+    public bool IsStudentViewing { get; set; }
+    public bool IsTeacherViewing { get; set; }
+    public bool IsRecruiterViewing { get; set; }
     #endregion
 
     #region [ Properties - Inject ]
@@ -35,6 +40,9 @@ public partial class JobListView
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    public ILocalStorageService LocalStorage { get; set; }
     #endregion
 
     #region [ Override Methods - Page ]
@@ -47,28 +55,28 @@ public partial class JobListView
     {
         if (firstRender)
         {
+            var role = await LocalStorage.GetItemAsStringAsync("role");
+            switch (role)
+            {
+                case "STUDENT":
+                    IsStudentViewing = true;
+                    break;
+                case "INSTRUCTOR":
+                    IsTeacherViewing = true;
+                    break;
+                case "RECRUITER":
+                    IsRecruiterViewing = true;
+                    break;
+                default:
+                    break;
+            }
             await this.LoadDataAsync();
         }
         await base.OnAfterRenderAsync(firstRender);
     }
     #endregion
 
-    #region [ Event Handlers - Search ]
-    private void OnSearchDatalist(ChangeEventArgs args)
-    {
-        var value = args?.Value.ToString();
-        if (String.IsNullOrWhiteSpace(value))
-        {
-
-        }
-        else
-        {
-
-        }
-    }
-    #endregion
-
-    #region [ Event Handlers - CommandBars - Filters ]
+    #region [ Event Handlers - CommandBars - Search & Filters ]
     private void FilterChangeHandler()
     {
         OnFilterItems();
@@ -146,7 +154,16 @@ public partial class JobListView
             this.StateHasChanged();
 
             var jobList = new List<Job>();
-            jobList.AddRange(await Jobs.FindAll(x => string.IsNullOrEmpty(CompanyId) || x.CompanyId == int.Parse(CompanyId)).Include(x => x.Company).Include(x => x.JobSkills).ToListAsync());
+            if(IsStudentViewing)
+            {
+                jobList.AddRange(await Jobs.FindAll(x => x.IsAccepted && (string.IsNullOrEmpty(CompanyId) || x.CompanyId == int.Parse(CompanyId))).Include(x => x.Company).Include(x => x.JobSkills).ToListAsync());
+            }
+            else
+            {
+                jobList.AddRange(await Jobs.FindAll(x => string.IsNullOrEmpty(CompanyId) || x.CompanyId == int.Parse(CompanyId)).Include(x => x.Company).Include(x => x.JobSkills).ToListAsync());
+            }
+
+
 
             var skills = await Skills.FindAll().ToListAsync();
             skills.ForEach(x =>

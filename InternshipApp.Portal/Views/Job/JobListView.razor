@@ -4,8 +4,8 @@
 @using Syncfusion.Blazor.Lists
 
 <Stack ClassName="list-container">
-    <Stack Horizontal=true>
-        <SfTextBox CssClass="search-text-box" Value="@SearchText" OnInput="@OnSearchHandler">
+    <Stack Horizontal Style="margin-bottom:24px;">
+        <SfTextBox CssClass="search-text-box" Value="@SearchText" OnInput="@OnSearchHandler" Placeholder="Search for job name">
 
         </SfTextBox>
 
@@ -20,8 +20,14 @@
         <ListViewEvents TValue="JobListRowViewStates" Clicked="OnRowSelect"></ListViewEvents> 
         <ListViewTemplates TValue="JobListRowViewStates">
             <Template>
-                <Stack ClassName="list-view-item">
+                <Stack ClassName="@(!IsStudentViewing
+                                        ?   (context as JobListRowViewStates).IsAccepted ? "list-view-item accepted" : "list-view-item not-accepted"
+                                        :   "list-view-item")">
                     <h3><b> @((context as JobListRowViewStates).Title) </b></h3>
+                    @if (!IsStudentViewing)
+                    {
+                        <lable> @((context as JobListRowViewStates).IsAccepted ? "* Job is accepted" : "* Job is not accepted") </lable>
+                    }
                     <lable> <b>Company's name:</b> @((context as JobListRowViewStates).CompanyName) </lable>
                     <lable> &#x2022; @((context as JobListRowViewStates).Description) </lable>
                     <lable> &#x2022; Required skills: </lable>
@@ -39,7 +45,8 @@
 
 <style>
     .list-view-item{
-        padding: 5px
+        padding: 20px 10px 10px 10px;
+        border-bottom: 2px solid grey
     }
 
     .e-headertext{
@@ -50,5 +57,17 @@
         border-radius:6px;
         padding:24px;
         background-color:white;
+    }
+
+    .accepted{
+        background-color: lightgreen;
+    }
+
+    .not-accepted {
+        background-color: #F8CECC;
+    }
+
+    .e-listview .e-list-header {
+        color: black;
     }
 </style>

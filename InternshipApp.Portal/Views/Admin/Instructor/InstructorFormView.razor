@@ -20,10 +20,17 @@
             </Stack>
 
             <Stack ClassName="formFieldContainer">
+                <FluentSwitch @bind-Value=@States.IsDepartmentManager Readonly=@States.IsManager>
+                    <label>Department Manager @(States.IsManager ? "(Cannot set to false)" : "(Switch ON to assign new manager)")</label>
+                </FluentSwitch>
+            </Stack>
+
+            <Stack ClassName="formFieldContainer">
                 <FluentTextField @bind-Value=@States.Username Readonly=@(FormRequest?.Action != FormAction.Add)>
                     <label>Username</label>
                 </FluentTextField>
             </Stack>
+
 
             <Stack ClassName="formFieldContainer">
                 <FluentTextField @bind-Value=@States.Password TextFieldType="TextFieldType.Password" Disabled=@(FormRequest?.Action != FormAction.Add)>

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Wave5.UI.Forms;
 using InternshipApp.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
 
@@ -97,8 +98,8 @@ public partial class InstructorFormView
     {
         try
         {
-
             this.States = this.FormRequest.Data.ToFormViewStates();
+            States.IsManager = FormRequest.Data.IsDepartmentManager;
 
             switch (this.FormRequest.Action)
             {
@@ -139,6 +140,17 @@ public partial class InstructorFormView
         {
             var recruiter = this.States.ToEntity();
 
+            if (States.IsDepartmentManager)
+            {
+                var oldManager = await Instructors.FindAll(x => x.IsDepartmentManager).AsTracking().FirstOrDefaultAsync();
+                if (oldManager != null)
+                {
+                    oldManager.IsDepartmentManager = false;
+                    await Instructors.UpdateAsync(oldManager);
+                }
+            }
+            recruiter.IsDepartmentManager = States.IsDepartmentManager;
+
             var result = await Instructors.CreateAsync(recruiter);
             if (!result.Succeeded)
             {
@@ -178,8 +190,19 @@ public partial class InstructorFormView
                 return;
             }
 
+            if(!States.IsManager && States.IsDepartmentManager)
+            {
+                var oldManager = await Instructors.FindAll(x => x.IsDepartmentManager).AsTracking().FirstOrDefaultAsync();
+                if(oldManager!= null)
+                {
+                    oldManager.IsDepartmentManager = false;
+                    await Instructors.UpdateAsync(oldManager);
+                }
+            }
+
             recruiter.FullName = States.Name;
             recruiter.Email = States.Email;
+            recruiter.IsDepartmentManager = States.IsDepartmentManager;
 
             await Instructors.UpdateAsync(recruiter);
 

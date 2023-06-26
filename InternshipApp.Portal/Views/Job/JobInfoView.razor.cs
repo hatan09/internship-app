@@ -12,8 +12,12 @@ namespace InternshipApp.Portal.Views;
 
 public partial class JobInfoView
 {
-    #region [ Fields ]
+    #region [ Properties ]
     public bool HasApplied { get; set; }
+
+    public bool IsStudentViewing { get; set; }
+    public bool IsTeacherViewing { get; set; }
+    public bool IsRecruiterViewing { get; set; }
     #endregion
 
     #region [ Properties - Parameter ]
@@ -59,21 +63,51 @@ public partial class JobInfoView
         await base.OnInitializedAsync();
     }
 
-    public override async Task SetParametersAsync(ParameterView parameters)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var currentJobId = this.JobId;
-        var parameterJobId = parameters.GetValueOrDefault<string>(nameof(this.JobId));
-
-        await base.SetParametersAsync(parameters);
-
-        if (currentJobId != parameterJobId)
+        if(firstRender)
         {
-            await this.LoadDataAsync();
+            var role = await LocalStorage.GetItemAsStringAsync("role");
+            switch (role)
+            {
+                case "STUDENT":
+                    IsStudentViewing = true;
+                    break;
+                case "INSTRUCTOR":
+                    IsTeacherViewing = true;
+                    break;
+                case "RECRUITER":
+                    IsRecruiterViewing = true;
+                    break;
+                default:
+                    break;
+            }
+            await LoadDataAsync();
         }
+        await base.OnAfterRenderAsync(firstRender);
     }
     #endregion
 
     #region [ Private Methods - Data ]
+    private async void OnCopy()
+    {
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", NavigationManager.Uri);
+    }
+
+    private async void OnAccept()
+    {
+        var job = await Jobs.FindAll(x => x.Id == int.Parse(JobId)).AsTracking().FirstOrDefaultAsync();
+        if (job == null || job.IsAccepted)
+        {
+            return;
+        }
+
+        job.IsAccepted = true;
+        Jobs.Update(job);
+        await Jobs.SaveChangesAsync();
+        await JSRuntime.InvokeVoidAsync("alert", "Job has been accepted!");
+    }
+
     private async void OnApply()
     {
         var student = await GetStudentAsync();
@@ -97,6 +131,7 @@ public partial class JobInfoView
                 student.Stat = Stat.APPLIED;
                 await Students.UpdateAsync(student);
             }
+            await JSRuntime.InvokeVoidAsync("alert", "Applied Successfully!");
             await LoadDataAsync();
             return;
         }
@@ -142,8 +177,6 @@ public partial class JobInfoView
 
         try
         {
-            var student = await GetStudentAsync();
-
             var job = await this.Jobs.FindAll(x => x.Id == int.Parse(JobId))
                 .Include(x => x.Company)
                 .Include(x => x.JobSkills)
@@ -156,16 +189,24 @@ public partial class JobInfoView
                 return;
             }
 
+            this.States = job.ToDetailsViewStates();
+
             var existingInterns = job.StudentJobs.Where(x => x.Status == ApplyStatus.HIRED).Count();
             var remaining = job.Slots - existingInterns;
+            States.Remaining = remaining;
 
-            this.States = job.ToDetailsViewStates();
-            HasApplied = job.StudentJobs.Where(x => x.StudentId == student.Id).Any() && student.Stat != Stat.FINISHED && student.Stat != Stat.HIRED;
-            States.IsAllowedApply = remaining > 0
-                                    && !HasApplied
-                                    && student.InternGroupId != null
-                                    && student.Stat != Stat.FINISHED 
-                                    && student.Stat != Stat.HIRED;
+            if (IsStudentViewing)
+            {
+                var student = await GetStudentAsync();
+                HasApplied = job.StudentJobs.Where(x => x.StudentId == student.Id).Any() && student.Stat != Stat.FINISHED && student.Stat != Stat.HIRED;
+                States.IsAllowedApply = States.Remaining > 0
+                                        && !HasApplied
+                                        && student.InternGroupId != null
+                                        && student.Stat != Stat.FINISHED
+                                        && student.Stat != Stat.HIRED;
+                States.Matching = await MatchingService.GetMatchingPointById(student.Id, job.Id);
+            }
+
             States.JobSkills = job.JobSkills.ToList();
             var skillIds = job.JobSkills.Select(x => x.SkillId).ToList();
 
@@ -175,9 +216,6 @@ public partial class JobInfoView
                 States.Address = job.Company.Address;
             }
 
-            States.Remaining = remaining;
-
-            States.Matching = await MatchingService.GetMatchingPointById(student.Id, job.Id);
 
             var skills = await Skills.FindAll(x => skillIds.Contains(x.Id)).AsNoTracking().ToListAsync();
             States.Skills.AddRange(skills);

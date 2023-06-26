@@ -12,6 +12,7 @@ public class BaseInstructorViewStates : BaseViewModel
     private string _username;
     private string _password;
     private string _oldPassword;
+    private bool _isDepartmentManager;
     #endregion
 
     #region [ CTor ]
@@ -55,6 +56,12 @@ public class BaseInstructorViewStates : BaseViewModel
     {
         get { return this._oldPassword; }
         set { this.SetProperty(ref this._oldPassword, value); }
+    }
+
+    public bool IsDepartmentManager
+    {
+        get { return this._isDepartmentManager; }
+        set { this.SetProperty(ref this._isDepartmentManager, value); }
     }
     #endregion
 }

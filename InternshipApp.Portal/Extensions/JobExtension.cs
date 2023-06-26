@@ -65,6 +65,7 @@ public static class JobExtension
         {
             Id = entity.Id,
             Title = entity.Title,
+            IsAccepted = entity.IsAccepted,
             Description = entity.Description,
             CompanyName = entity.Company?.Title,
             Credit = entity.MinCredit,
@@ -81,6 +82,7 @@ public static class JobExtension
         {
             Id = viewModel.Id,
             Title = viewModel.Title,
+            IsAccepted = viewModel.IsAccepted,
             Description = viewModel.Description,
             MinCredit = viewModel.Credit,
             MinGPA = viewModel.Gpa,

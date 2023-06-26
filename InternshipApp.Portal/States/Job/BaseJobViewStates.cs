@@ -20,7 +20,7 @@ public class BaseJobViewStates : BaseViewModel
     private List<Skill> _skills;
     private bool _isAllowedApply;
     private string _address;
-
+    private bool _isAccepted;
     #endregion
 
     #region [ CTor ]
@@ -114,6 +114,12 @@ public class BaseJobViewStates : BaseViewModel
     {
         get { return this._address; }
         set { this.SetProperty(ref this._address, value); }
+    }
+
+    public bool IsAccepted
+    {
+        get { return this._isAccepted; }
+        set { this.SetProperty(ref this._isAccepted, value); }
     }
     #endregion
 }

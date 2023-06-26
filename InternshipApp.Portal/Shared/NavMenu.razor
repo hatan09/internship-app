@@ -1,7 +1,9 @@
 ﻿@using Syncfusion.Blazor.Buttons
+
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">InternshipApp</a>
+        <a class="navbar-brand" href="/"> <img src="logo.svg" /> InternshipApp</a>
+
         <button type="button" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -69,6 +71,10 @@
                     <span class="oi oi-people"></span> Students
                 </NavLink>
 
+                <NavLink class="nav-link" href="/jobs" Match="NavLinkMatch.All">
+                    <span class="oi oi-briefcase"></span> Jobs
+                </NavLink>
+
                 <NavLink class="nav-link" href="/chat" Match="NavLinkMatch.All">
                     <span class="oi oi-chat"></span> Chat
                 </NavLink>
@@ -113,3 +119,10 @@
         collapseNavMenu = !collapseNavMenu;
     }
 }
+
+<style>
+    img{
+        width:40px;
+        height:40px;
+    }
+</style>

@@ -4,41 +4,44 @@
 @using Syncfusion.Blazor.Popups
 
 <Stack Horizontal Style="width:100%; padding-right:30px" Wrap=false>
-    <Stack Style="height:200px">
-        <SfTooltip ID="gauge-tooltip" Content=@($"Matching point: {States.Matching}") MouseTrail>
-        <SfCircularGauge Width= "400px" Height= "400px" Title="Matching" Background="#f2f2f2">
-            <CircularGaugeTitleStyle Color="blue" FontWeight="bold" Size="25" ></CircularGaugeTitleStyle>
-            <CircularGaugeTooltipSettings Enable="true"></CircularGaugeTooltipSettings>
-            <CircularGaugeAxes>
-                <CircularGaugeAxis Direction="GaugeDirection.ClockWise" StartAngle="270" EndAngle="90" Minimum="0" Maximum="100">
-                    <CircularGaugeAxisLineStyle Width="5" />
+    @if (IsStudentViewing)
+    {
+        <Stack Style="height:200px">
+            <SfTooltip ID="gauge-tooltip" Content=@($"Matching point: {States.Matching}") MouseTrail>
+                <SfCircularGauge Width="400px" Height="400px" Title="Matching" Background="#f2f2f2">
+                    <CircularGaugeTitleStyle Color="blue" FontWeight="bold" Size="25"></CircularGaugeTitleStyle>
+                    <CircularGaugeTooltipSettings Enable="true"></CircularGaugeTooltipSettings>
+                    <CircularGaugeAxes>
+                        <CircularGaugeAxis Direction="GaugeDirection.ClockWise" StartAngle="270" EndAngle="90" Minimum="0" Maximum="100">
+                            <CircularGaugeAxisLineStyle Width="5" />
 
-                    <CircularGaugeAxisMajorTicks UseRangeColor="true">
-                    </CircularGaugeAxisMajorTicks>
-                    <CircularGaugeAxisMinorTicks UseRangeColor="true">
-                    </CircularGaugeAxisMinorTicks>
-                    <CircularGaugeAxisLabelStyle UseRangeColor="true">
-                    </CircularGaugeAxisLabelStyle>
+                            <CircularGaugeAxisMajorTicks UseRangeColor="true">
+                            </CircularGaugeAxisMajorTicks>
+                            <CircularGaugeAxisMinorTicks UseRangeColor="true">
+                            </CircularGaugeAxisMinorTicks>
+                            <CircularGaugeAxisLabelStyle UseRangeColor="true">
+                            </CircularGaugeAxisLabelStyle>
 
-                    <CircularGaugeRanges>
-                        <CircularGaugeRange Start="0" End="25" Radius="108%" Color="red">
-                        </CircularGaugeRange>
-                        <CircularGaugeRange Start="25" End="50" Radius="108%" Color="orange">
-                        </CircularGaugeRange>
-                        <CircularGaugeRange Start="50" End="75" Radius="108%" Color="green">
-                        </CircularGaugeRange>
-                        <CircularGaugeRange Start="75" End="100" Radius="108%" Color="cyan">
-                        </CircularGaugeRange>
-                    </CircularGaugeRanges>
+                            <CircularGaugeRanges>
+                                <CircularGaugeRange Start="0" End="25" Radius="108%" Color="red">
+                                </CircularGaugeRange>
+                                <CircularGaugeRange Start="25" End="50" Radius="108%" Color="orange">
+                                </CircularGaugeRange>
+                                <CircularGaugeRange Start="50" End="75" Radius="108%" Color="green">
+                                </CircularGaugeRange>
+                                <CircularGaugeRange Start="75" End="100" Radius="108%" Color="cyan">
+                                </CircularGaugeRange>
+                            </CircularGaugeRanges>
 
-                    <CircularGaugePointers>
-                        <CircularGaugePointer Value="@States.Matching"></CircularGaugePointer>
-                    </CircularGaugePointers>
-                </CircularGaugeAxis>
-            </CircularGaugeAxes>
-        </SfCircularGauge>
-    </SfTooltip>
-    </Stack>
+                            <CircularGaugePointers>
+                                <CircularGaugePointer Value="@States.Matching"></CircularGaugePointer>
+                            </CircularGaugePointers>
+                        </CircularGaugeAxis>
+                    </CircularGaugeAxes>
+                </SfCircularGauge>
+            </SfTooltip>
+        </Stack>
+    }
 
     <Stack Horizontal="false" Style="width:100%">
         <h1>
@@ -47,9 +50,18 @@
             </b>
         </h1>
         <h3> At @States.CompanyName</h3>
-        <SfButton Content=@(States.IsAllowedApply ? "Apply Now" : HasApplied ? "Job Applied" : "Cannot Apply") CssClass="apply-btn" OnClick="OnApply" Disabled="@(!States.IsAllowedApply)">
+        @if (IsStudentViewing)
+        {
+            <SfButton Content=@(States.IsAllowedApply ? "Apply Now" : HasApplied ? "Job Applied" : "Cannot Apply") CssClass="apply-btn" OnClick="OnApply" Disabled="@(!States.IsAllowedApply)" />
+        }
+        else if(IsTeacherViewing)
+        {
+            <SfButton Content=@(States.IsAccepted ? "Job Accepted" : "Accept this job") CssClass="apply-btn" OnClick="OnAccept" Disabled="@(States.IsAccepted)" />
 
-        </SfButton>
+            <br />
+
+            <SfButton Content="Copy Job's URL to clipboard" OnClick="OnCopy" />
+        }
 
         <br />
         <FluentDivider ></FluentDivider>

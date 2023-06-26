@@ -66,6 +66,7 @@ public static class InstructorExtension
         {
             Id = entity.Id,
 
+            IsDepartmentManager = entity.IsDepartmentManager,
             Name = entity.FullName,
             Email = entity.Email,
 
@@ -80,6 +81,7 @@ public static class InstructorExtension
         {
             Id = viewModel.Id,
 
+            IsDepartmentManager = viewModel.IsDepartmentManager,
             FullName = viewModel.Name,
             Email = viewModel.Email,
 
