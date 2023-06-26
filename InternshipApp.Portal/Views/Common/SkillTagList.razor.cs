@@ -31,17 +31,6 @@ public partial class SkillTagList
     [Parameter]
     public EventCallback OnEditButtonClickedCallback { get; set; }
 
-    #region [ Properties - Inject ]
-    [Inject]
-    public StudentManager Students { get; set; }
-
-    [Inject]
-    public ISkillRepository Skills { get; set; }
-
-    [Inject]
-    public IJobRepository Jobs { get; set; }
-    #endregion
-
     #region [ Properties ]
     public bool IsStudentSkills { get; set; }
     #endregion
@@ -70,21 +59,21 @@ public partial class SkillTagList
         var newStudentSkills = parameters.GetValueOrDefault<List<StudentSkill>>(nameof(this.StudentSkills));
         var currentStudentSkills = this.StudentSkills;
 
+        var newAllSkills = parameters.GetValueOrDefault<List<Skill>>(nameof(this.AllSkills));
+        var currentAllSkills = this.AllSkills;
+
         await base.SetParametersAsync(parameters);
 
-        if ((newJobSkills != null && newJobSkills != currentJobSkills) || (newStudentSkills != null && newStudentSkills != currentStudentSkills))
+        if ((newJobSkills != null && newJobSkills != currentJobSkills) || 
+            (newStudentSkills != null && newStudentSkills != currentStudentSkills) ||
+            (newAllSkills != null && newAllSkills != currentAllSkills))
         {
+            JobSkills = newJobSkills;
+            AllSkills = newAllSkills;
             await this.LoadDataAsync();
             return;
         }
     }
-    #endregion
-
-    #region [ Event Handlers - Search ]
-
-    #endregion
-
-    #region [ Event Handlers - DataList ]
     #endregion
 
     #region [ Event Handlers - Panel ]
@@ -104,7 +93,6 @@ public partial class SkillTagList
     {
         try
         {
-            await Task.Delay(2000);
             var IsStudent = !string.IsNullOrEmpty(StudentId);
             var IsJob = JobId > 0;
             

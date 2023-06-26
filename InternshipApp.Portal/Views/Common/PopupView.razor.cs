@@ -44,11 +44,12 @@ public partial class PopupView
         IsSkillEdited = true;
     }
 
-    public async void OnCloseHandler()
+    public void OnCloseHandler()
     {
         if(IsEditSkillView && IsSkillEdited)
         {
-            if (Context.OnEditSkillCallback.HasDelegate) await Context.OnEditSkillCallback.InvokeAsync();
+            Context.OnEditedSkillCallback?.Invoke();
+            IsSkillEdited = false;
         }
     }
 
@@ -65,6 +66,6 @@ public class PopupContext
     public string StudentId { get; set; }
     public string CompanyName { get; set; }
     public List<Skill> AllSkills { get; set; }
-    public EventCallback OnEditSkillCallback { get; set; }
+    public Action OnEditedSkillCallback { get; set; }
     public EventCallback OnFinishCallBack { get; set; }
 }

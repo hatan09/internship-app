@@ -20,10 +20,11 @@
         <ListViewEvents TValue="JobListRowViewStates" Clicked="OnRowSelect"></ListViewEvents> 
         <ListViewTemplates TValue="JobListRowViewStates">
             <Template>
-                <Stack Horizontal=false ClassName="list-view-item">
+                <Stack ClassName="list-view-item">
                     <h3><b> @((context as JobListRowViewStates).Title) </b></h3>
                     <lable> <b>Company's name:</b> @((context as JobListRowViewStates).CompanyName) </lable>
                     <lable> &#x2022; @((context as JobListRowViewStates).Description) </lable>
+                    <lable> &#x2022; Required skills: </lable>
                     <SkillTagList 
                         JobId="@((context as JobListRowViewStates).Id)" 
                         JobSkills="@((context as JobListRowViewStates).JobSkills)" 

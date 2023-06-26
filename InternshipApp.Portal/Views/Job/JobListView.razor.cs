@@ -143,6 +143,8 @@ public partial class JobListView
             this.States.Options.Clear();
             this.States.OriginalItems.Clear();
 
+            this.StateHasChanged();
+
             var jobList = new List<Job>();
             jobList.AddRange(await Jobs.FindAll(x => string.IsNullOrEmpty(CompanyId) || x.CompanyId == int.Parse(CompanyId)).Include(x => x.Company).Include(x => x.JobSkills).ToListAsync());
 
@@ -165,6 +167,7 @@ public partial class JobListView
             {
                 x.JobSkills = jobList.FirstOrDefault(y => y.Id == x.Id)?.JobSkills.ToList();
             });
+
             this.States.OriginalItems = jobList.ToListRowList();
             this.States.OriginalItems.ForEach(x =>
             {

@@ -119,7 +119,7 @@ public partial class EditableStudentSkillListView
         await AddAsync(entity);
         if (EditSkillCallback.HasDelegate) await EditSkillCallback.InvokeAsync();
         await this.LoadDataAsync();
-        OnToggleAdd(null);
+        IsAddRowShown = false;
     }
 
     public async Task OnDelete(int answerId)
@@ -153,7 +153,6 @@ public partial class EditableStudentSkillListView
             this.ListContainerContext.SetProcessingStates(true, false);
             this.ListContext.SetProcessingStates(true);
             this.States.Items.Clear();
-            this.Items.Clear();
 
             this.StateHasChanged();
 
@@ -170,7 +169,10 @@ public partial class EditableStudentSkillListView
                     .FirstOrDefaultAsync();
 
                 if (student != null)
+                {
+                    this.Items.Clear();
                     Items.AddRange(student.StudentSkills.ToList());
+                }
             }
 
             States.Items.AddRange(Items.ToListRowList());

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 using RCode;
+using Syncfusion.Blazor.RichTextEditor;
 using Wave5.UI.Forms;
 
 namespace InternshipApp.Portal.Views;
@@ -52,17 +53,13 @@ public partial class ManageInfoView
         await base.OnInitializedAsync();
     }
 
-    public override async Task SetParametersAsync(ParameterView parameters)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var currentApplicationId = this.StudentId;
-        var parameterApplicationId = parameters.GetValueOrDefault<string>(nameof(this.StudentId));
-
-        await base.SetParametersAsync(parameters);
-
-        if (currentApplicationId != parameterApplicationId)
+        if (firstRender)
         {
             await this.LoadDataAsync();
         }
+        await base.OnAfterRenderAsync(firstRender);
     }
     #endregion
 
@@ -91,7 +88,7 @@ public partial class ManageInfoView
 
         try
         {
-            var item = await this.Students.FindAll().AsNoTracking().Include(x => x.StudentSkills).Where(x => x.Id == this.StudentId).FirstOrDefaultAsync();
+            var item = await this.Students.FindAll(x => x.Id == this.StudentId).AsNoTracking().Include(x => x.StudentSkills).FirstOrDefaultAsync();
 
             if (item is null)
             {
@@ -100,6 +97,7 @@ public partial class ManageInfoView
             }
             IsFinished = item.Stat == Stat.FINISHED;
             this.States = item.ToDetailsViewStates();
+
             States.StudentSkills = item.StudentSkills.ToList();
 
             var skills = await Skills.FindAll().AsNoTracking().ToListAsync();
@@ -113,6 +111,17 @@ public partial class ManageInfoView
         {
             this.StateHasChanged();
         }
+    }
+
+    public async void OnLoadSkills()
+    {
+        var student = await this.Students.FindAll(x => x.Id == this.StudentId).AsNoTracking().Include(x => x.StudentSkills).FirstOrDefaultAsync();
+        if(student is null)
+        {
+            return;
+        }
+        States.StudentSkills = student.StudentSkills.ToList();
+        StateHasChanged();
     }
 
     public string GetOrderFromInt(int order)
@@ -160,6 +169,8 @@ public partial class ManageInfoView
         this.PopupContext = new() {
             IsOpen = true,
             StudentId = States.Id,
+            AllSkills = States.AllSkills,
+            OnEditedSkillCallback = OnLoadSkills
         };
     }
 
