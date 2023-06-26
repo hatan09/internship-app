@@ -4,21 +4,21 @@
 <div id="container">
     <div class="sample flex vertical-center">
         <div class="padding">
-            @*<SfListView DataSource="@DataSource" CssClass="e-list-template">
-                <ListViewFieldSettings TValue="ListDataModel" Id="Id" Text="Name"></ListViewFieldSettings>
-                <ListViewTemplates TValue="ListDataModel">
+            <SfListView DataSource="@StudentConversations" CssClass="e-list-template">
+                <ListViewFieldSettings TValue="@ConversationListRowViewStates" Id="Id" Text="Name"></ListViewFieldSettings>
+                <ListViewTemplates TValue="ConversationListRowViewStates">
                     <Template>
                         @{
-                            ListDataModel currentData = (ListDataModel)context;
+                            var currentData = context as ConversationListRowViewStates;
                             <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="(e => OnSelect(currentData))">
-                                <img src="@(currentData.Image)" class="e-avatar e-avatar-circle" />
+                                <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" />
                                 <span class="e-list-item-header">@currentData.Name</span>
-                                <span class="e-list-content">@currentData.Contact</span>
+                                <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
                             </div>
                         }
                     </Template>
                 </ListViewTemplates>
-            </SfListView>*@
+            </SfListView>
         </div>
     </div>
 </div>
