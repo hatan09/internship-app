@@ -1,19 +1,11 @@
 ﻿@namespace InternshipApp.Portal.Views
 
-<div class="chat-container">
-    <ConversationView>
+<Stack ClassName="chat-container" Style="max-width:calc(100% - 400px)" Horizontal>
+    <ConversationView Context="@ChatContext" SendCallback="@OnChat">
 
     </ConversationView>
 
-    <ConversationListView>
+    <ConversationListView Context="@ConversationContext" SelectConversationCallback="@OnChangeConversation">
 
     </ConversationListView>
-</div>
-
-<style>
-    .chat-container {
-        display: flex;
-        flex-direction: column;
-        width: auto;
-    }
-</style>
+</Stack>

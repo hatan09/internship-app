@@ -5,8 +5,9 @@
 
 @namespace InternshipApp.Portal.Views
 
-<div id="container">
-    <Stack ClassName="sticky top" Style="width:100%" Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+<Stack ClassName="chat-view" Style="width: 100%;">
+    <Stack />
+    <Stack ClassName="sticky top" Style="width:calc(100% - 250px);" Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
         <span class="e-avatar e-avatar-circle receiver image"></span>
         <b style="margin-left:8px">
             @(Receiver?.FullName)
@@ -14,7 +15,7 @@
     </Stack>
     <div id="chat">
         <SfListView ID="list"
-                    DataSource="@Chat"
+                    DataSource="@ChatMessages"
                     ShowHeader="false"
                     HeaderTitle="">
             <ListViewTemplates TValue="ChatModel">
@@ -47,7 +48,7 @@
                 </Template>
             </ListViewTemplates>
         </SfListView>
-        <Stack Style="width:86%" Horizontal ClassName="sticky bottom">
+        <Stack Style="width:calc(100% - 650px);" Horizontal ClassName="sticky bottom">
             <div class="flex__8 padding">
                 <SfTextBox Placeholder="Type your message"
                            @ref=@(SfTextBox) />
@@ -57,9 +58,13 @@
             </div>
         </Stack>
     </div>
-</div>
+</Stack>
 
 <style>
+    .chat-view{
+        padding-top: 40px;
+    }
+
     #list {
         box-shadow: 0 1px 4px #ddd;
         border-bottom: 1px solid #ddd;
@@ -191,15 +196,13 @@
     }
 
     .sticky.top {
-        height: 30px;
         padding: 8px 8px 8px 38px;
         position: fixed;
         top: 0px;
         left: 250px;
-        width: 86%;
         background-color: white;
-        z-index: 999;
-        box-shadow: 0px 0px 3px 0px;
+        z-index: 50;
+        box-shadow: 0px 0px 10px 0px;
     }
 
     .gray {

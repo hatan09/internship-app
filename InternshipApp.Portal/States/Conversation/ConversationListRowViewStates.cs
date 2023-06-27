@@ -5,7 +5,7 @@ namespace InternshipApp.Portal.Views;
 public class ConversationListRowViewStates : BaseViewModel
 {
     #region [ Fields ]
-    private string _id;
+    private int _id;
     private string _avatar;
     private string _name;
     private DateTime _lastMsgTime;
@@ -20,7 +20,7 @@ public class ConversationListRowViewStates : BaseViewModel
     #endregion
 
     #region [ Properties ]
-    public string Id
+    public int Id
     {
         get { return this._id; }
         set { this.SetProperty(ref this._id, value); }

@@ -1,11 +1,10 @@
-﻿using InternshipApp.Contracts;
+﻿using Blazored.LocalStorage;
+using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
-using RCode;
-using Syncfusion.Blazor.RichTextEditor;
 using Wave5.UI.Forms;
 
 namespace InternshipApp.Portal.Views;
@@ -17,12 +16,7 @@ public partial class ManageInfoView
     public bool HasNewMessage { get; set; }
     #endregion
 
-    #region [ Properties - Parameter ]
-    [Parameter]
-    public string StudentId { get; set; }
-    #endregion
-
-    #region [ Properties ]
+    #region [ Properties - Inject ]
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
@@ -34,6 +28,9 @@ public partial class ManageInfoView
 
     [Inject]
     public IJSRuntime JSRuntime { get; private set; }
+
+    [Inject]
+    public ILocalStorageService LocalStorage { get; set; }
     #endregion
 
     #region [ Properties - Panel ]
@@ -82,23 +79,39 @@ public partial class ManageInfoView
     #endregion
 
     #region [ Private Methods - Data ]
+    private async Task<Student> GetStudentAsync()
+    {
+        var user = await LocalStorage.GetItemAsync<User>("login-user-info");
+        if (user == null)
+        {
+            NavigationManager.NavigateTo("/", true);
+            return null;
+        }
+
+        var student = await Students.FindAll(x => x.Id == user.Id).Include(x => x.StudentSkills).AsNoTracking().FirstOrDefaultAsync();
+        if (student == null)
+        {
+            NavigationManager.NavigateTo("/", true);
+        }
+
+        return student;
+    }
+
     private async Task LoadDataAsync()
     {
-        Guard.ParamIsNullOrEmpty(this.StudentId, nameof(this.StudentId));
-
         try
         {
-            var item = await this.Students.FindAll(x => x.Id == this.StudentId).AsNoTracking().Include(x => x.StudentSkills).FirstOrDefaultAsync();
+            var student = await GetStudentAsync();
 
-            if (item is null)
+            if (student is null)
             {
                 this.States = null;
                 return;
             }
-            IsFinished = item.Stat == Stat.FINISHED;
-            this.States = item.ToDetailsViewStates();
+            IsFinished = student.Stat == Stat.FINISHED;
+            this.States = student.ToDetailsViewStates();
 
-            States.StudentSkills = item.StudentSkills.ToList();
+            States.StudentSkills = student.StudentSkills.ToList();
 
             var skills = await Skills.FindAll().AsNoTracking().ToListAsync();
             States.AllSkills = skills;
@@ -115,8 +128,8 @@ public partial class ManageInfoView
 
     public async void OnLoadSkills()
     {
-        var student = await this.Students.FindAll(x => x.Id == this.StudentId).AsNoTracking().Include(x => x.StudentSkills).FirstOrDefaultAsync();
-        if(student is null)
+        var student = await GetStudentAsync();
+        if (student is null)
         {
             return;
         }
@@ -166,7 +179,8 @@ public partial class ManageInfoView
 
     public void OnEditSkill()
     {
-        this.PopupContext = new() {
+        this.PopupContext = new()
+        {
             IsOpen = true,
             StudentId = States.Id,
             AllSkills = States.AllSkills,

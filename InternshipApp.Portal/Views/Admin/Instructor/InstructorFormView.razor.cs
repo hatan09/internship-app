@@ -18,6 +18,11 @@ public partial class InstructorFormView
     [Inject]
     public RoleManager<Role> Roles { get; private set; }
 
+    [Inject]
+    public IConversationRepository Conversations { get; private set; }
+
+    [Inject]
+    public UserManager Users { get; private set; }
     #endregion
 
     #region [ Properties - Parameters ]
@@ -138,7 +143,7 @@ public partial class InstructorFormView
     {
         try
         {
-            var recruiter = this.States.ToEntity();
+            var instructor = this.States.ToEntity();
 
             if (States.IsDepartmentManager)
             {
@@ -149,25 +154,39 @@ public partial class InstructorFormView
                     await Instructors.UpdateAsync(oldManager);
                 }
             }
-            recruiter.IsDepartmentManager = States.IsDepartmentManager;
+            instructor.IsDepartmentManager = States.IsDepartmentManager;
 
-            var result = await Instructors.CreateAsync(recruiter);
+            var result = await Instructors.CreateAsync(instructor);
             if (!result.Succeeded)
             {
                 return;
             }
 
-            result = await Instructors.AddPasswordAsync(recruiter, States.Password);
+            result = await Instructors.AddPasswordAsync(instructor, States.Password);
             if (!result.Succeeded)
             {
                 return;
             }
 
-            result = await Instructors.AddToRoleAsync(recruiter, "instructor");
+            result = await Instructors.AddToRoleAsync(instructor, "instructor");
             if (!result.Succeeded)
             {
                 return;
             }
+
+            var adminRole = await Roles.FindByNameAsync("admin");
+            var admin = await Users.FindAll(x => x.UserRoles.Where(x => x.RoleId == adminRole.Id).Any()).AsTracking().FirstOrDefaultAsync();
+
+            var conversation = new Conversation()
+            {
+                LastMessageTime = DateTime.Now,
+                Title = $"{instructor.FullName} - ADMIN",
+            };
+            conversation.Users.Add(admin);
+            conversation.Users.Add(instructor);
+
+            Conversations.Add(conversation);
+            await Conversations.SaveChangesAsync();
 
             await this.InvokeFormResultCallbackAsync(FormResultState.Added);
         }
