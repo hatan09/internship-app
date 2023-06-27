@@ -2,6 +2,13 @@
 @using Syncfusion.Blazor.Lists
 
 <Stack Style="height:100vh;width:400px;" ClassName="conversation-view">
+    @if (!HasConversation)
+    {
+        <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
+            <i>You don't have any conversation</i>
+        </Stack>
+    }
+
     @if (IsAdminViewing)
     {
         <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
@@ -86,43 +93,38 @@
             </b>
         </Stack>
         <FluentDivider></FluentDivider>
-        <div class="conversation-item-list flex vertical-center">
-            <div class="padding">
-                <SfListView DataSource="@StudentConversations" CssClass="e-list-template">
-                    <ListViewFieldSettings TValue="@ConversationListRowViewStates" Id="Id" Text="Name"></ListViewFieldSettings>
-                    <ListViewTemplates TValue="ConversationListRowViewStates">
-                        <Template>
-                            @{
-                                var currentData = context as ConversationListRowViewStates;
-                                <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="(e => OnSelect(currentData))">
-                                    <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" />
-                                    <span class="e-list-item-header">@currentData.Name</span>
-                                    <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
-                                </div>
-                            }
-                        </Template>
-                    </ListViewTemplates>
-                </SfListView>
-            </div>
-        </div>
+        <SfListView DataSource="@StudentConversations" CssClass="e-list-template">
+            <ListViewFieldSettings TValue="@ConversationListRowViewStates" Id="Id" Text="Name"></ListViewFieldSettings>
+            <ListViewTemplates TValue="ConversationListRowViewStates">
+                <Template>
+                    @{
+                        var currentData = context as ConversationListRowViewStates;
+                        <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="(e => OnSelect(currentData))">
+                            <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" />
+                            <span class="e-list-item-header">@currentData.Name</span>
+                            <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
+                        </div>
+                    }
+                </Template>
+            </ListViewTemplates>
+        </SfListView>
     }
     else if (IsStudentViewing)
     {
-        <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
-            <b>
-                Group Manager Instructor
-            </b>
-        </Stack>
-        <FluentDivider></FluentDivider>
-        <div class="conversation-item-list flex vertical-center">
-            <div class="padding">
-                <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="(e => OnSelect(InstructorConversation))">
-                    <img src="@(InstructorConversation.Avatar)" class="e-avatar e-avatar-circle" />
-                    <span class="e-list-item-header">@InstructorConversation.Name</span>
-                    <span class="e-list-content">@InstructorConversation.LastMsgTime.ToString()</span>
-                </div>
+        @if (InstructorConversation == null)
+        {
+            <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
+                <b>
+                    Group Manager Instructor
+                </b>
+            </Stack>
+            <FluentDivider></FluentDivider>
+            <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="(e => OnSelect(InstructorConversation))">
+                <img src="@(InstructorConversation?.Avatar)" class="e-avatar e-avatar-circle" />
+                <span class="e-list-item-header">@InstructorConversation?.Name</span>
+                <span class="e-list-content">@InstructorConversation?.LastMsgTime.ToString()</span>
             </div>
-        </div>
+        }
     }
     else if (IsRecruiterViewing)
     {
@@ -180,9 +182,5 @@
 
     .flex__center {
         justify-content: center;
-    }
-
-    .margin {
-        margin: 10px;
     }
 </style>

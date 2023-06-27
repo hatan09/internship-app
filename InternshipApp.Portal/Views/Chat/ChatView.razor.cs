@@ -270,11 +270,11 @@ public partial class ChatView
         }
         else if (IsStudentViewing)
         {
-            conversationContext.InstructorConversation = InstructorConversation.ToListRow(receiverName: InstructorConversation.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName);
+            conversationContext.InstructorConversation = InstructorConversation?.ToListRow(receiverName: InstructorConversation.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName);
         }
         else if (IsRecruiterViewing)
         {
-            conversationContext.InstructorConversation = InstructorConversation.ToListRow(receiverName: InstructorConversation.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName);
+            conversationContext.InstructorConversation = InstructorConversation?.ToListRow(receiverName: InstructorConversation.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName);
         }
 
         ConversationContext = conversationContext;
