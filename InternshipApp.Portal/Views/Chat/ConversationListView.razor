@@ -34,63 +34,72 @@
     }
     else if (IsTeacherViewing)
     {
-        <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
-            <b>
-                Admin
-            </b>
-        </Stack>
-        <div class="e-list-wrapper e-list-item e-single-item @(CurrentConversationId == AdminConversation.Id ? "selected" : "")" @onclick="(e => OnSelect(AdminConversation))">
-            <img src="@(AdminConversation.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
-            <span class="e-list-item-header">@AdminConversation.Name</span>
-            <span class="e-list-content">@AdminConversation.LastMsgTime.ToString()</span>
-        </div>
+        if(AdminConversation != null)
+        {
+            <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
+                <b>
+                    Admin
+                </b>
+            </Stack>
+            <div class="e-list-wrapper e-list-item e-single-item @(CurrentConversationId == AdminConversation.Id ? "selected" : "")" @onclick="(e => OnSelect(AdminConversation))">
+                <img src="@(AdminConversation.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
+                <span class="e-list-item-header">@AdminConversation.Name</span>
+                <span class="e-list-content">@AdminConversation.LastMsgTime.ToString()</span>
+            </div>
 
-        <br />
+            <br />
+        }
 
-        <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
-            <b>
-                Recruiters
-            </b>
-        </Stack>
-        <SfListView DataSource="@RecruiterConversations" CssClass="e-list-template">
-            <ListViewFieldSettings TValue="@ConversationListRowViewStates" Id="Id" Text="Name"></ListViewFieldSettings>
-            <ListViewTemplates TValue="ConversationListRowViewStates">
-                <Template>
-                    @{
-                        var currentData = context as ConversationListRowViewStates;
-                        <div class="e-list-wrapper e-list-multi-line e-list-avatar @(CurrentConversationId == context.Id ? "selected" : "")" @onclick="(e => OnSelect(currentData))">
-                            <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
-                            <span class="e-list-item-header">@currentData.Name</span>
-                            <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
-                        </div>
-                    }
-                </Template>
-            </ListViewTemplates>
-        </SfListView>
+        if(RecruiterConversations.Count > 0)
+        {
+            <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
+                <b>
+                    Recruiters
+                </b>
+            </Stack>
+            <SfListView DataSource="@RecruiterConversations" CssClass="e-list-template">
+                <ListViewFieldSettings TValue="@ConversationListRowViewStates" Id="Id" Text="Name"></ListViewFieldSettings>
+                <ListViewTemplates TValue="ConversationListRowViewStates">
+                    <Template>
+                        @{
+                            var currentData = context as ConversationListRowViewStates;
+                            <div class="e-list-wrapper e-list-multi-line e-list-avatar @(CurrentConversationId == context.Id ? "selected" : "")" @onclick="(e => OnSelect(currentData))">
+                                <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
+                                <span class="e-list-item-header">@currentData.Name</span>
+                                <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
+                            </div>
+                        }
+                    </Template>
+                </ListViewTemplates>
+            </SfListView>
 
-        <br />
+            <br />
+        }
 
-        <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
-            <b>
-                Students
-            </b>
-        </Stack>
-        <FluentDivider></FluentDivider>
-        <SfListView DataSource="@StudentConversations" CssClass="e-list-template">
-            <ListViewFieldSettings TValue="@ConversationListRowViewStates" Id="Id" Text="Name"></ListViewFieldSettings>
-            <ListViewTemplates TValue="ConversationListRowViewStates">
-                <Template>
-                    @{
-                        var currentData = context as ConversationListRowViewStates;
-                        <div class="e-list-wrapper e-list-multi-line e-list-avatar @(CurrentConversationId == context.Id ? "selected" : "")" @onclick="(e => OnSelect(currentData))">
-                            <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
-                            <span class="e-list-item-header">@currentData.Name</span>
-                            <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
-                        </div>
-                    }
-                </Template>
-            </ListViewTemplates>
-        </SfListView>
+        @if (StudentConversations.Count > 0)
+        {
+            <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
+                <b>
+                    Students
+                </b>
+            </Stack>
+            <FluentDivider></FluentDivider>
+            <SfListView DataSource="@StudentConversations" CssClass="e-list-template">
+                <ListViewFieldSettings TValue="@ConversationListRowViewStates" Id="Id" Text="Name"></ListViewFieldSettings>
+                <ListViewTemplates TValue="ConversationListRowViewStates">
+                    <Template>
+                        @{
+                            var currentData = context as ConversationListRowViewStates;
+                            <div class="e-list-wrapper e-list-multi-line e-list-avatar @(CurrentConversationId == context.Id ? "selected" : "")" @onclick="(e => OnSelect(currentData))">
+                                <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
+                                <span class="e-list-item-header">@currentData.Name</span>
+                                <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
+                            </div>
+                        }
+                    </Template>
+                </ListViewTemplates>
+            </SfListView>
+        }
     }
     else if (IsStudentViewing)
     {

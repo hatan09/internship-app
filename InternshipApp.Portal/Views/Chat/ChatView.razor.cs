@@ -249,7 +249,7 @@ public partial class ChatView
         }
         else if (IsTeacherViewing)
         {
-            conversationContext.AdminConversation = AdminConversation.ToListRow(receiverName: "Administrator");
+            conversationContext.AdminConversation = AdminConversation?.ToListRow(receiverName: "Administrator");
 
             StudentConversations.ForEach(x =>
             {

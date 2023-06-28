@@ -24,14 +24,9 @@ public class InternGroupServices : IInternGroupServices
     #endregion
 
     #region [ Methods - Assign ]
-    private async Task AddToConversation()
-    {
-
-    }
-
     public async Task AutoAssign(int maxAmount = 0, bool assignToFreeInstructor = false)
     {
-        var students = await _studentManager.FindAll(x => x.InternGroup == null && x.Stat != Stat.REJECTED).AsTracking().ToListAsync();
+        var students = await _studentManager.FindAll(x => x.InternGroup == null && x.Stat == Stat.WAITING).AsTracking().ToListAsync();
         if (students == null || students.Count <= 0)
         {
             return;
@@ -89,6 +84,12 @@ public class InternGroupServices : IInternGroupServices
                 .Include(x => x.Instructor)
                 .AsTracking()
                 .ToListAsync();
+
+            if(availableGroups.Count == 0)
+            {
+                return;
+            }
+
             var sortedAvailableGroups = availableGroups.OrderBy(x => x.Students.Count);
 
             var conversationList = new List<Conversation>();
@@ -159,7 +160,7 @@ public class InternGroupServices : IInternGroupServices
             remain = 0;
         }
 
-        var students = await _studentManager.FindAll(x => x.InternGroup == null && x.Stat != Stat.REJECTED)
+        var students = await _studentManager.FindAll(x => x.InternGroup == null && x.Stat == Stat.WAITING)
             .Take(amountPerGroup + ((remain-- > 0)? 1 : 0))
             .AsTracking()
             .ToListAsync();
@@ -212,7 +213,7 @@ public class InternGroupServices : IInternGroupServices
             await _internGroupRepository.SaveChangesAsync();
             await _conversationRepository.SaveChangesAsync();
 
-            students = await _studentManager.FindAll(x => x.InternGroup == null && x.Stat != Stat.REJECTED)
+            students = await _studentManager.FindAll(x => x.InternGroup == null && x.Stat == Stat.WAITING)
                 .Take(amountPerGroup + ((remain-- > 0) ? 1 : 0))
                 .AsTracking()
                 .ToListAsync();
@@ -221,7 +222,7 @@ public class InternGroupServices : IInternGroupServices
 
     private Task<int> CountNoGroupStudent()
     {
-        return _studentManager.FindAll(x => x.InternGroup == null && x.Stat != Stat.REJECTED).CountAsync();
+        return _studentManager.FindAll(x => x.InternGroup == null && x.Stat == Stat.WAITING).CountAsync();
     }
 
     private Task<int> CountFreeInstructor()
