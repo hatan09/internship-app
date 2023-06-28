@@ -90,6 +90,7 @@ public partial class SettingView
 
             Settings.Update(settingFromDB);
             await Settings.SaveChangesAsync();
+            NavigationManager.NavigateTo(NavigationManager.Uri, true);
         }
         else
         {

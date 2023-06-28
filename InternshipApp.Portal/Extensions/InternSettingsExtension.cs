@@ -81,11 +81,11 @@ public static class InternSettingsExtension
         {
             Id = viewModel.Id,
             Title = viewModel.Title,
-            StartTime = viewModel.Start,
-            CloseRegistrationTime = viewModel.CloseReg,
-            JobDeadline = viewModel.JobDeadline,
-            SummaryTime = viewModel.Summary,
-            EndTime = viewModel.End,
+            StartTime = viewModel.Start.GetDayStart(),
+            CloseRegistrationTime = viewModel.CloseReg.GetDayEnd(),
+            JobDeadline = viewModel.JobDeadline.GetDayStart(),
+            SummaryTime = viewModel.Summary.GetDayEnd(),
+            EndTime = viewModel.End.GetDayEnd(),
         };
     }
     #endregion

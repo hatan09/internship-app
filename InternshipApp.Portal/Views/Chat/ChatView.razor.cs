@@ -237,10 +237,7 @@ public partial class ChatView
 
     private void OnInitializeContext()
     {
-        var conversationContext = new ConversationContext()
-        {
-            Sender = Sender,
-        };
+        var conversationContext = new ConversationContext();
 
         if (IsAdminViewing)
         {

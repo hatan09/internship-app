@@ -16,26 +16,21 @@
                 Instructors
             </b>
         </Stack>
-        <FluentDivider></FluentDivider>
-        <div class="conversation-item-list flex vertical-center">
-            <div class="padding">
-                <SfListView DataSource="@InstructorConversations" CssClass="e-list-template">
-                    <ListViewFieldSettings TValue="@ConversationListRowViewStates" Id="Id" Text="Name"></ListViewFieldSettings>
-                    <ListViewTemplates TValue="ConversationListRowViewStates">
-                        <Template>
-                            @{
-                                var currentData = context as ConversationListRowViewStates;
-                                <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="(e => OnSelect(currentData))">
-                                    <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" />
-                                    <span class="e-list-item-header">@currentData.Name</span>
-                                    <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
-                                </div>
-                            }
-                        </Template>
-                    </ListViewTemplates>
-                </SfListView>
-            </div>
-        </div>
+        <SfListView DataSource="@InstructorConversations" CssClass="e-list-template">
+            <ListViewFieldSettings TValue="@ConversationListRowViewStates" Id="Id" Text="Name"></ListViewFieldSettings>
+            <ListViewTemplates TValue="ConversationListRowViewStates">
+                <Template>
+                    @{
+                        var currentData = context as ConversationListRowViewStates;
+                        <div class="e-list-wrapper e-list-multi-line e-list-avatar @(CurrentConversationId == context.Id ? "selected" : "")" @onclick="(e => OnSelect(currentData))">
+                            <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
+                            <span class="e-list-item-header">@currentData.Name</span>
+                            <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
+                        </div>
+                    }
+                </Template>
+            </ListViewTemplates>
+        </SfListView>
     }
     else if (IsTeacherViewing)
     {
@@ -44,18 +39,12 @@
                 Admin
             </b>
         </Stack>
-        <FluentDivider></FluentDivider>
-        <div class="conversation-item-list flex vertical-center">
-            <div class="padding">
-                <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="(e => OnSelect(AdminConversation))">
-                    <img src="@(AdminConversation.Avatar)" class="e-avatar e-avatar-circle" />
-                    <span class="e-list-item-header">@AdminConversation.Name</span>
-                    <span class="e-list-content">@AdminConversation.LastMsgTime.ToString()</span>
-                </div>
-            </div>
+        <div class="e-list-wrapper e-list-item e-single-item @(CurrentConversationId == AdminConversation.Id ? "selected" : "")" @onclick="(e => OnSelect(AdminConversation))">
+            <img src="@(AdminConversation.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
+            <span class="e-list-item-header">@AdminConversation.Name</span>
+            <span class="e-list-content">@AdminConversation.LastMsgTime.ToString()</span>
         </div>
 
-        <FluentDivider></FluentDivider>
         <br />
 
         <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
@@ -63,28 +52,22 @@
                 Recruiters
             </b>
         </Stack>
-        <FluentDivider></FluentDivider>
-        <div class="conversation-item-list flex vertical-center">
-            <div class="padding">
-                <SfListView DataSource="@RecruiterConversations" CssClass="e-list-template">
-                    <ListViewFieldSettings TValue="@ConversationListRowViewStates" Id="Id" Text="Name"></ListViewFieldSettings>
-                    <ListViewTemplates TValue="ConversationListRowViewStates">
-                        <Template>
-                            @{
-                                var currentData = context as ConversationListRowViewStates;
-                                <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="(e => OnSelect(currentData))">
-                                    <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" />
-                                    <span class="e-list-item-header">@currentData.Name</span>
-                                    <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
-                                </div>
-                            }
-                        </Template>
-                    </ListViewTemplates>
-                </SfListView>
-            </div>
-        </div>
+        <SfListView DataSource="@RecruiterConversations" CssClass="e-list-template">
+            <ListViewFieldSettings TValue="@ConversationListRowViewStates" Id="Id" Text="Name"></ListViewFieldSettings>
+            <ListViewTemplates TValue="ConversationListRowViewStates">
+                <Template>
+                    @{
+                        var currentData = context as ConversationListRowViewStates;
+                        <div class="e-list-wrapper e-list-multi-line e-list-avatar @(CurrentConversationId == context.Id ? "selected" : "")" @onclick="(e => OnSelect(currentData))">
+                            <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
+                            <span class="e-list-item-header">@currentData.Name</span>
+                            <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
+                        </div>
+                    }
+                </Template>
+            </ListViewTemplates>
+        </SfListView>
 
-        <FluentDivider></FluentDivider>
         <br />
 
         <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
@@ -99,8 +82,8 @@
                 <Template>
                     @{
                         var currentData = context as ConversationListRowViewStates;
-                        <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="(e => OnSelect(currentData))">
-                            <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" />
+                        <div class="e-list-wrapper e-list-multi-line e-list-avatar @(CurrentConversationId == context.Id ? "selected" : "")" @onclick="(e => OnSelect(currentData))">
+                            <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
                             <span class="e-list-item-header">@currentData.Name</span>
                             <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
                         </div>
@@ -111,16 +94,15 @@
     }
     else if (IsStudentViewing)
     {
-        @if (InstructorConversation == null)
+        @if (InstructorConversation != null)
         {
             <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
                 <b>
                     Group Manager Instructor
                 </b>
             </Stack>
-            <FluentDivider></FluentDivider>
-            <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="(e => OnSelect(InstructorConversation))">
-                <img src="@(InstructorConversation?.Avatar)" class="e-avatar e-avatar-circle" />
+            <div class="e-list-wrapper e-list-item e-single-item @(CurrentConversationId == InstructorConversation?.Id ? "selected" : "")" @onclick="(e => OnSelect(InstructorConversation))">
+                <img src="@(InstructorConversation?.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
                 <span class="e-list-item-header">@InstructorConversation?.Name</span>
                 <span class="e-list-content">@InstructorConversation?.LastMsgTime.ToString()</span>
             </div>
@@ -128,21 +110,23 @@
     }
     else if (IsRecruiterViewing)
     {
-        <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
-            <b>
-                Department Manager Instructor
-            </b>
-        </Stack>
-        <FluentDivider></FluentDivider>
-        <div class="conversation-item-list flex vertical-center">
-            <div class="padding">
-                <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="(e => OnSelect(InstructorConversation))">
-                    <img src="@(InstructorConversation.Avatar)" class="e-avatar e-avatar-circle" />
-                    <span class="e-list-item-header">@InstructorConversation.Name</span>
-                    <span class="e-list-content">@InstructorConversation.LastMsgTime.ToString()</span>
+        @if (InstructorConversation != null)
+        {
+            <Stack HorizontalAlign="Wave5.UI.Alignment.Center">
+                <b>
+                    Department Manager Instructor
+                </b>
+            </Stack>
+            <div class="conversation-item-list flex vertical-center">
+                <div class="padding">
+                    <div class="e-list-wrapper e-list-item e-single-item @(CurrentConversationId == InstructorConversation?.Id ? "selected" : "")" @onclick="(e => OnSelect(InstructorConversation))">
+                        <img src="@(InstructorConversation.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
+                        <span class="e-list-item-header">@InstructorConversation.Name</span>
+                        <span class="e-list-content">@InstructorConversation.LastMsgTime.ToString()</span>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     }
 </Stack>
 
@@ -156,6 +140,54 @@
         z-index:100;
         background:white;
         box-shadow:0px 0px 5px 0px;
+    }
+
+    .e-list-wrapper.e-list-item.e-single-item {
+        font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+        font-size: 14px;
+        padding: 4px;
+        padding-left: 68px;
+        padding-right: 16px;
+        cursor: pointer;
+        color: #212529;
+        border: 1px solid #dee2e6;
+        position: relative;
+    }
+
+    .e-list-wrapper.e-list-item.e-single-item .e-avatar{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 40px;
+        margin: 7px 16px 7px 12px;
+    }
+    
+    .e-list-wrapper.e-list-item.e-single-item .e-list-item-header{
+        color: #212529;
+        display: block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 22px;
+        margin: 0;
+        overflow: hidden;
+        padding: 0;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .e-list-wrapper.e-list-item.e-single-item .e-list-content {
+        color: #6c757d;
+        display: block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 22px;
+        margin: 0;
+        padding: 2px 0 0 0;
+        word-wrap: break-word;
+    }
+
+    .e-list-wrapper.e-list-item.e-single-item:hover {
+        background: #e9ecef;
     }
 
     #container .e-listview {
@@ -182,5 +214,22 @@
 
     .flex__center {
         justify-content: center;
+    }
+
+    .e-list-item-header{
+        color: #212529 !important;
+    }
+
+    .e-list-content {
+        color: #6c757d !important;
+    }
+
+    .e-list-item.e-level-1.e-focused {
+        background: #e9ecef;
+        
+    }
+
+    .selected {
+        background: #e9ecef;
     }
 </style>

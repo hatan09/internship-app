@@ -31,6 +31,9 @@ public partial class StudentListView : ComponentBase
     public InstructorManager Instructors { get; set; }
 
     [Inject]
+    public IConversationRepository Conversations { get; set; }
+
+    [Inject]
     public NavigationManager NavigationManager { get; set; }
 
     [Inject]
@@ -414,7 +417,10 @@ public partial class StudentListView : ComponentBase
                 NavigationManager.NavigateTo("/", true);
                 return;
             }
-            var group = await Groups.FindAll(x => x.InstructorId == instructor.Id).Include(x => x.Students).AsTracking().FirstOrDefaultAsync();
+            var group = await Groups.FindAll(x => x.InstructorId == instructor.Id)
+                .Include(x => x.Students)
+                .Include(x => x.Instructor)
+                .AsTracking().FirstOrDefaultAsync();
             if(group == null)
             {
                 await JSRuntime.InvokeVoidAsync("alert", "Cannot find your group.");
@@ -425,14 +431,34 @@ public partial class StudentListView : ComponentBase
             foreach(var student in students)
             {
                 group.Students.Add(student);
+                var conversation = new Conversation()
+                {
+                    LastMessageTime = DateTime.Now,
+                    Title = $"{group.Instructor.FullName}_{student.FullName}",
+                    Users =
+                                {
+                                    group.Instructor,
+                                    student
+                                }
+                };
+                var existingConversation = await Conversations.FindAll(x =>
+                    x.Users.Contains(group.Instructor) &&
+                    x.Users.Contains(student))
+                        .AsNoTracking().FirstOrDefaultAsync();
+                if (existingConversation == null)
+                {
+                    Conversations.Add(conversation);
+                }
             }
 
             Groups.Update(group);
             await Groups.SaveChangesAsync();
+            await Conversations.SaveChangesAsync();
 
-            var tasks = new List<Task>();
-
-            tasks.Add(this.LoadDataAsync());
+            var tasks = new List<Task>
+            {
+                this.LoadDataAsync()
+            };
 
             await Task.WhenAll(tasks);
 

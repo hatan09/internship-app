@@ -10,21 +10,28 @@ public class InternGroupServices : IInternGroupServices
     StudentManager _studentManager;
     InstructorManager _instructorManager;
     IInternGroupRepository _internGroupRepository;
+    IConversationRepository _conversationRepository;
     #endregion
 
     #region [ CTor ]
-    public InternGroupServices(StudentManager studentManager, InstructorManager instructorManager, IInternGroupRepository internGroupRepository)
+    public InternGroupServices(StudentManager studentManager, InstructorManager instructorManager, IInternGroupRepository internGroupRepository, IConversationRepository conversationRepository)
     {
         _studentManager = studentManager;
         _instructorManager = instructorManager;
         _internGroupRepository = internGroupRepository;
+        _conversationRepository = conversationRepository;
     }
     #endregion
 
     #region [ Methods - Assign ]
-    public async Task AutoAssign(int maxAmount = 0, bool assignToFreeInstructor = true)
+    private async Task AddToConversation()
     {
-        var students = await _studentManager.FindAll(x => x.InternGroup == null).AsTracking().ToListAsync();
+
+    }
+
+    public async Task AutoAssign(int maxAmount = 0, bool assignToFreeInstructor = false)
+    {
+        var students = await _studentManager.FindAll(x => x.InternGroup == null && x.Stat != Stat.REJECTED).AsTracking().ToListAsync();
         if (students == null || students.Count <= 0)
         {
             return;
@@ -77,15 +84,21 @@ public class InternGroupServices : IInternGroupServices
                 await _internGroupRepository.SaveChangesAsync();
             }
 
-            var availableGroups = await _internGroupRepository.FindAll().Include(x => x.Students).AsTracking().ToListAsync();
+            var availableGroups = await _internGroupRepository.FindAll()
+                .Include(x => x.Students)
+                .Include(x => x.Instructor)
+                .AsTracking()
+                .ToListAsync();
             var sortedAvailableGroups = availableGroups.OrderBy(x => x.Students.Count);
 
-            var amountPerGroup = 0;
+            var conversationList = new List<Conversation>();
+
+            var amountPerGroup = sortedAvailableGroups.Any() ? sortedAvailableGroups.First().Students.Count : 0;
             while(students.Count > 0)
             {
                 foreach (var group in sortedAvailableGroups)
                 {
-                    if(amountPerGroup > maxAmount || students.Count <= 0)
+                    if (amountPerGroup > maxAmount || students.Count <= 0)
                     {
                         break;
                     }
@@ -99,13 +112,37 @@ public class InternGroupServices : IInternGroupServices
                     var student = students.FirstOrDefault();
                     if(student != null) {
                         group.Students.Add(student);
-                        group.Students.Remove(student);
+                        students.Remove(student);
                         _internGroupRepository.Update(group);
+
+                        var instructor = group.Instructor;
+                        if(instructor != null)
+                        {
+                            var conversation = new Conversation()
+                            {
+                                LastMessageTime = DateTime.Now,
+                                Title = $"{group.Instructor?.FullName}_{student.FullName}",
+                                Users =
+                                {
+                                    instructor,
+                                    student
+                                }
+                            };
+                            var existingConversation = await _conversationRepository.FindAll(x => 
+                                x.Users.Contains(instructor) && 
+                                x.Users.Contains(student))
+                                    .AsNoTracking().FirstOrDefaultAsync();
+                            if (existingConversation == null)
+                            {
+                                _conversationRepository.Add(conversation);
+                            }
+                        }
                     }
                 }
             }
 
             await _internGroupRepository.SaveChangesAsync();
+            await _conversationRepository.SaveChangesAsync();
         }
     }
 
@@ -122,14 +159,14 @@ public class InternGroupServices : IInternGroupServices
             remain = 0;
         }
 
-        var students = await _studentManager.FindAll(x => x.InternGroup == null)
+        var students = await _studentManager.FindAll(x => x.InternGroup == null && x.Stat != Stat.REJECTED)
             .Take(amountPerGroup + ((remain-- > 0)? 1 : 0))
             .AsTracking()
             .ToListAsync();
 
         while(students.Any())
         {
-            var instructor = await _instructorManager.FindAll(x => x.InternGroup == null).FirstOrDefaultAsync();
+            var instructor = await _instructorManager.FindAll(x => x.InternGroup == null).AsTracking().FirstOrDefaultAsync();
             if(instructor == null)
             {
                 break;
@@ -152,11 +189,30 @@ public class InternGroupServices : IInternGroupServices
             foreach(var student in students)
             {
                 newGroup.Students.Add(student);
+                var conversation = new Conversation()
+                {
+                    LastMessageTime = DateTime.Now,
+                    Title = $"{instructor.FullName}_{student.FullName}",
+                    Users =
+                        {
+                            instructor,
+                            student
+                        }
+                };
+                var existingConversation = await _conversationRepository.FindAll(x =>
+                    x.Users.Contains(instructor) &&
+                    x.Users.Contains(student))
+                        .AsNoTracking().FirstOrDefaultAsync();
+                if (existingConversation == null)
+                {
+                    _conversationRepository.Add(conversation);
+                }
             }
             _internGroupRepository.Update(newGroup);
             await _internGroupRepository.SaveChangesAsync();
+            await _conversationRepository.SaveChangesAsync();
 
-            students = await _studentManager.FindAll(x => x.InternGroup == null)
+            students = await _studentManager.FindAll(x => x.InternGroup == null && x.Stat != Stat.REJECTED)
                 .Take(amountPerGroup + ((remain-- > 0) ? 1 : 0))
                 .AsTracking()
                 .ToListAsync();

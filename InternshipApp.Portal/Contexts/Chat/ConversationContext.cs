@@ -14,8 +14,6 @@ public class ConversationContext
     #endregion
 
     #region [ Properties ]
-    public User Sender { get; set; }
-    public int CurrentConversation { get; set; }
     public ConversationListRowViewStates AdminConversation { get; set; }
     public ConversationListRowViewStates InstructorConversation { get; set; }
     public List<ConversationListRowViewStates> InstructorConversations { get; set; }

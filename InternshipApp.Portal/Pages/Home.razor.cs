@@ -1,11 +1,11 @@
 ﻿using Blazored.LocalStorage;
+using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
-using Wave5.UI;
 
 namespace InternshipApp.Portal.Views;
 
@@ -36,6 +36,7 @@ public partial class Home
     public string InternshipTitle { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime CloseRegistrationTime { get; set; }
+    public DateTime JobDeadline { get; set; }
     public DateTime SummaryTime { get; set; }
     public DateTime EndTime { get; set; }
 
@@ -44,6 +45,9 @@ public partial class Home
 
     [Inject]
     public IJSRuntime JSRuntime { get; set; }
+
+    [Inject]
+    public IInternSettingsRepository Settings { get; set; }
 
     [Inject]
     public UserManager Users { get; private set; }
@@ -60,7 +64,7 @@ public partial class Home
     #region [ Protected Override Methods - Page ]
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        if (firstRender)
         {
             try
             {
@@ -75,6 +79,7 @@ public partial class Home
                     LoginUser = user;
                 }
 
+                await LoadDataAsync();
                 StateHasChanged();
                 await base.OnInitializedAsync();
             }
@@ -83,7 +88,7 @@ public partial class Home
 
             }
         }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
 
@@ -176,7 +181,7 @@ public partial class Home
         Msg = "";
         if (IsLogin)
         {
-            if(string.IsNullOrEmpty(Username))
+            if (string.IsNullOrEmpty(Username))
             {
                 Msg += "Username cannot be empty. \n";
                 result = false;
@@ -229,7 +234,7 @@ public partial class Home
         }
 
         var user = await Users.FindByNameAsync(Username);
-        if(user == null)
+        if (user == null)
         {
             Msg = "Username or password is incorrect";
             return false;
@@ -252,23 +257,28 @@ public partial class Home
 
     private async Task<string> SaveRoleAsync(List<string> roles)
     {
-        if (roles.Contains("admin")) {
+        if (roles.Contains("admin"))
+        {
             await this.LocalStorage.SetItemAsStringAsync("role", "ADMIN");
             return "ADMIN";
         }
-        else if (roles.Contains("instructor"))  {
+        else if (roles.Contains("instructor"))
+        {
             await this.LocalStorage.SetItemAsStringAsync("role", "INSTRUCTOR");
             return "INSTRUCTOR";
         }
-        else if (roles.Contains("recruiter")) {
+        else if (roles.Contains("recruiter"))
+        {
             await this.LocalStorage.SetItemAsStringAsync("role", "RECRUITER");
             return "RECRUITER";
         }
-        else if (roles.Contains("student")) {
+        else if (roles.Contains("student"))
+        {
             await this.LocalStorage.SetItemAsStringAsync("role", "STUDENT");
             return "STUDENT";
         }
-        else {
+        else
+        {
             await this.LocalStorage.SetItemAsStringAsync("role", "GUEST");
             return "GUEST";
         }
@@ -281,7 +291,8 @@ public partial class Home
         {
             return false;
         }
-        var student = new Student() { 
+        var student = new Student()
+        {
             FullName = this.Name,
             StudentId = this.StudentId,
             Email = this.Email,
@@ -292,7 +303,7 @@ public partial class Home
             Stat = Stat.WAITING
         };
         var result = await Students.CreateAsync(student);
-        if(!result.Succeeded)
+        if (!result.Succeeded)
         {
             Msg = "Can't create user";
             StateHasChanged();
@@ -337,6 +348,37 @@ public partial class Home
         GPA = 0;
         Credits = 0;
         Msg = "";
+    }
+    #endregion
+
+    #region [ Methods -  ]
+    private async Task LoadDataAsync()
+    {
+        try
+        {
+            var settings = await Settings.GetCurrentSemester();
+            if (settings != null)
+            {
+                InternshipTitle = settings.Title;
+                StartTime = settings.StartTime;
+                CloseRegistrationTime = settings.CloseRegistrationTime;
+                JobDeadline = settings.JobDeadline;
+                SummaryTime = settings.SummaryTime;
+                EndTime = settings.EndTime;
+            }
+            else
+            {
+                if(Role == "ADMIN")
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "There is currently no internship settings for semester. Please add soon!");
+
+                }
+            }
+        }
+        catch (Exception e)
+        {
+
+        }
     }
     #endregion
 }

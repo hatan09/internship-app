@@ -41,6 +41,9 @@ public partial class InfoView
     public StudentManager Students { get; set; }
 
     [Inject]
+    public IConversationRepository Conversations { get; set; }
+
+    [Inject]
     public IInternGroupRepository Groups { get; set; }
 
     [Inject]
@@ -273,13 +276,37 @@ public partial class InfoView
             return;
         }
 
-        var group = await Groups.FindAll(x => x.InstructorId == user.Id).Include(x => x.Students).AsTracking().FirstOrDefaultAsync();
+        var group = await Groups.FindAll(x => x.InstructorId == user.Id)
+            .Include(x => x.Instructor)
+            .Include(x => x.Students)
+            .AsTracking().FirstOrDefaultAsync();
         var student = await Students.FindByIdAsync(States.Id);
         if (group != null && student != null && student.Stat == Stat.WAITING)
         {
             group.Students.Add(student);
             Groups.Update(group);
+
+            var conversation = new Conversation()
+            {
+                LastMessageTime = DateTime.Now,
+                Title = $"{group.Instructor.FullName}_{student.FullName}",
+                Users =
+                    {
+                        group.Instructor,
+                        student
+                    }
+            };
+            var existingConversation = await Conversations.FindAll(x =>
+                x.Users.Contains(group.Instructor) &&
+                x.Users.Contains(student))
+                    .AsNoTracking().FirstOrDefaultAsync();
+            if (existingConversation == null)
+            {
+                Conversations.Add(conversation);
+            }
+
             await Groups.SaveChangesAsync();
+            await Conversations.SaveChangesAsync();
         }
     }
 

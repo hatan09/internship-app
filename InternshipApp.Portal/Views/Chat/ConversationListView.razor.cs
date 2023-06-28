@@ -17,13 +17,13 @@ public partial class ConversationListView
     public EventCallback RefreshCallback { get; set; }
     #endregion
 
-    #region [ Properties ]
+    #region [ Properties - Inject ]
     [Inject]
     public ILocalStorageService LocalStorage { get; set; }
     #endregion
 
     #region [ Properties ]
-    public User Sender { get; set; }
+    public int CurrentConversationId { get; set; }
     private bool HasConversation { get; set; }
     public ConversationListRowViewStates AdminConversation { get; set; }
     public ConversationListRowViewStates InstructorConversation { get; set; }
@@ -83,7 +83,9 @@ public partial class ConversationListView
     {
         if (selectedItem != null && selectedItem.Id > 0)
         {
+            CurrentConversationId = selectedItem.Id;
             await SelectConversationCallback.InvokeAsync(selectedItem.Id);
+            StateHasChanged();
             return;
         }
     }
@@ -92,12 +94,6 @@ public partial class ConversationListView
     #region [ Methods - Data ]
     private void LoadData()
     {
-        Sender = Context.Sender;
-        if(Sender == null)
-        {
-            return;
-        }
-
         if (IsAdminViewing)
         {
             InstructorConversations = Context.InstructorConversations;
