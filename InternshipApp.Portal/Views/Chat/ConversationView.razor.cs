@@ -110,7 +110,7 @@ public partial class ConversationView
     #endregion
 
     #region [ Methods - Data ]
-    private void AppendChatMessage(Message message)
+    private async void AppendChatMessage(Message message)
     {
         if(LastMessage != null)
         {
@@ -140,9 +140,11 @@ public partial class ConversationView
             CreatedAt = message.SentTime,
             IsSender = isSender,
         });
+
+        await ScrollToEndChat();
     }
 
-    private void LoadDataAsync()
+    private async void LoadDataAsync()
     {
         try
         {
@@ -152,10 +154,12 @@ public partial class ConversationView
 
             Sender = Context.Sender;
             Receiver = Context.Receiver;
-            ReceiverAvatar = Context.Avatar?? "";
+            ReceiverAvatar = Context.ReceiverAvatar?? "";
+            SenderAvatar = Context.SenderAvatar ?? "";
             Title = Context.ConversationTitle?? "";
 
             LoadChat();
+            await ScrollToEndChat();
         }
         catch (Exception ex)
         {
@@ -179,6 +183,11 @@ public partial class ConversationView
 
             LastMessage = Context.Messages.LastOrDefault();
         }
+    }
+
+    private async Task ScrollToEndChat()
+    {
+        await JSRuntime.InvokeVoidAsync("scrollToElementId", "end-chat");
     }
     #endregion
 }
