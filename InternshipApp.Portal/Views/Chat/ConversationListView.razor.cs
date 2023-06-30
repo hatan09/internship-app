@@ -27,9 +27,9 @@ public partial class ConversationListView
     private bool HasConversation { get; set; }
     public ConversationListRowViewStates AdminConversation { get; set; }
     public ConversationListRowViewStates InstructorConversation { get; set; }
-    public List<ConversationListRowViewStates> InstructorConversations { get; set; }
-    public List<ConversationListRowViewStates> StudentConversations { get; set; }
-    public List<ConversationListRowViewStates> RecruiterConversations { get; set; }
+    public List<ConversationListRowViewStates> InstructorConversations { get; set; } = new();
+    public List<ConversationListRowViewStates> StudentConversations { get; set; } = new();
+    public List<ConversationListRowViewStates> RecruiterConversations { get; set; } = new();
     public bool IsAdminViewing { get; set; }
     public bool IsStudentViewing { get; set; }
     public bool IsTeacherViewing { get; set; }
@@ -81,7 +81,7 @@ public partial class ConversationListView
     #region [ Methods - Event Handlers ]
     public async void OnSelect(ConversationListRowViewStates selectedItem)
     {
-        if (selectedItem != null && selectedItem.Id > 0)
+        if (selectedItem != null && selectedItem.Id > 0 && selectedItem.Id != CurrentConversationId)
         {
             CurrentConversationId = selectedItem.Id;
             await SelectConversationCallback.InvokeAsync(selectedItem.Id);

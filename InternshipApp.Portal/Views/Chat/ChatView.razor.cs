@@ -34,8 +34,12 @@ public partial class ChatView
     #endregion
 
     #region [ Properties - States ]
+    public bool IsProcessing { get; set; } = true;
+
     public User Sender { get; set; }
     public User? Receiver { get; set; }
+    public string SenderAvatar { get; set; }
+    public string ReceiverAvatar { get; set; }
     public Conversation CurrentConversation { get; set; }
     public List<Message> CurrentMessages { get; set; }
 
@@ -104,14 +108,28 @@ public partial class ChatView
 
     }
 
-    public async void OnChat()
+    public async void OnChat(Message message)
     {
+        if(CurrentConversation != null)
+        {
+            var conversation = await Conversations.FindAll(x => x.Id == CurrentConversation.Id).AsTracking().FirstOrDefaultAsync();
+            conversation.Messages.Add(message);
+            conversation.LastMessageTime = message.SentTime;
+            conversation.LastMessage = message.Content;
 
+            Conversations.Update(conversation);
+            await Conversations.SaveChangesAsync();
+        }
     }
 
-    public async void OnChangeConversation()
+    public async void OnChangeConversation(int conversationId)
     {
-
+        if(conversationId > 0)
+        {
+            await LoadCurrentConversation(conversationId);
+            await LoadChatAsync();
+            ProcessChatContext();
+        }
     }
 
     public async void OnRefresh()
@@ -133,10 +151,106 @@ public partial class ChatView
         return user;
     }
 
+    private async Task LoadCurrentConversation(int id)
+    {
+        if(id > 0)
+        {
+            var conversation = await Conversations.FindAll(x => x.Id == id).Include(x => x.Users).Include(x => x.Messages).AsNoTracking().FirstOrDefaultAsync();
+            if(conversation != null)
+            {
+                CurrentConversation = conversation;
+            }
+        }
+    }
+
+    private async Task LoadChatAsync()
+    {
+        if(CurrentConversation != null)
+        {
+            if(CurrentConversation.Users.Where(x => x.Id == Sender.Id).Any())
+            {
+                Receiver = CurrentConversation.Users.FirstOrDefault(x => x.Id != Sender.Id);
+                if(Receiver != null)
+                {
+                    var student = await Students.FindAll(x => x.Id == Receiver.Id).AsNoTracking().FirstOrDefaultAsync();
+                    if(student != null)
+                    {
+                        ReceiverAvatar = student.ImgUrl;
+                    }
+                    else
+                    {
+                        ReceiverAvatar = "";
+                    }
+                    CurrentMessages = CurrentConversation.Messages.ToList();
+                }
+            }
+        }
+    }
+
+    private void ProcessConversationContext()
+    {
+        var conversationContext = new ConversationContext();
+
+        if (IsAdminViewing)
+        {
+            InstructorConversations.ForEach(x =>
+            {
+                conversationContext.InstructorConversations.Add(
+                    x.ToListRow(receiverName: x.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName));
+            });
+        }
+        else if (IsTeacherViewing)
+        {
+            conversationContext.AdminConversation = AdminConversation?.ToListRow(receiverName: "Administrator");
+
+            StudentConversations.ForEach(x =>
+            {
+                conversationContext.StudentConversations.Add(
+                    x.ToListRow(
+                        receiverAvatarUrl: StudentList.FirstOrDefault(y => y.Id == x.Users.FirstOrDefault(x => x.Id != Sender.Id)?.Id)?.ImgUrl,
+                        receiverName: x.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName));
+            });
+
+            RecruiterConversations.ForEach(x =>
+            {
+                conversationContext.RecruiterConversations.Add(
+                    x.ToListRow(receiverName: x.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName));
+            });
+        }
+        else if (IsStudentViewing)
+        {
+            conversationContext.InstructorConversation = InstructorConversation?.ToListRow(receiverName: InstructorConversation.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName);
+        }
+        else if (IsRecruiterViewing)
+        {
+            conversationContext.InstructorConversation = InstructorConversation?.ToListRow(receiverName: InstructorConversation.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName);
+        }
+
+        ConversationContext = conversationContext;
+        StateHasChanged();
+    }
+
+    private void ProcessChatContext()
+    {
+        var context = new ChatContext()
+        {
+            Sender = Sender,
+            SenderAvatar = SenderAvatar,
+            Receiver = Receiver,
+            ReceiverAvatar = ReceiverAvatar,
+            ConversationTitle = CurrentConversation.Title,
+            Messages = CurrentMessages
+        };
+
+        ChatContext = context;
+        StateHasChanged();
+    }
+
     private async Task LoadDataAsync()
     {
         try
         {
+            IsProcessing = true;
             var user = await GetCurrentUserAsync();
             Sender = user;
 
@@ -205,6 +319,7 @@ public partial class ChatView
                                             .FirstOrDefaultAsync();
                 if (student != null && student.InternGroup != null)
                 {
+                    SenderAvatar = student.ImgUrl;
                     var instructorId = student.InternGroup.InstructorId;
 
                     var studentConversations = await Conversations.FindAll(x => x.Users.Where(x => x.Id == user.Id).Any()).Include(x => x.Users).AsNoTracking().ToListAsync();
@@ -231,50 +346,14 @@ public partial class ChatView
         }
         finally
         {
+            IsProcessing = false;
             StateHasChanged();
         }
     }
 
     private void OnInitializeContext()
     {
-        var conversationContext = new ConversationContext();
-
-        if (IsAdminViewing)
-        {
-            InstructorConversations.ForEach(x =>
-            {
-                conversationContext.InstructorConversations.Add(
-                    x.ToListRow(receiverName: x.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName));
-            });
-        }
-        else if (IsTeacherViewing)
-        {
-            conversationContext.AdminConversation = AdminConversation?.ToListRow(receiverName: "Administrator");
-
-            StudentConversations.ForEach(x =>
-            {
-                conversationContext.StudentConversations.Add(
-                    x.ToListRow(
-                        receiverAvatarUrl: StudentList.FirstOrDefault(y => y.Id == x.Users.FirstOrDefault(x => x.Id != Sender.Id)?.Id)?.ImgUrl,
-                        receiverName: x.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName));
-            });
-
-            RecruiterConversations.ForEach(x =>
-            {
-                conversationContext.RecruiterConversations.Add(
-                    x.ToListRow(receiverName: x.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName));
-            });
-        }
-        else if (IsStudentViewing)
-        {
-            conversationContext.InstructorConversation = InstructorConversation?.ToListRow(receiverName: InstructorConversation.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName);
-        }
-        else if (IsRecruiterViewing)
-        {
-            conversationContext.InstructorConversation = InstructorConversation?.ToListRow(receiverName: InstructorConversation.Users.FirstOrDefault(x => x.Id != Sender.Id)?.FullName);
-        }
-
-        ConversationContext = conversationContext;
+        ProcessConversationContext();
         ChatContext = new();
     }
     #endregion

@@ -112,7 +112,11 @@ public partial class ConversationView
     #region [ Methods - Data ]
     private async void AppendChatMessage(Message message)
     {
-        if(LastMessage != null)
+        if(LastMessage == null)
+        {
+            LastMessage = message;
+        }
+        else
         {
             if (DateTime.Compare(message.SentTime, LastMessage.SentTime) > 0)
             {
@@ -174,6 +178,7 @@ public partial class ConversationView
 
     private void LoadChat()
     {
+        ChatMessages.Clear();
         if(Sender != null && Receiver != null)
         {
             Context.Messages.ForEach(x =>
@@ -187,7 +192,7 @@ public partial class ConversationView
 
     private async Task ScrollToEndChat()
     {
-        await JSRuntime.InvokeVoidAsync("scrollToElementId", "end-chat");
+        
     }
     #endregion
 }

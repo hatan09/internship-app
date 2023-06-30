@@ -1,6 +1,11 @@
 ﻿@namespace InternshipApp.Portal.Views
+@using Syncfusion.Blazor.Spinner
 
 <Stack ClassName="chat-container" Style="max-width:calc(100% - 400px)" Horizontal>
+    <SfSpinner Visible=@IsProcessing Label="Loading...">
+
+    </SfSpinner>
+
     <ConversationView Context="@ChatContext" SendCallback="@OnChat">
 
     </ConversationView>
