@@ -71,6 +71,13 @@
         </SfTooltip>
     }
 
+    @if (IsViewEvaluationButtonVisible)
+    {
+        <SfTooltip Content="View result">
+            <SfButton IconCss="oi oi-bar-chart" CssClass="command-bar-button evaluation" OnClick="@ViewEvaluationCallBack" />
+        </SfTooltip>
+    }
+
     @if (IsViewResultButtonVisible)
     {
         <SfTooltip Content="View result">
@@ -137,7 +144,11 @@
     }
 
     .oi-circle-document.e-btn-icon {
-        color: white;
+        color: deepskyblue;
+    }
+
+    .oi-bar-chart.e-btn-icon {
+        color: forestgreen;
     }
 
     .oi-action-undo.e-btn-icon {

@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 using RCode;
-using Syncfusion.Blazor.RichTextEditor;
-using Wave5.UI;
 using Wave5.UI.Forms;
 
 namespace InternshipApp.Portal.Views;
@@ -105,7 +103,8 @@ public partial class InfoView
         {
             IsAdminViewing = true;
         }
-        if (firstRender) {
+        if (firstRender)
+        {
             StateHasChanged();
         }
         await base.OnAfterRenderAsync(firstRender);
@@ -241,7 +240,7 @@ public partial class InfoView
         var group = await Groups.FindAll(x => x.Students.Contains(student)).Include(x => x.Students).AsTracking().FirstOrDefaultAsync();
         if (student != null)
         {
-            if(group != null)
+            if (group != null)
             {
                 group.Students.Remove(student);
                 Groups.Update(group);
@@ -261,7 +260,8 @@ public partial class InfoView
 
     public void OnShowScore()
     {
-        PopupContext = new() {
+        PopupContext = new()
+        {
             IsOpen = true,
             StudentId = StudentId
         };
@@ -270,7 +270,7 @@ public partial class InfoView
     public async Task OnAddToGroup()
     {
         var user = await LocalStorage.GetItemAsync<User>("login-user-info");
-        if(user == null)
+        if (user == null)
         {
             NavigationManager.NavigateTo("/", true);
             return;
@@ -313,7 +313,7 @@ public partial class InfoView
     public async Task OnFinish()
     {
         var student = await Students.FindAll(x => x.Id == States.Id).Include(x => x.StudentJobs).AsTracking().FirstOrDefaultAsync();
-        if(student == null)
+        if (student == null)
         {
             await JSRuntime.InvokeVoidAsync("alert", "Can't mark as finished");
             return;
@@ -323,11 +323,11 @@ public partial class InfoView
         var score = evaluations.Average(x => x.Score);
 
         student.Stat = Stat.FINISHED;
-        student.Score = (int) score;
+        student.Score = (int)score;
         student.StudentJobs.Clear();
 
         var result = await Students.UpdateAsync(student);
-        if(!result.Succeeded)
+        if (!result.Succeeded)
         {
             await JSRuntime.InvokeVoidAsync("alert", "Can't mark as finished");
             return;

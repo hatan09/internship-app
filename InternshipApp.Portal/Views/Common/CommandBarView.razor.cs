@@ -30,6 +30,9 @@ public partial class CommandBarView
     public EventCallback FinishCallback { get; set; }
 
     [Parameter]
+    public EventCallback ViewEvaluationCallBack { get; set; }
+
+    [Parameter]
     public EventCallback ViewResultCallBack { get; set; }
 
     [Parameter]
@@ -48,6 +51,7 @@ public partial class CommandBarView
     public bool IsApplyListButtonVisible { get; set; }
     public bool IsShowScoreButtonVisible { get; set; }
     public bool IsFinishButtonVisible { get; set; }
+    public bool IsViewEvaluationButtonVisible { get; set; }
     public bool IsViewResultButtonVisible { get; set; }
     public bool IsAddGroupButtonVisible { get; set; }
     public bool IsUndoButtonVisible { get; set; }
@@ -64,6 +68,7 @@ public partial class CommandBarView
         IsApplyListButtonVisible = ApplyListCallback.HasDelegate;
         IsShowScoreButtonVisible = ShowScoreCallBack.HasDelegate;
         IsFinishButtonVisible = FinishCallback.HasDelegate;
+        IsViewEvaluationButtonVisible = ViewEvaluationCallBack.HasDelegate;
         IsViewResultButtonVisible = ViewResultCallBack.HasDelegate;
         IsAddGroupButtonVisible = AddGroupCallBack.HasDelegate;
         IsUndoButtonVisible = UndoCallBack.HasDelegate;

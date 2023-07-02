@@ -40,6 +40,26 @@
             </FooterTemplate>
         </DialogTemplates>
     }
+    else if (IsShowResultView)
+    {
+        <DialogTemplates>
+            <Header>
+                <div>Student's Reports From @Context.CompanyName</div>
+            </Header>
+            <Content>
+                <ManageEvaluationListView StudentId=@Context.StudentId>
+
+                </ManageEvaluationListView>
+            </Content>
+            <FooterTemplate>
+                <div>
+                    <SfButton Content="Finish Intern" OnClick=@OnFinishButtonClicked >
+                        
+                    </SfButton>
+                </div>
+            </FooterTemplate>
+        </DialogTemplates>
+    }
     else if (IsNotifyView)
     {
         <DialogTemplates>

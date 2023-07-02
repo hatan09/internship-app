@@ -15,6 +15,9 @@ public partial class PopupView
     public bool IsShowScoreView { get; set; }
 
     [Parameter]
+    public bool IsShowResultView { get; set; }
+
+    [Parameter]
     public bool IsNotifyView { get; set; }
 
     [Parameter]

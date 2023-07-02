@@ -40,7 +40,10 @@ public partial class ManageInfoView
     #region [ Properties - Data ]
     protected StudentDetailsViewStates States { get; private set; }
 
-    public PopupContext PopupContext { get; set; }
+    public PopupContext EditSkillPopupContext { get; set; }
+    public PopupContext EvaluationPopupContext { get; set; }
+    public PopupContext ResultPopupContext { get; set; }
+    public PopupContext MessagePopupContext { get; set; }
     #endregion
 
     #region [ Protected Methods - Override ]
@@ -109,6 +112,14 @@ public partial class ManageInfoView
                 return;
             }
             IsFinished = student.Stat == Stat.FINISHED;
+            if (student.Stat == Stat.REJECTED)
+            {
+                MessagePopupContext = new()
+                {
+                    Message = "You have been disqualified by Instructor. Please contact your department for more information and assisstance!",
+                    IsOpen = true,
+                };
+            }
             this.States = student.ToDetailsViewStates();
 
             States.StudentSkills = student.StudentSkills.ToList();
@@ -179,13 +190,14 @@ public partial class ManageInfoView
 
     public void OnEditSkill()
     {
-        this.PopupContext = new()
+        this.EditSkillPopupContext = new()
         {
             IsOpen = true,
             StudentId = States.Id,
             AllSkills = States.AllSkills,
             OnEditedSkillCallback = OnLoadSkills
         };
+        StateHasChanged();
     }
 
     public void OnEdit()
@@ -199,9 +211,24 @@ public partial class ManageInfoView
         this.NavigationManager.NavigateTo($"apply-status/{States.Id}");
     }
 
+    public void OnViewEvaluation()
+    {
+        EvaluationPopupContext = new()
+        {
+            StudentId = States.Id,
+            IsOpen = true,
+        };
+        StateHasChanged();
+    }
+
     public void OnViewResult()
     {
-
+        ResultPopupContext = new()
+        {
+            StudentId = States.Id,
+            IsOpen = true,
+        };
+        StateHasChanged();
     }
 
     public async void OnOpenGithubProfile()

@@ -24,7 +24,7 @@
             <mark style="background-color: #FFFF00">Please contact your department for assisstance and further information.</mark>
         </label>
     }
-    else if (States.InternGroupId < 1)
+    else if (States.InternGroupId < 1 && !IsFinished)
     {
         <label>
             <mark style="background-color: #FFFF00"><i>*You are not added to any intern group!</i></mark>
@@ -41,6 +41,11 @@
     else if (States.Status == Stat.REJECTED.ToString())
     {
         
+    }
+    else if (States.Status == Stat.HIRED.ToString())
+    {
+        <CommandBarView EditCallback="OnEdit" ApplyListCallback="OnOpenApplyList" ViewEvaluationCallBack="OnViewEvaluation"/>
+
     }
     else
     {
@@ -116,7 +121,13 @@
 
 <StudentInfoFormPanel FormRequest="StudentFormRequest" FormResultCallback="OnFormResultReceived"/>
 
-<PopupView IsEditSkillView=true Context=@PopupContext />
+<PopupView IsEditSkillView=true Context=@EditSkillPopupContext />
+
+<PopupView IsShowScoreView=true Context=@EvaluationPopupContext />
+
+<PopupView IsShowScoreView=true Context=@ResultPopupContext />
+
+<PopupView IsNotifyView=true Context=@MessagePopupContext />
 
 <style>
     .opencv-btn {
