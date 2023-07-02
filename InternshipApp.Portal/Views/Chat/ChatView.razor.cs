@@ -24,6 +24,9 @@ public partial class ChatView
     public InstructorManager Instructors { get; set; }
 
     [Inject]
+    public RecruiterManager Recruiters { get; private set; }
+
+    [Inject]
     public UserManager Users { get; private set; }
 
     [Inject]
@@ -119,6 +122,9 @@ public partial class ChatView
 
             Conversations.Update(conversation);
             await Conversations.SaveChangesAsync();
+
+            UpdateConversationLastMessage(CurrentConversation.Id, message.SentTime);
+            ProcessConversationContext();
         }
     }
 
@@ -183,6 +189,49 @@ public partial class ChatView
                     }
                     CurrentMessages = CurrentConversation.Messages.ToList();
                 }
+            }
+        }
+    }
+
+    private void UpdateConversationLastMessage(int id, DateTime time)
+    {
+        if (IsAdminViewing)
+        {
+            if (InstructorConversations.FirstOrDefault(x => x.Id == id) != null)
+            {
+                InstructorConversations.FirstOrDefault(x => x.Id == id).LastMessageTime = time;
+                InstructorConversations = InstructorConversations.OrderByDescending(x => x.LastMessageTime).ToList();
+            }
+        }
+        else if (IsTeacherViewing)
+        {
+            if(AdminConversation?.Id == id)
+            {
+                AdminConversation.LastMessageTime = time;
+            }
+            else if(StudentConversations.FirstOrDefault(x => x.Id == id) != null)
+            {
+                StudentConversations.FirstOrDefault(x => x.Id == id).LastMessageTime = time;
+                StudentConversations = StudentConversations.OrderByDescending(x => x.LastMessageTime).ToList();
+            }
+            else if (RecruiterConversations.FirstOrDefault(x => x.Id == id) != null)
+            {
+                RecruiterConversations.FirstOrDefault(x => x.Id == id).LastMessageTime = time;
+                RecruiterConversations = RecruiterConversations.OrderByDescending(x => x.LastMessageTime).ToList();
+            }
+        }
+        else if (IsStudentViewing)
+        {
+            if(InstructorConversation?.Id == id)
+            {
+                InstructorConversation.LastMessageTime = time;
+            }
+        }
+        else if (IsRecruiterViewing)
+        {
+            if (InstructorConversation?.Id == id)
+            {
+                InstructorConversation.LastMessageTime = time;
             }
         }
     }
@@ -263,7 +312,7 @@ public partial class ChatView
                                                     .Where(x => x.Users
                                                         .Where(x => x.UserRoles
                                                             .Where(x => x.RoleId == instructorRole.Id).Any())
-                                                        .Any()).ToList();
+                                                        .Any()).OrderByDescending(x => x.LastMessageTime).ToList();
                 InstructorConversations = admin_insConversations;
             }
             else if (IsTeacherViewing)
@@ -284,14 +333,14 @@ public partial class ChatView
                                                     .Where(x => x.Users
                                                         .Where(x => x.UserRoles
                                                             .Where(x => x.RoleId == studentRole.Id).Any())
-                                                        .Any()).ToList();
+                                                        .Any()).OrderByDescending(x => x.LastMessageTime).ToList();
                 StudentConversations = ins_studentConversations;
 
                 var ins_recruiterConversations = instructorConversations
                                                     .Where(x => x.Users
                                                         .Where(x => x.UserRoles
                                                             .Where(x => x.RoleId == recruiterRole.Id).Any())
-                                                        .Any()).ToList();
+                                                        .Any()).OrderByDescending(x => x.LastMessageTime).ToList();
                 RecruiterConversations = ins_recruiterConversations;
 
                 //load student's avatar
@@ -329,11 +378,27 @@ public partial class ChatView
             }
             else if (IsRecruiterViewing)
             {
-                var instructor = await Instructors.FindAll(x => x.IsDepartmentManager).AsNoTracking().FirstOrDefaultAsync();
+                var instructor = await Instructors.FindAll(x => x.IsDepartmentManager).AsTracking().FirstOrDefaultAsync();
                 if (instructor != null)
                 {
                     var recruiterConversations = await Conversations.FindAll(x => x.Users.Where(x => x.Id == user.Id).Any()).Include(x => x.Users).AsNoTracking().ToListAsync();
                     var recruiter_insConversation = recruiterConversations.Where(x => x.Users.Where(x => x.Id == instructor.Id).Any()).FirstOrDefault();
+                    if(recruiter_insConversation == null)
+                    {
+                        var recruiter = await Recruiters.FindAll(x => x.Id == user.Id).AsTracking().FirstOrDefaultAsync();
+                        recruiter_insConversation = new()
+                        {
+                            Title = $"{instructor.FullName}_{recruiter.FullName} Conversation",
+                            Users =
+                            {
+                                recruiter,
+                                instructor
+                            },
+
+                        };
+                        Conversations.Add(recruiter_insConversation);
+                        await Conversations.SaveChangesAsync();
+                    }
                     InstructorConversation = recruiter_insConversation;
                 }
             }

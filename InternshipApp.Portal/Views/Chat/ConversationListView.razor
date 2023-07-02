@@ -25,7 +25,7 @@
                         <div class="e-list-wrapper e-list-multi-line e-list-avatar @(CurrentConversationId == context.Id ? "selected" : "")" @onclick="(e => OnSelect(currentData))">
                             <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
                             <span class="e-list-item-header">@currentData.Name</span>
-                            <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
+                            <span class="e-list-content">@currentData.LastMsgTime.ToString("dd/MM/yyyy HH:mm:ss")</span>
                         </div>
                     }
                 </Template>
@@ -44,7 +44,7 @@
             <div class="e-list-wrapper e-list-item e-single-item @(CurrentConversationId == AdminConversation.Id ? "selected" : "")" @onclick="(e => OnSelect(AdminConversation))">
                 <img src="@(AdminConversation.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
                 <span class="e-list-item-header">@AdminConversation.Name</span>
-                <span class="e-list-content">@AdminConversation.LastMsgTime.ToString()</span>
+                <span class="e-list-content">@AdminConversation.LastMsgTime.ToString("dd/MM/yyyy HH:mm:ss")</span>
             </div>
 
             <br />
@@ -66,7 +66,7 @@
                             <div class="e-list-wrapper e-list-multi-line e-list-avatar @(CurrentConversationId == context.Id ? "selected" : "")" @onclick="(e => OnSelect(currentData))">
                                 <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
                                 <span class="e-list-item-header">@currentData.Name</span>
-                                <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
+                                <span class="e-list-content">@currentData.LastMsgTime.ToString("dd/MM/yyyy HH:mm:ss")</span>
                             </div>
                         }
                     </Template>
@@ -93,7 +93,7 @@
                             <div class="e-list-wrapper e-list-multi-line e-list-avatar @(CurrentConversationId == context.Id ? "selected" : "")" @onclick="(e => OnSelect(currentData))">
                                 <img src="@(currentData.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
                                 <span class="e-list-item-header">@currentData.Name</span>
-                                <span class="e-list-content">@currentData.LastMsgTime.ToString()</span>
+                                <span class="e-list-content">@currentData.LastMsgTime.ToString("dd/MM/yyyy HH:mm:ss")</span>
                             </div>
                         }
                     </Template>
@@ -113,7 +113,7 @@
             <div class="e-list-wrapper e-list-item e-single-item @(CurrentConversationId == InstructorConversation?.Id ? "selected" : "")" @onclick="(e => OnSelect(InstructorConversation))">
                 <img src="@(InstructorConversation?.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
                 <span class="e-list-item-header">@InstructorConversation?.Name</span>
-                <span class="e-list-content">@InstructorConversation?.LastMsgTime.ToString()</span>
+                <span class="e-list-content">@InstructorConversation?.LastMsgTime.ToString("dd/MM/yyyy HH:mm:ss")</span>
             </div>
         }
     }
@@ -131,7 +131,7 @@
                     <div class="e-list-wrapper e-list-item e-single-item @(CurrentConversationId == InstructorConversation?.Id ? "selected" : "")" @onclick="(e => OnSelect(InstructorConversation))">
                         <img src="@(InstructorConversation.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
                         <span class="e-list-item-header">@InstructorConversation.Name</span>
-                        <span class="e-list-content">@InstructorConversation.LastMsgTime.ToString()</span>
+                        <span class="e-list-content">@InstructorConversation.LastMsgTime.ToString("dd/MM/yyyy HH:mm:ss")</span>
                     </div>
                 </div>
             </div>

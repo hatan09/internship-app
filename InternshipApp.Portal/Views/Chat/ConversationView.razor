@@ -27,7 +27,7 @@
                         {
                             <Stack Horizontal=false HorizontalAlign="Wave5.UI.Alignment.Center">
                                 <hr style="width:100%" />
-                                <div class="small__font gray">@currentData.CreatedAt.ToShortDateString()</div>
+                                <div class="small__font gray">@currentData.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</div>
                             </Stack>
                         }
                         else
@@ -39,7 +39,7 @@
                                 <div class="flex content__container flex__8 vertical padding @(currentData.IsSender ? "right__align" : "left__align")">
                                     <div class="bold">@currentData.Name</div>
                                     <div class="small__font">@currentData.ChatMessage</div>
-                                    <div class="small__font gray">@currentData.CreatedAt.ToShortDateString()</div>
+                                    <div class="small__font gray">@currentData.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</div>
                                 </div>
                             </div>
                         }
@@ -51,8 +51,7 @@
         <div id="end-chat"></div>
         <Stack Style="width:calc(100% - 650px);" Horizontal ClassName="sticky bottom">
             <div class="flex__8 padding">
-                <SfTextBox Placeholder="Type your message"
-                           @ref=@(SfTextBox) />
+                <SfTextBox Placeholder="Type your message" @bind-Value="@ChatContent"/>
             </div>
             <div class="flex__1 padding">
                 <SfButton Content="Send" OnClick="OnSend" CssClass="send-btn" />

@@ -15,7 +15,7 @@ namespace InternshipApp.Portal.Views;
 public partial class ConversationView
 {
     #region [ Fields ]
-    public SfTextBox? SfTextBox;
+    private SfTextBox _sfTextBox;
     #endregion
 
     #region [ Properties - Inject ]
@@ -56,6 +56,7 @@ public partial class ConversationView
     #endregion
 
     #region [ Properties ]
+    public string ChatContent { get; set; }
     public ObservableCollection<ChatModel> ChatMessages { get; set; } = new();
     public Message? LastMessage { get; set; }
     protected User Sender { get; set; }
@@ -98,11 +99,11 @@ public partial class ConversationView
         {
             UserId = Sender.Id,
             SentTime = DateTime.Now,
-            Content = SfTextBox.Value
+            Content = ChatContent
         };
 
         AppendChatMessage(message);
-        SfTextBox.Value = "";
+        ChatContent = "";
 
         await SendCallback.InvokeAsync(message);
         StateHasChanged();
@@ -161,6 +162,7 @@ public partial class ConversationView
             ReceiverAvatar = Context.ReceiverAvatar?? "";
             SenderAvatar = Context.SenderAvatar ?? "";
             Title = Context.ConversationTitle?? "";
+            LastMessage = null;
 
             LoadChat();
             await ScrollToEndChat();
