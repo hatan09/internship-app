@@ -120,7 +120,8 @@ public partial class JobListView
             // have to check the string is not null first
             // for some reasons, the data can be null or blank
             result = filtered.Where(x =>
-                (!string.IsNullOrEmpty(x.Title) && x.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase))
+                (!string.IsNullOrEmpty(x.Title) && x.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase)) ||
+                (!string.IsNullOrEmpty(x.CompanyName) && x.CompanyName.Contains(search, StringComparison.InvariantCultureIgnoreCase))
             ).ToList();
         }
 
@@ -156,11 +157,18 @@ public partial class JobListView
             var jobList = new List<Job>();
             if(IsStudentViewing)
             {
-                jobList.AddRange(await Jobs.FindAll(x => x.IsAccepted && (string.IsNullOrEmpty(CompanyId) || x.CompanyId == int.Parse(CompanyId))).Include(x => x.Company).Include(x => x.JobSkills).ToListAsync());
+                jobList.AddRange(await Jobs.FindAll(x => x.IsAccepted && (string.IsNullOrEmpty(CompanyId) || x.CompanyId == int.Parse(CompanyId)))
+                    .Include(x => x.Company)
+                    .Include(x => x.JobSkills)
+                    .ToListAsync());
             }
             else
             {
-                jobList.AddRange(await Jobs.FindAll(x => string.IsNullOrEmpty(CompanyId) || x.CompanyId == int.Parse(CompanyId)).Include(x => x.Company).Include(x => x.JobSkills).ToListAsync());
+                jobList.AddRange(await Jobs.FindAll(x => string.IsNullOrEmpty(CompanyId) || x.CompanyId == int.Parse(CompanyId))
+                    .Include(x => x.Company)
+                    .Include(x => x.JobSkills)
+                    .OrderBy(x => x.CompanyId)
+                    .ToListAsync());
             }
 
 

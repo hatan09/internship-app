@@ -26,7 +26,7 @@
                         if (currentData.Name == "break")
                         {
                             <Stack Horizontal=false HorizontalAlign="Wave5.UI.Alignment.Center">
-                                <hr style="width:100%" />
+                                
                                 <div class="small__font gray">@currentData.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</div>
                             </Stack>
                         }
@@ -38,7 +38,7 @@
                                 </div>
                                 <div class="flex content__container flex__8 vertical padding @(currentData.IsSender ? "right__align" : "left__align")">
                                     <div class="bold">@currentData.Name</div>
-                                    <div class="small__font">@currentData.ChatMessage</div>
+                                    <div class="small__font black">@currentData.ChatMessage</div>
                                     <div class="small__font gray">@currentData.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</div>
                                 </div>
                             </div>
@@ -165,6 +165,7 @@
     }
 
     .bold {
+        color: black !important;
         font-weight: 500;
     }
 
@@ -206,11 +207,15 @@
     }
 
     .gray {
-        color: dimgrey;
+        color: darkgray !important;
     }
 
-    .e-list-view .e-list-item.e-focused {
+    .black {
         color: black;
+    }
+
+    hr {
+        width: 100%;
     }
 
 </style>

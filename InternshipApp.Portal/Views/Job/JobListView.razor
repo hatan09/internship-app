@@ -5,42 +5,85 @@
 
 <Stack ClassName="list-container">
     <Stack Horizontal Style="margin-bottom:24px;">
-        <SfTextBox CssClass="search-text-box" Value="@SearchText" OnInput="@OnSearchHandler" Placeholder="Search for job name">
+        <SfTextBox CssClass="search-text-box" Value="@SearchText" OnInput="@OnSearchHandler" Placeholder="Search for job name or company name">
 
         </SfTextBox>
 
-        <SfMultiSelect @ref="SfMultiSelect" TValue="string[]" AllowFiltering="true" TItem="JobFilterOption" Mode="@VisualMode.CheckBox" Width="250px" Placeholder="Search for skills" DataSource="@this.States.Options" ShowSelectAll="@true"
-                   EnableSelectionOrder="@true" FilterBarPlaceholder="Search for skills" EnableGroupCheckBox="@true" PopupHeight="350px">
+        <SfMultiSelect @ref="SfMultiSelect" TValue="string[]" 
+                        AllowFiltering="true" TItem="JobFilterOption" 
+                        Mode="@VisualMode.CheckBox" 
+                        Width="250px" 
+                        Placeholder="Filter jobs by skills" 
+                        DataSource="@this.States.Options" 
+                        ShowSelectAll="@true"
+                        EnableSelectionOrder="@true" 
+                        FilterBarPlaceholder="Search skills..." 
+                        EnableGroupCheckBox="@true" 
+                        PopupHeight="350px">
             <MultiSelectEvents TItem="JobFilterOption" TValue="string[]" ValueChange="@FilterChangeHandler"></MultiSelectEvents>
             <MultiSelectFieldSettings GroupBy="Category" Value="Id" Text="Title"></MultiSelectFieldSettings>
         </SfMultiSelect>
     </Stack>
 
-    <SfListView TValue="JobListRowViewStates" ID="job-list" DataSource="@States.Items" HeaderTitle="Jobs" ShowHeader CssClass="e-list-template">
-        <ListViewEvents TValue="JobListRowViewStates" Clicked="OnRowSelect"></ListViewEvents> 
-        <ListViewTemplates TValue="JobListRowViewStates">
-            <Template>
-                <Stack ClassName="@(!IsStudentViewing
+    @if (IsStudentViewing || IsRecruiterViewing)
+    {
+        <SfListView TValue="JobListRowViewStates" ID="job-list" DataSource="@States.Items" HeaderTitle="Jobs" ShowHeader CssClass="e-list-template">
+            <ListViewEvents TValue="JobListRowViewStates" Clicked="OnRowSelect"></ListViewEvents>
+            <ListViewTemplates TValue="JobListRowViewStates">
+                <Template>
+                    <Stack ClassName="@(!IsStudentViewing
                                         ?   (context as JobListRowViewStates).IsAccepted ? "list-view-item accepted" : "list-view-item not-accepted"
                                         :   "list-view-item")">
-                    <h3><b> @((context as JobListRowViewStates).Title) </b></h3>
-                    @if (!IsStudentViewing)
-                    {
-                        <lable> @((context as JobListRowViewStates).IsAccepted ? "* Job is accepted" : "* Job is not accepted") </lable>
-                    }
-                    <lable> <b>Company's name:</b> @((context as JobListRowViewStates).CompanyName) </lable>
-                    <lable> &#x2022; @((context as JobListRowViewStates).Description) </lable>
-                    <lable> &#x2022; Required skills: </lable>
-                    <SkillTagList 
-                        JobId="@((context as JobListRowViewStates).Id)" 
-                        JobSkills="@((context as JobListRowViewStates).JobSkills)" 
-                        AllSkills="@States.AllSkills">
-                    </SkillTagList>
-                </Stack>
-            </Template>
-        </ListViewTemplates>
-        <ListViewFieldSettings TValue="JobListRowViewStates" Id="Id"></ListViewFieldSettings>
-    </SfListView>
+                        <h3><b> @((context as JobListRowViewStates).Title) </b></h3>
+                        @if (!IsStudentViewing)
+                        {
+                            <lable> @((context as JobListRowViewStates).IsAccepted ? "* Job is accepted" : "* Job is not accepted") </lable>
+                        }
+                        <lable> <b>Company's name:</b> @((context as JobListRowViewStates).CompanyName) </lable>
+                        <lable> &#x2022; @((context as JobListRowViewStates).Description) </lable>
+                        <lable> &#x2022; Required skills: </lable>
+                        <SkillTagList JobId="@((context as JobListRowViewStates).Id)"
+                                  JobSkills="@((context as JobListRowViewStates).JobSkills)"
+                                  AllSkills="@States.AllSkills">
+                        </SkillTagList>
+                    </Stack>
+                </Template>
+            </ListViewTemplates>
+            <ListViewFieldSettings TValue="JobListRowViewStates" Id="Id"></ListViewFieldSettings>
+        </SfListView>
+    }
+    else if (IsTeacherViewing)
+    {
+        <SfListView TValue="JobListRowViewStates" ID="job-list" DataSource="@States.Items" HeaderTitle="Jobs" ShowHeader CssClass="e-list-template">
+            <ListViewEvents TValue="JobListRowViewStates" Clicked="OnRowSelect"></ListViewEvents>
+            <ListViewTemplates TValue="JobListRowViewStates">
+                <Template>
+                    <Stack ClassName="@(!IsStudentViewing
+                                        ?   (context as JobListRowViewStates).IsAccepted ? "list-view-item accepted" : "list-view-item not-accepted"
+                                        :   "list-view-item")">
+                        <h3><b> @((context as JobListRowViewStates).Title) </b></h3>
+                        @if (!IsStudentViewing)
+                        {
+                            <lable> @((context as JobListRowViewStates).IsAccepted ? "* Job is accepted" : "* Job is not accepted") </lable>
+                        }
+                        <lable> <b>Company's name:</b> @((context as JobListRowViewStates).CompanyName) </lable>
+                        <lable> &#x2022; @((context as JobListRowViewStates).Description) </lable>
+                        <lable> &#x2022; Required skills: </lable>
+                        <SkillTagList JobId="@((context as JobListRowViewStates).Id)"
+                                  JobSkills="@((context as JobListRowViewStates).JobSkills)"
+                                  AllSkills="@States.AllSkills">
+                        </SkillTagList>
+                    </Stack>
+                </Template>
+                <GroupTemplate>
+                    <div>
+                        <span class="group-by">Company: @context.Text</span>
+                    </div>
+                </GroupTemplate>
+            </ListViewTemplates>
+            <ListViewFieldSettings TValue="JobListRowViewStates" Id="Id" GroupBy="CompanyName"></ListViewFieldSettings>
+        </SfListView>
+    }
 </Stack>
 
 <style>
@@ -69,5 +112,11 @@
 
     .e-listview .e-list-header {
         color: black;
+    }
+
+    .group-by{
+        color: gray;
+        font-size:16pt;
+        font-weight:700;
     }
 </style>

@@ -307,7 +307,11 @@ public partial class ChatView
             {
                 var instructorRole = await Roles.FindByNameAsync("instructor");
 
-                var adminConversations = await Conversations.FindAll(x => x.Users.Where(x => x.Id == user.Id).Any()).Include(x => x.Users).AsNoTracking().ToListAsync();
+                var adminConversations = await Conversations
+                    .FindAll(x => x.Users.Where(x => x.Id == user.Id).Any())
+                    .Include(x => x.Users)
+                    .ThenInclude(x => x.UserRoles)
+                    .AsNoTracking().ToListAsync();
                 var admin_insConversations = adminConversations
                                                     .Where(x => x.Users
                                                         .Where(x => x.UserRoles
