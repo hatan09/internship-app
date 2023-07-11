@@ -1,10 +1,14 @@
-﻿using InternshipApp.Core.Entities;
+﻿using Blazored.LocalStorage;
+using InternshipApp.Core.Entities;
 using Microsoft.AspNetCore.Components;
 
 namespace InternshipApp.Portal.Views;
 
 public partial class PopupView
 {
+    [Inject]
+    public ILocalStorageService LocalStorage { get; set; }
+
     [Parameter]
     public bool IsSendEmailView { get; set; }
 
@@ -27,6 +31,8 @@ public partial class PopupView
 
     private bool IsSkillEdited { get; set; } = false;
 
+    private bool IsTeacherViewing { get; set; } = false;
+
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         var newContext = parameters.GetValueOrDefault<PopupContext>(nameof(this.Context));
@@ -40,6 +46,23 @@ public partial class PopupView
             StateHasChanged();
 
         }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            var role = await LocalStorage.GetItemAsStringAsync("role");
+            switch(role)
+            {
+                case "INSTRUCTOR":
+                    IsTeacherViewing = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     public void OnSkillEdit()
@@ -58,7 +81,10 @@ public partial class PopupView
 
     public async void OnFinishButtonClicked()
     {
-        await Context.OnFinishCallBack.InvokeAsync();
+        if (IsTeacherViewing)
+        {
+            await Context.OnFinishCallBack.InvokeAsync();
+        }
     }
 }
 

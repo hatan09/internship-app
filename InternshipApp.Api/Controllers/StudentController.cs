@@ -95,11 +95,7 @@ namespace InternshipApp.Api.Controllers
             var student = await _studentManager.FindByStudentId(dto.StudentId, cancellationToken);
             if (student is not null) return BadRequest("Student exist");
 
-            var group = await _internGroupRepository.FindByDepartment(dto.DepartmentId!.Value).FirstOrDefaultAsync(cancellationToken);
-            if (group is null) return NotFound();
-
             student = _mapper.Map<Student>(dto);
-            student.InternGroupId = group!.Id;
 
             var result = await _studentManager.CreateAsync(student, dto.Password);
             if (!result.Succeeded)
@@ -119,18 +115,18 @@ namespace InternshipApp.Api.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> AddSkill([FromBody] AddSkillModel model)
+        public async Task<IActionResult> AddSkill([FromBody] AddSkillModel model, CancellationToken cancellationToken = default)
         {
-            var student = await _studentManager.FindByIdAsync(model.StudentId);
+            var student = await _studentManager.FindAll(x => x.Id == model.StudentId).Include(x => x.StudentSkills).FirstOrDefaultAsync(cancellationToken);
             if (student is null || student.IsDeleted)
                 return NotFound("No Student Found");
 
             foreach (var id in model.Skills)
             {
-                var skill = await _skillRepository.FindByIdAsync(id);
+                var skill = await _skillRepository.FindByIdAsync(id, cancellationToken);
                 if (skill is not null)
                 {
-                    student.StudentSkills.Add(new StudentSkill { Student = student, StudentId = student.Id, Skill = skill, SkillId = id });
+                    student.StudentSkills?.Add(new StudentSkill { Student = student, StudentId = student.Id, Skill = skill, SkillId = id });
                 }
             }
 
@@ -225,6 +221,30 @@ namespace InternshipApp.Api.Controllers
                 return NotFound("No Student Found");
 
             student.Stat = model.Stat;
+            await _studentManager.UpdateAsync(student);
+            return NoContent();
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateSkill([FromBody] UpdateSkillModel model, CancellationToken cancellationToken = default)
+        {
+            var student = await _studentManager.FindAll(x => x.Id == model.StudentId).Include(x => x.StudentSkills).FirstOrDefaultAsync(cancellationToken);
+            if (student is null || student.IsDeleted)
+                return NotFound("No Student Found");
+
+            var notRelatedSkills = student.StudentSkills?.Where(x => !model.Skills.Select(x => x.SkillId).Contains(x.SkillId ?? 0)).ToList() ?? new();
+
+            foreach (var skill in model.Skills)
+            {
+                notRelatedSkills.Add(new()
+                {
+                    SkillId = skill.SkillId,
+                    StudentId = student.Id,
+                    Description = skill.Description
+                });
+            }
+            student.StudentSkills = notRelatedSkills;
             await _studentManager.UpdateAsync(student);
             return NoContent();
         }

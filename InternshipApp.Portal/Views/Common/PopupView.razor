@@ -32,11 +32,12 @@
                 </ManageEvaluationListView>
             </Content>
             <FooterTemplate>
-                <div>
-                    <SfButton Content="Finish Intern" OnClick=@OnFinishButtonClicked >
-                        
-                    </SfButton>
-                </div>
+                @if (IsTeacherViewing)
+                {
+                    <div>
+                        <SfButton Content="Finish Intern" OnClick=@OnFinishButtonClicked />
+                    </div>
+                }
             </FooterTemplate>
         </DialogTemplates>
     }

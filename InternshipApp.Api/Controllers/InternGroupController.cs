@@ -18,14 +18,23 @@ namespace InternshipApp.Api.Controllers
     {
         private readonly IInternGroupRepository _internGroupRepository;
         private readonly IDepartmentRepository _departmentRepository;
+        private readonly IConversationRepository _conversationRepository;
         private readonly InstructorManager _instructorManager;
+        private readonly StudentManager _studentManager;
         private readonly IMapper _mapper;
 
-        public InternGroupController(IDepartmentRepository departmentRepository, InstructorManager instructorManager, IInternGroupRepository internGroupRepository, IMapper mapper)
+        public InternGroupController(
+            IDepartmentRepository departmentRepository, 
+            InstructorManager instructorManager, StudentManager studentManager, 
+            IInternGroupRepository internGroupRepository,
+            IConversationRepository conversationRepository,
+            IMapper mapper)
         {
             _instructorManager = instructorManager;
             _departmentRepository = departmentRepository;
             _internGroupRepository = internGroupRepository;
+            _conversationRepository = conversationRepository;
+            _studentManager = studentManager;
             _mapper = mapper;
         }
 
@@ -86,6 +95,43 @@ namespace InternshipApp.Api.Controllers
         }
 
 
+        [HttpPut("{groupId}")]
+        public async Task<IActionResult> AddStudents([FromBody] List<string> studentIds, int groupId, CancellationToken cancellationToken)
+        {
+            if(studentIds == null || studentIds.Count <= 0)
+            {
+                return BadRequest("No student provided!");
+            }
+
+            var internGroup = await _internGroupRepository.FindAll(x => x.Id == groupId).Include(x => x.Students).Include(x => x.Instructor).FirstOrDefaultAsync(cancellationToken);
+            if (internGroup is null || internGroup.Instructor == null)
+                return NotFound();
+
+            var students = await _studentManager.FindAll(x => studentIds.Contains(x.Id)).ToListAsync(cancellationToken);
+            students.ForEach(x =>
+            {
+                if(x != null)
+                    internGroup.Students.Add(x);
+            });
+
+            _internGroupRepository.Update(internGroup);
+            await _internGroupRepository.SaveChangesAsync(cancellationToken);
+
+            students.ForEach(student => {
+                var newConversation = new Conversation()
+                {
+                    LastMessageTime = DateTime.Now,
+                    Users = { student, internGroup.Instructor },
+                    Title = $"{internGroup.Instructor.FullName}_{student.FullName}"
+                };
+                _conversationRepository.Add(newConversation);
+            });
+
+            await _conversationRepository.SaveChangesAsync(cancellationToken);
+
+            return NoContent();
+        }
+
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] InternGroupDTO dto, CancellationToken cancellationToken)
         {
@@ -104,7 +150,7 @@ namespace InternshipApp.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var internGroup = await _internGroupRepository.FindByIdAsync(id);
+            var internGroup = await _internGroupRepository.FindByIdAsync(id, cancellationToken);
             if (internGroup is null)
                 return NotFound("No Group Found");
 

@@ -2,13 +2,8 @@
 using InternshipApp.Api.DataObjects;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
-using InternshipApp.Repository;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace InternshipApp.Api.Controllers
 {
