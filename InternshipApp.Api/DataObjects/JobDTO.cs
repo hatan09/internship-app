@@ -39,4 +39,14 @@ namespace InternshipApp.Api.DataObjects
 
         public ICollection<int> SkillIds { get; set; } = Array.Empty<int>();
     }
+
+    public class AddJobSkillDTO : BaseDTO<int>
+    {
+        public ICollection<JobSkill> Skills { get; set; } = Array.Empty<JobSkill>();
+    }
+
+    public class RemoveJobSkillDTO : BaseDTO<int>
+    {
+        public ICollection<int> SkillIds { get; set; } = Array.Empty<int>();
+    }
 }

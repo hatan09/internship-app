@@ -33,7 +33,7 @@ namespace InternshipApp.Api.Controllers
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken = default)
         {
             var student = await _studentManager
-                .FindAll(stu => stu.Id.Equals(id))
+                .FindAll(stu => stu.Id == id)
                 .Include(stu => stu.StudentSkills)
                 .Include(stu => stu.StudentJobs)
                 .FirstOrDefaultAsync(cancellationToken);
@@ -45,27 +45,13 @@ namespace InternshipApp.Api.Controllers
 
 
         [HttpGet("{groupId}")]
-        public async Task<IActionResult> GetRegister(int groupId, CancellationToken cancellationToken = default)
-        {
-            var group = await _internGroupRepository.FindByIdAsync(groupId, cancellationToken);
-            if (group is null) return NotFound("No Intern Group Found");
-
-            var students = await _studentManager.FindAll().Where(stu => stu.InternGroupId == groupId && stu.Stat == Stat.WAITING).ToListAsync(cancellationToken);
-            if (students is null) return NotFound("No Student Found");
-
-            return Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
-
-        }
-
-
-        [HttpGet("{groupId}")]
         public async Task<IActionResult> GetAllByGroup(int groupId, CancellationToken cancellationToken = default)
         {
             var group = await _internGroupRepository.FindByIdAsync(groupId, cancellationToken);
             if (group is null) return NotFound("No Intern Group Found");
 
             var students = await _studentManager.FindAll()
-                .Where(stu => stu.InternGroupId == groupId && stu.Stat == Stat.ACCEPTED)
+                .Where(stu => stu.InternGroupId == groupId)
                 .Include(stu => stu.StudentJobs)
                 .ToListAsync(cancellationToken);
             if (students is null) return NotFound("No Student Found");
@@ -74,10 +60,26 @@ namespace InternshipApp.Api.Controllers
         }
 
 
-        [HttpGet("{jobId}")]
-        public async Task<IActionResult> GetAllByJob(int jobId, CancellationToken cancellationToken = default)
+        [HttpGet]
+        public async Task<IActionResult> GetAllWithoutGroup(CancellationToken cancellationToken = default)
         {
-            var job = await _jobRepository.FindAll().Where(job => job.Id == jobId).Include(job => job.StudentJobs!).ThenInclude(sj => sj.Student).FirstOrDefaultAsync(cancellationToken);
+            var students = await _studentManager.FindAll()
+                .Where(stu => stu.InternGroup == null)
+                .ToListAsync(cancellationToken);
+            if (students is null || students.Count == 0) return NotFound("No Student Found");
+
+            return Ok(_mapper.Map<IEnumerable<GetStudentDTO>>(students));
+        }
+
+
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> GetAllHireByJob(int jobId, CancellationToken cancellationToken = default)
+        {
+            var job = await _jobRepository.FindAll()
+                .Where(job => job.Id == jobId)
+                .Include(job => job.StudentJobs!.Where(x => x.Status == ApplyStatus.HIRED))
+                .ThenInclude(sj => sj.Student)
+                .FirstOrDefaultAsync(cancellationToken);
             if (job is null) return NotFound("No Job Found!");
 
             if (job.StudentJobs is null) return NotFound("No Student Found");
@@ -85,7 +87,24 @@ namespace InternshipApp.Api.Controllers
             var students = job.StudentJobs.Select(sj => sj.Student);
 
             return Ok(_mapper.Map<IEnumerable<GetStudentDTO>>(students));
+        }
 
+
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> GetAllApplicantByJob(int jobId, CancellationToken cancellationToken = default)
+        {
+            var job = await _jobRepository.FindAll()
+                .Where(job => job.Id == jobId)
+                .Include(job => job.StudentJobs!.Where(x => x.Status != ApplyStatus.HIRED))
+                .ThenInclude(sj => sj.Student)
+                .FirstOrDefaultAsync(cancellationToken);
+            if (job is null) return NotFound("No Job Found!");
+
+            if (job.StudentJobs is null) return NotFound("No Student Found");
+
+            var students = job.StudentJobs.Select(sj => sj.Student);
+
+            return Ok(_mapper.Map<IEnumerable<GetStudentDTO>>(students));
         }
 
 
@@ -203,10 +222,43 @@ namespace InternshipApp.Api.Controllers
 
             if (student.StudentJobs is null) return NotFound();
 
-            var sj = student.StudentJobs!.First(sj => sj.JobId == model.JobId);
+            var sj = student.StudentJobs?.FirstOrDefault(sj => sj.JobId == model.JobId);
             if (sj is null) return NotFound("Student Has Not Applied For That Job");
 
             student.StudentJobs!.First(sj => sj.JobId == model.JobId).Status = ApplyStatus.REJECTED;
+
+            await _studentManager.UpdateAsync(student);
+            return NoContent();
+        }
+
+
+        [HttpPut("{studentId}")]
+        public async Task<IActionResult> Disqualify(string studentId, CancellationToken cancellationToken = default)
+        {
+            var student = await _studentManager.FindAll(stu => stu.Id == studentId).Include(stu => stu.StudentJobs).Include(x => x.InternGroup).FirstOrDefaultAsync(cancellationToken);
+            if (student is null || student.IsDeleted)
+                return NotFound("No Student Found");
+
+            if (student.StudentJobs != null && student.StudentJobs.Any())
+            {
+                student.StudentJobs = null;
+            }
+            student.InternGroup = null;
+            student.Stat = Stat.REJECTED;
+
+            await _studentManager.UpdateAsync(student);
+            return NoContent();
+        }
+
+
+        [HttpPut("{studentId}")]
+        public async Task<IActionResult> FinishIntern(string studentId, CancellationToken cancellationToken = default)
+        {
+            var student = await _studentManager.FindAll(stu => stu.Id == studentId).FirstOrDefaultAsync(cancellationToken);
+            if (student is null || student.IsDeleted)
+                return NotFound("No Student Found");
+
+            student.Stat = Stat.FINISHED;
 
             await _studentManager.UpdateAsync(student);
             return NoContent();

@@ -67,5 +67,7 @@ namespace InternshipApp.Api.DataObjects
         [Phone]
         public string PhoneNumber { get; set; } = string.Empty;
         public ICollection<int> SkillIds { get; set; } = Array.Empty<int>();
+        public ICollection<StudentSkill> StudentSkills { get; set; } = Array.Empty<StudentSkill>();
+        public ICollection<StudentJob> StudentJobs { get; set; } = Array.Empty<StudentJob>();
     }
 }

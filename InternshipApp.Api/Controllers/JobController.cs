@@ -2,13 +2,8 @@
 using InternshipApp.Api.DataObjects;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
-using InternshipApp.Repository;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace InternshipApp.Api.Controllers
 {
@@ -57,17 +52,18 @@ namespace InternshipApp.Api.Controllers
         {
             var department = await _departmentRepository
                 .FindAll(dep => dep.Id == departmentId)
-                .Select(dep => new {
+                .Select(dep => new
+                {
                     Jobs = dep.Jobs.Select(job => job!.Id),
                 }).FirstOrDefaultAsync(cancellationToken);
             if (department is null)
                 return NotFound("No Department Found");
-               
-            if(department.Jobs is null)
+
+            if (department.Jobs is null)
                 return NotFound("No Job Found");
 
             List<Job> jobs = new List<Job>();
-            foreach(var id in department.Jobs)
+            foreach (var id in department.Jobs)
             {
                 var job = await _jobRepository.FindAll(job => job.Id == id).Include(job => job.JobSkills).FirstOrDefaultAsync(cancellationToken);
                 if (job is not null)
@@ -81,15 +77,15 @@ namespace InternshipApp.Api.Controllers
         [HttpGet("{companyId}")]
         public async Task<IActionResult> GetAllByCompany(int companyId, CancellationToken cancellationToken)
         {
-            var company = await _companyRepository.FindByIdAsync(companyId);
+            var company = await _companyRepository.FindByIdAsync(companyId, cancellationToken);
             if (company is null)
                 return NotFound("No Company Found");
 
             var jobs = await _jobRepository.FindByCompanyId(companyId).ToListAsync(cancellationToken);
-            if(jobs is null)
+            if (jobs is null)
                 return NotFound("No Job Found");
 
-            return Ok(_mapper.Map< IEnumerable<JobDTO>>(jobs));
+            return Ok(_mapper.Map<IEnumerable<JobDTO>>(jobs));
         }
 
 
@@ -99,16 +95,13 @@ namespace InternshipApp.Api.Controllers
             var job = _mapper.Map<Job>(dto);
 
             var company = await _companyRepository.FindByIdAsync(dto.CompanyId, cancellationToken);
-            if(company is null) return NotFound("No Company Found");
+            if (company is null) return NotFound("No Company Found");
 
-            //var test = dto.DepartmentIds;
-
-            //var test2 = _companyRepository.FindAll(com => test.Contains(com.Id));
 
             foreach (var id in dto.DepartmentIds)
             {
                 var department = await _departmentRepository.FindByIdAsync(id, cancellationToken);
-                if (department is not null) job.Departments.Add(department);
+                if (department is not null && job.Departments != null) job.Departments.Add(department);
             }
 
             job.Company = company;
@@ -120,12 +113,13 @@ namespace InternshipApp.Api.Controllers
             {
                 var skill = await _skillRepository.FindByIdAsync(id, cancellationToken);
                 if (skill is not null) job.JobSkills.Add(new JobSkill
-                { 
-                    Job = job, 
-                    JobId = job.Id, 
-                    Skill = skill, 
-                    SkillId = skill.Id, 
-                    Description = "This is required" }) ;
+                {
+                    Job = job,
+                    JobId = job.Id,
+                    Skill = skill,
+                    SkillId = skill.Id,
+                    Description = "This is required"
+                });
             }
 
             _jobRepository.Update(job);
@@ -150,10 +144,49 @@ namespace InternshipApp.Api.Controllers
         }
 
 
+        [HttpPut]
+        public async Task<IActionResult> AddSkills([FromBody] AddJobSkillDTO dto, CancellationToken cancellationToken = default)
+        {
+            var job = await _jobRepository.FindAll(x => x.Id == dto.Id).Include(x => x.JobSkills).FirstOrDefaultAsync(cancellationToken);
+            if (job is null)
+                return NotFound();
+
+            job.JobSkills ??= new List<JobSkill>();
+            foreach (var x in dto.Skills)
+            {
+                job.JobSkills.Add(x);
+            }
+            _jobRepository.Update(job);
+            await _jobRepository.SaveChangesAsync(cancellationToken);
+
+            return NoContent();
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> RemoveSkills([FromBody] RemoveJobSkillDTO dto, CancellationToken cancellationToken = default)
+        {
+            var job = await _jobRepository.FindAll(x => x.Id == dto.Id).Include(x => x.JobSkills).FirstOrDefaultAsync(cancellationToken);
+            if (job is null || job.JobSkills == null || !job.JobSkills.Any())
+                return NotFound();
+
+            foreach (var id in dto.SkillIds)
+            {
+                var skill = job.JobSkills.FirstOrDefault(x => x.SkillId == id);
+                if (skill != null)
+                    job.JobSkills.Remove(skill);
+            }
+            _jobRepository.Update(job);
+            await _jobRepository.SaveChangesAsync(cancellationToken);
+
+            return NoContent();
+        }
+
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var job = await _jobRepository.FindByIdAsync(id);
+            var job = await _jobRepository.FindByIdAsync(id, cancellationToken);
             if (job is null)
                 return NotFound("No Job Found");
 

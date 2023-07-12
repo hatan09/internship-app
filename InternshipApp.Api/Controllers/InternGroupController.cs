@@ -79,7 +79,7 @@ namespace InternshipApp.Api.Controllers
         {
             var internGroup = _mapper.Map<InternGroup>(dto);
 
-            var department = await _departmentRepository.FindByIdAsync(dto.DepartmentId);
+            var department = await _departmentRepository.FindByIdAsync(dto.DepartmentId, cancellationToken);
             if(department is null) return NotFound("No Department Found");
 
             var instructor = await _instructorManager.FindByIdAsync(dto.InstructorId);
