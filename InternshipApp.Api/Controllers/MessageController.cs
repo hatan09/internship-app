@@ -3,6 +3,8 @@ using InternshipApp.Contracts;
 
 namespace InternshipApp.Controllers
 {
+    [Route("api/[controller]/[action]")]
+    [ApiController]
     public class MessageController : ControllerBase
     {
         private readonly IMapper _mapper;

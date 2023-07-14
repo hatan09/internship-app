@@ -14,6 +14,8 @@ namespace InternshipApp.Core.Entities
         //recruiter: job accept, number of new application, inform times
         //admin: out time
         public string? Message { get; set; }
+
+        public string? SignalRConnectionId { get; set; }
         public bool IsDeleted { get; set; } = false;
 
         public virtual ICollection<UserRole> UserRoles { get; } = new HashSet<UserRole>();

@@ -3,12 +3,8 @@ using InternshipApp.Api.DataObjects;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace InternshipApp.Api.Controllers
 {
@@ -19,15 +15,17 @@ namespace InternshipApp.Api.Controllers
         private readonly IInternGroupRepository _internGroupRepository;
         private readonly IDepartmentRepository _departmentRepository;
         private readonly IConversationRepository _conversationRepository;
+        private readonly IInternGroupServices _internGroupServices;
         private readonly InstructorManager _instructorManager;
         private readonly StudentManager _studentManager;
         private readonly IMapper _mapper;
 
         public InternGroupController(
-            IDepartmentRepository departmentRepository, 
-            InstructorManager instructorManager, StudentManager studentManager, 
+            IDepartmentRepository departmentRepository,
+            InstructorManager instructorManager, StudentManager studentManager,
             IInternGroupRepository internGroupRepository,
             IConversationRepository conversationRepository,
+            IInternGroupServices internGroupServices,
             IMapper mapper)
         {
             _instructorManager = instructorManager;
@@ -35,6 +33,7 @@ namespace InternshipApp.Api.Controllers
             _internGroupRepository = internGroupRepository;
             _conversationRepository = conversationRepository;
             _studentManager = studentManager;
+            _internGroupServices = internGroupServices;
             _mapper = mapper;
         }
 
@@ -80,7 +79,7 @@ namespace InternshipApp.Api.Controllers
             var internGroup = _mapper.Map<InternGroup>(dto);
 
             var department = await _departmentRepository.FindByIdAsync(dto.DepartmentId, cancellationToken);
-            if(department is null) return NotFound("No Department Found");
+            if (department is null) return NotFound("No Department Found");
 
             var instructor = await _instructorManager.FindByIdAsync(dto.InstructorId);
             if (instructor is null) return NotFound("No Instructor Found");
@@ -95,10 +94,18 @@ namespace InternshipApp.Api.Controllers
         }
 
 
+        [HttpPut]
+        public async Task<IActionResult> AutoCreateGroupAndAssignStudents([FromBody] AutoGroupDTO dto, CancellationToken cancellationToken)
+        {
+            await _internGroupServices.AutoCreateAndAssign(dto.MaxStudentsPerGroup);
+            return NoContent();
+        }
+
+
         [HttpPut("{groupId}")]
         public async Task<IActionResult> AddStudents([FromBody] List<string> studentIds, int groupId, CancellationToken cancellationToken)
         {
-            if(studentIds == null || studentIds.Count <= 0)
+            if (studentIds == null || studentIds.Count <= 0)
             {
                 return BadRequest("No student provided!");
             }
@@ -110,14 +117,15 @@ namespace InternshipApp.Api.Controllers
             var students = await _studentManager.FindAll(x => studentIds.Contains(x.Id)).ToListAsync(cancellationToken);
             students.ForEach(x =>
             {
-                if(x != null)
+                if (x != null)
                     internGroup.Students.Add(x);
             });
 
             _internGroupRepository.Update(internGroup);
             await _internGroupRepository.SaveChangesAsync(cancellationToken);
 
-            students.ForEach(student => {
+            students.ForEach(student =>
+            {
                 var newConversation = new Conversation()
                 {
                     LastMessageTime = DateTime.Now,
@@ -131,6 +139,7 @@ namespace InternshipApp.Api.Controllers
 
             return NoContent();
         }
+
 
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] InternGroupDTO dto, CancellationToken cancellationToken)

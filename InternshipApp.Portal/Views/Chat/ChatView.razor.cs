@@ -4,6 +4,7 @@ using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
@@ -39,6 +40,8 @@ public partial class ChatView
     #region [ Properties - States ]
     public bool IsProcessing { get; set; } = true;
 
+    public string ConnectionId { get; set; }
+
     public User Sender { get; set; }
     public User? Receiver { get; set; }
     public string SenderAvatar { get; set; }
@@ -55,6 +58,7 @@ public partial class ChatView
     #region [ Properties - Contexts ]
     public ChatContext ChatContext { get; set; }
     public ConversationContext ConversationContext { get; set; }
+    public HubConnection ConnectionContext;
     #endregion
 
     #region [ Properties - Data ]
@@ -68,18 +72,28 @@ public partial class ChatView
     #endregion
 
     #region [ Methods - Override ]
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         CurrentMessages = new();
         InstructorConversations = new();
         StudentConversations = new();
         RecruiterConversations = new();
-        return base.OnInitializedAsync();
+
+        ConnectionContext = new HubConnectionBuilder()
+                .WithUrl("http://localhost:53353/internship-app-chat")
+                .WithAutomaticReconnect()
+                .Build();
+
+        RegisterHubCallHandlers();
+
+        await ConnectionContext.StartAsync();
+
+        await base.OnInitializedAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        if (firstRender)
         {
             var role = await LocalStorage.GetItemAsStringAsync("role");
             switch (role)
@@ -105,6 +119,40 @@ public partial class ChatView
     }
     #endregion
 
+    #region [ Events - ChatHub ]
+    private void RegisterHubCallHandlers()
+    {
+        ConnectionContext.On<string>("IdentifyUserAsync", this.OnIdentifyUser);
+        ConnectionContext.On<int, string, DateTime, string>("IdentifyUserAsync", this.OnReceiveMessage);
+    }
+
+    public void OnIdentifyUser(string id)
+    {
+        ConnectionId = id;
+    }
+
+    public void OnReceiveMessage(int conversationId, string fromUserId, DateTime sentTime, string message)
+    {
+        // Update Chat first to quickly see changes
+        // Append Chat => update ChatContext
+        if(CurrentConversation.Id == conversationId)
+        {
+            CurrentMessages.Add(new()
+            {
+                ConversationId = conversationId,
+                UserId = fromUserId,
+                Content = message,
+                SentTime = sentTime
+            });
+            ProcessChatContext();
+        }
+
+        // Float conversation => update ConversationContext
+        UpdateConversationLastMessage(conversationId, sentTime);
+        ProcessConversationContext();
+    }
+    #endregion
+
     #region [ Methods - Event Handlers ]
     public async void OnLoadOlderMessage()
     {
@@ -113,7 +161,7 @@ public partial class ChatView
 
     public async void OnChat(Message message)
     {
-        if(CurrentConversation != null)
+        if (CurrentConversation != null)
         {
             var conversation = await Conversations.FindAll(x => x.Id == CurrentConversation.Id).AsTracking().FirstOrDefaultAsync();
             conversation.Messages.Add(message);
@@ -130,7 +178,7 @@ public partial class ChatView
 
     public async void OnChangeConversation(int conversationId)
     {
-        if(conversationId > 0)
+        if (conversationId > 0)
         {
             await LoadCurrentConversation(conversationId);
             await LoadChatAsync();
@@ -148,7 +196,7 @@ public partial class ChatView
     private async Task<User> GetCurrentUserAsync()
     {
         var user = await LocalStorage.GetItemAsync<User>("login-user-info");
-        if(user == null)
+        if (user == null)
         {
             NavigationManager.NavigateTo("/", true);
             return null;
@@ -159,10 +207,10 @@ public partial class ChatView
 
     private async Task LoadCurrentConversation(int id)
     {
-        if(id > 0)
+        if (id > 0)
         {
             var conversation = await Conversations.FindAll(x => x.Id == id).Include(x => x.Users).Include(x => x.Messages).AsNoTracking().FirstOrDefaultAsync();
-            if(conversation != null)
+            if (conversation != null)
             {
                 CurrentConversation = conversation;
             }
@@ -171,15 +219,15 @@ public partial class ChatView
 
     private async Task LoadChatAsync()
     {
-        if(CurrentConversation != null)
+        if (CurrentConversation != null)
         {
-            if(CurrentConversation.Users.Where(x => x.Id == Sender.Id).Any())
+            if (CurrentConversation.Users.Where(x => x.Id == Sender.Id).Any())
             {
                 Receiver = CurrentConversation.Users.FirstOrDefault(x => x.Id != Sender.Id);
-                if(Receiver != null)
+                if (Receiver != null)
                 {
                     var student = await Students.FindAll(x => x.Id == Receiver.Id).AsNoTracking().FirstOrDefaultAsync();
-                    if(student != null)
+                    if (student != null)
                     {
                         ReceiverAvatar = student.ImgUrl;
                     }
@@ -205,11 +253,11 @@ public partial class ChatView
         }
         else if (IsTeacherViewing)
         {
-            if(AdminConversation?.Id == id)
+            if (AdminConversation?.Id == id)
             {
                 AdminConversation.LastMessageTime = time;
             }
-            else if(StudentConversations.FirstOrDefault(x => x.Id == id) != null)
+            else if (StudentConversations.FirstOrDefault(x => x.Id == id) != null)
             {
                 StudentConversations.FirstOrDefault(x => x.Id == id).LastMessageTime = time;
                 StudentConversations = StudentConversations.OrderByDescending(x => x.LastMessageTime).ToList();
@@ -222,7 +270,7 @@ public partial class ChatView
         }
         else if (IsStudentViewing)
         {
-            if(InstructorConversation?.Id == id)
+            if (InstructorConversation?.Id == id)
             {
                 InstructorConversation.LastMessageTime = time;
             }
@@ -303,6 +351,10 @@ public partial class ChatView
             var user = await GetCurrentUserAsync();
             Sender = user;
 
+            await ConnectionContext.InvokeAsync("OnConnectedAsync");
+
+            await ConnectionContext.InvokeAsync("ChatHubUserIndentity", ConnectionId, user.Id);
+
             if (IsAdminViewing)
             {
                 var instructorRole = await Roles.FindByNameAsync("instructor");
@@ -349,17 +401,17 @@ public partial class ChatView
 
                 //load student's avatar
                 var studentIds = new List<string>();
-                foreach(var x in StudentConversations.Select(x => x.Users))
+                foreach (var x in StudentConversations.Select(x => x.Users))
                 {
                     studentIds.AddRange(x.Select(x => x.Id));
                 }
 
                 var students = await Students.FindAll(x => studentIds.Contains(x.Id)).Select(x => new Student()
-                                                                                                    {
-                                                                                                        Id = x.Id,
-                                                                                                        ImgUrl = x.ImgUrl,
-                                                                                                    }).ToListAsync();
-                if(students != null && students.Count > 0)
+                {
+                    Id = x.Id,
+                    ImgUrl = x.ImgUrl,
+                }).ToListAsync();
+                if (students != null && students.Count > 0)
                 {
                     StudentList = students;
                 }
@@ -387,7 +439,7 @@ public partial class ChatView
                 {
                     var recruiterConversations = await Conversations.FindAll(x => x.Users.Where(x => x.Id == user.Id).Any()).Include(x => x.Users).AsNoTracking().ToListAsync();
                     var recruiter_insConversation = recruiterConversations.Where(x => x.Users.Where(x => x.Id == instructor.Id).Any()).FirstOrDefault();
-                    if(recruiter_insConversation == null)
+                    if (recruiter_insConversation == null)
                     {
                         var recruiter = await Recruiters.FindAll(x => x.Id == user.Id).AsTracking().FirstOrDefaultAsync();
                         recruiter_insConversation = new()
@@ -406,12 +458,12 @@ public partial class ChatView
                     InstructorConversation = recruiter_insConversation;
                 }
             }
-
+            await ConnectionContext.InvokeAsync("JoinAllConversations");
             OnInitializeContext();
         }
         catch (Exception)
         {
-            
+
         }
         finally
         {

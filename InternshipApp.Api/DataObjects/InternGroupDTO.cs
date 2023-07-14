@@ -22,4 +22,9 @@ namespace InternshipApp.Api.DataObjects
 
         public int Slots { get; set; } = 0;
     }
+
+    public class AutoGroupDTO
+    {
+        public int MaxStudentsPerGroup { get; set; }
+    }
 }

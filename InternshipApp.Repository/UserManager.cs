@@ -2,6 +2,7 @@
 using InternshipApp.Core.Entities;
 using InternshipApp.Repository.Extensions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -28,6 +29,11 @@ namespace InternshipApp.Repository
                 return null;
 
             return student;
+        }
+
+        public new async Task<User?> FindBySignalRConnectionId(string connectionId)
+        {
+            return await Users.Where(x => !x.IsDeleted && x.SignalRConnectionId == connectionId).Include(x => x.Conversations).FirstOrDefaultAsync();
         }
 
         public IQueryable<User> FindAll(Expression<Func<User, bool>>? predicate = null)

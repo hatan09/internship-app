@@ -4,6 +4,7 @@ using InternshipApp.Api.DataObjects;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Database;
 using InternshipApp.Core.Entities;
+using InternshipApp.Hubs;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -133,7 +134,12 @@ builder.Services.AddScoped<IInternGroupRepository, InternGroupRepository>();
 builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<IJobRepository, JobRepository>();
 
+//Chat
+builder.Services.AddSignalR();
+//builder.Services.AddScoped<ChatHub>();
+
 //Authorization
+builder.Services.AddAuthorization();
 
 //AutoMapper
 var mapperConfig = new MapperConfiguration(mc =>
@@ -160,6 +166,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapHub<ChatHub>("/internship-app-chat");
+});
+
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAnySourceCors");
@@ -167,7 +181,5 @@ app.UseCors("AllowAnySourceCors");
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.MapControllers();
 
 app.Run();
