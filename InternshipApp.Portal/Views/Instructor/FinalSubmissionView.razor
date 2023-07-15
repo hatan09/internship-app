@@ -1,0 +1,54 @@
+﻿@namespace InternshipApp.Portal.Views
+
+<div class="page-header">
+    <Stack Style="flex:1;">
+
+    </Stack>
+    <Stack Style="flex:1;" Horizontal=true HorizontalAlign="Wave5.UI.Alignment.End" VerticalAlign="Wave5.UI.Alignment.Center">
+        <img class="iu-logo" alt="International University"/>
+        <Stack Style="min-width:420px;justify-content:center;align-items:center;">
+            <label style="display:block;">
+                VIETNAM NATIONAL UNIVERSITY – HCMC
+            </label>
+
+            <label style="display:block;">
+                INTERNATIONAL UNIVERSITY
+            </label>
+
+            <label style="display:block;">
+                <b>SCHOOL OF COMPUTER SCIENCE AND ENGINEERING</b>
+            </label>
+        </Stack>
+    </Stack>
+</div>
+
+<FluentTabs>
+    <FluentTab id="student">Internship Evaluation</FluentTab>
+    <FluentTab id="labour">Labour Market Feedback</FluentTab>
+
+    <FluentTabPanel>
+        <Stack>
+            <StudentFormView>
+            </StudentFormView>
+        </Stack>
+    </FluentTabPanel>
+
+    <FluentTabPanel>
+        <Stack>
+            
+        </Stack>
+    </FluentTabPanel>
+</FluentTabs>
+
+<style>
+    .page-header{
+        margin-bottom:12px;
+        display:flex;
+        flex-direction:row;
+    }
+
+    .iu-logo {
+        width:80px !important;
+        height: 80px !important;
+    }
+</style>

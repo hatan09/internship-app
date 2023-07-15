@@ -3,6 +3,14 @@
 public class StudentForm : BaseEntity<int>
 {
     public string StudentId { get; set; }
+    public string GeneralInformation { get; set; }
+    public string StudentName { get; set; }
+    public string CompanyName { get; set; }
+    public string EvaluatedBy  { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public int OverallScore { get; set; }
+    public string StudentComment { get; set; }
 
     public FulfilmentOfInternshipObjectivesValues FulfilmentOfInternshipObjectives { get; set; }
     public string FulfilmentOfInternshipObjectivesComment { get; set; }
@@ -49,8 +57,7 @@ public class StudentForm : BaseEntity<int>
     public OverallPerformanceValues OverallPerformance { get; set; }
     public string OverallPerformanceComment { get; set; }
 
-    public int OverallScore { get; set; }
-    public string StudentComment { get; set; }
+    public bool IsSubmitted { get; set; }
 }
 
 public enum FulfilmentOfInternshipObjectivesValues
@@ -120,10 +127,10 @@ public enum QualityOfWorkResearchValues
 
 public enum AnalyticalProblemSolvingSkillsValues
 {
-    Usually_poorly_understanding_of_the_problems_at_hand_experiences_difficulty_in_evaluating_and_selecting_among_alternatives_consistently_gets_stuck_in_the_problem_solving_process,
-    Sometimes_understands_the_problems_at_hand_analytical_skills_are_satisfactory_and_usually_require_assistance_in_solving_problems,
-    Generally_understands_the_problems_at_hand_good_analytical_skills_but_may_require_assistance_in_solving_problems,
-    Always_understands_the_problems_at_hand_regularly_exercises_critical_thinking_and_systematic_problem_solving___Carefully_evaluates_and_selects_among_alternatives_and_successfully_solvers_problems_with_little_assistance,
+    Usually_poorly_understanding_of_the_problems_at_hand__experiences_difficulty_in_evaluating_and_selecting_among_alternatives__consistently_gets_stuck_in_the_problem_solving_process,
+    Sometimes_understands_the_problems_at_hand__analytical_skills_are_satisfactory_and_usually_require_assistance_in_solving_problems,
+    Generally_understands_the_problems_at_hand__good_analytical_skills_but_may_require_assistance_in_solving_problems,
+    Always_understands_the_problems_at_hand__regularly_exercises_critical_thinking_and_systematic_problem_solving___Carefully_evaluates_and_selects_among_alternatives_and_successfully_solvers_problems_with_little_assistance,
 }
 
 public enum DependabilityValues

@@ -135,7 +135,7 @@ public partial class ChatView
     {
         // Update Chat first to quickly see changes
         // Append Chat => update ChatContext
-        if(CurrentConversation.Id == conversationId)
+        if (CurrentConversation.Id == conversationId)
         {
             CurrentMessages.Add(new()
             {

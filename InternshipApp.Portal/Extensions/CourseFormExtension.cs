@@ -5,14 +5,14 @@ namespace InternshipApp.Portal.Views;
 public static class CourseFormExtension
 {
     #region [ Public Methods - ListRow ]
-    public static List<CourseFormListRowViewStates> ToListRowList(this List<CourseForm> list)
+    public static List<CourseFormListRowViewStates> ToListRowList(this List<LabourMarketForm> list)
     {
         var result = new List<CourseFormListRowViewStates>();
         list.ForEach(x => result.Add(x.ToListRow()));
         return result;
     }
 
-    public static CourseFormListRowViewStates ToListRow(this CourseForm entity)
+    public static CourseFormListRowViewStates ToListRow(this LabourMarketForm entity)
     {
 
         var viewStates = ToViewStates<CourseFormListRowViewStates>(entity);
@@ -20,14 +20,14 @@ public static class CourseFormExtension
         return viewStates;
     }
 
-    public static CourseForm ToEntity(this CourseFormListRowViewStates viewStates)
+    public static LabourMarketForm ToEntity(this CourseFormListRowViewStates viewStates)
     {
-        return ToEntity<CourseForm>(viewStates);
+        return ToEntity<LabourMarketForm>(viewStates);
     }
     #endregion
 
     #region [ Public Methods - FormViewModel ]
-    public static CourseFormFormViewStates ToFormViewStates(this CourseForm entity)
+    public static CourseFormFormViewStates ToFormViewStates(this LabourMarketForm entity)
     {
 
         var viewmodel = ToViewStates<CourseFormFormViewStates>(entity);
@@ -35,14 +35,14 @@ public static class CourseFormExtension
         return viewmodel;
     }
 
-    public static CourseForm ToEntity(this CourseFormFormViewStates viewStates)
+    public static LabourMarketForm ToEntity(this CourseFormFormViewStates viewStates)
     {
-        return ToEntity<CourseForm>(viewStates);
+        return ToEntity<LabourMarketForm>(viewStates);
     }
     #endregion
 
     #region [ Public Methods - DetailsViewModel ]
-    public static CourseFormDetailsViewStates ToDetailsViewStates(this CourseForm entity)
+    public static CourseFormDetailsViewStates ToDetailsViewStates(this LabourMarketForm entity)
     {
 
         var viewmodel = ToViewStates<CourseFormDetailsViewStates>(entity);
@@ -50,14 +50,14 @@ public static class CourseFormExtension
         return viewmodel;
     }
 
-    public static CourseForm ToEntity(this CourseFormDetailsViewStates viewStates)
+    public static LabourMarketForm ToEntity(this CourseFormDetailsViewStates viewStates)
     {
-        return ToEntity<CourseForm>(viewStates);
+        return ToEntity<LabourMarketForm>(viewStates);
     }
     #endregion
 
     #region [ Private Methods - BaseViewModel ]
-    private static TBaseViewModel ToViewStates<TBaseViewModel>(this CourseForm entity)
+    private static TBaseViewModel ToViewStates<TBaseViewModel>(this LabourMarketForm entity)
 
         where TBaseViewModel : BaseCourseFormViewStates, new()
     {
@@ -68,7 +68,7 @@ public static class CourseFormExtension
     }
 
     private static TEntity ToEntity<TEntity>(this BaseCourseFormViewStates viewModel)
-        where TEntity : CourseForm, new()
+        where TEntity : LabourMarketForm, new()
     {
         return new TEntity()
         {

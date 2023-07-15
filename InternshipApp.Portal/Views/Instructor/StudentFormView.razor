@@ -1,0 +1,89 @@
+﻿@namespace InternshipApp.Portal.Views
+@using InternshipApp.Core.Entities;
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Calendars
+
+<Stack Style="padding:30px;background-color:white;margin-top:10px;">
+    <Stack Horizontal HorizontalAlign="Wave5.UI.Alignment.Center">
+        <h3>
+            <b>INTERNSHIP EVALUATION</b>
+        </h3>
+    </Stack>
+
+    @*General information section*@
+    @if(IsStudentViewing){
+        <FluentTextArea @bind-Value=@StudentForm.GeneralInformation>
+            <b>
+                General information:
+            </b>
+        </FluentTextArea>
+    }
+    else
+    {
+        <b style="display:block;">
+            General information:
+        </b>
+        <label>
+            @StudentForm.GeneralInformation
+        </label>
+    }
+
+    <br />
+
+    @*Entities*@
+    <Stack Horizontal HorizontalAlign="Wave5.UI.Alignment.Center" Style="margin:24px 0px">
+        <h4>
+            <b>@StudentForm.CompanyName</b>
+        </h4>
+    </Stack>
+    <b style="display:block;">Student Name: @StudentForm.StudentName</b>
+    @if (IsRecruiterViewing)
+    {
+        <FluentTextField @bind-Value=@StudentForm.EvaluatedBy>
+            <b>Supervior Name</b>
+        </FluentTextField>
+
+        <b>Start Date</b>
+        <SfDatePicker @bind-Value=@StudentForm.StartDate />
+
+        <b>End Date</b>
+        <SfDatePicker @bind-Value=@StudentForm.EndDate/>
+    }
+    else
+    {
+        <b style="display:block;">Supervior Name: @StudentForm.EvaluatedBy</b>
+        <b style="display:block;">Internship Start Date: @StudentForm.StartDate.ToLongDateString()</b>
+        <b style="display:block;">Internship End Date: @StudentForm.EndDate.Date.ToLongDateString()</b>
+    }
+    <b>Please CHECK the category which best describes the student’s performance in each of these areas. The options are arranged in "bad to excellent" order.</b>
+
+    <label>
+        1. FULFILMENT OF INTERNSHIP OBJECTIVES
+    </label>
+    <Stack Style="padding-left:12px;">
+        <SfRadioButton 
+            Label="@(FulfilmentOfInternshipObjectivesValues.Objectives_not_met.ToString().Beautify())"
+            Name="options1" 
+            Value="@FulfilmentOfInternshipObjectivesValues.Objectives_not_met.ToString()"
+            TChecked="@string"
+            @bind-Checked="@Options1"/>
+        <SfRadioButton 
+            Label="@(FulfilmentOfInternshipObjectivesValues.Few_objectives_fulfilled.ToString().Beautify())"
+            Name="options1" 
+            Value="@FulfilmentOfInternshipObjectivesValues.Few_objectives_fulfilled.ToString()"
+            TChecked="@string"
+            @bind-Checked="@Options1"/>
+        <SfRadioButton 
+            Label="@(FulfilmentOfInternshipObjectivesValues.Most_objectives_fulfilled.ToString().Beautify())"
+            Name="options1" 
+            Value="@FulfilmentOfInternshipObjectivesValues.Most_objectives_fulfilled.ToString()"
+            TChecked="@string"
+            @bind-Checked="@Options1"/>
+        <SfRadioButton 
+            Label="@(FulfilmentOfInternshipObjectivesValues.All_objectives_adequately_objectives.ToString().Beautify())"
+            Name="options1" 
+            Value="@FulfilmentOfInternshipObjectivesValues.All_objectives_adequately_objectives.ToString()"
+            TChecked="@string"
+            @bind-Checked="@Options1"/>
+    </Stack>
+</Stack>

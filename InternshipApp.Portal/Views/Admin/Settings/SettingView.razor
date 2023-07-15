@@ -9,7 +9,7 @@
 
 <Stack Style="padding:24px;background-color:white;">
     <h1>
-
+        Manage Internship Times
     </h1>
 
     <label><b>Internship Title</b></label>
@@ -18,28 +18,28 @@
     <br />
 
     <label><b>Start Day: @States.Start.ToShortDateString()</b></label>
-    <SfCalendar @bind-Value=@States.Start WeekNumber=true>
-    </SfCalendar>
+    <SfDatePicker @bind-Value=@States.Start WeekNumber=true>
+    </SfDatePicker>
     <br />
 
     <label><b>Close Registration Day: @States.CloseReg.ToShortDateString()</b></label>
-    <SfCalendar @bind-Value=@States.CloseReg WeekNumber=true>
-    </SfCalendar>
+    <SfDatePicker @bind-Value=@States.CloseReg WeekNumber=true>
+    </SfDatePicker>
     <br />
 
     <label><b>Job Deadline Day: @States.JobDeadline.ToShortDateString()</b></label>
-    <SfCalendar @bind-Value=@States.JobDeadline WeekNumber=true>
-    </SfCalendar>
+    <SfDatePicker @bind-Value=@States.JobDeadline WeekNumber=true>
+    </SfDatePicker>
     <br />
 
     <label><b>Summary Start Day: @States.Summary.ToShortDateString()</b></label>
-    <SfCalendar @bind-Value=@States.Summary WeekNumber=true>
-    </SfCalendar>
+    <SfDatePicker @bind-Value=@States.Summary WeekNumber=true>
+    </SfDatePicker>
     <br />
 
     <label><b>End Day: @States.End.ToShortDateString()</b></label>
-    <SfCalendar @bind-Value=@States.End WeekNumber=true>
-    </SfCalendar>
+    <SfDatePicker @bind-Value=@States.End WeekNumber=true>
+    </SfDatePicker>
     <br />
 
     <SfButton Content="Save" CssClass="color" OnClick="@OnSave">

@@ -22,7 +22,7 @@ namespace InternshipApp.Core.Database
         public virtual DbSet<Evaluation> Evaluations { get; set; } = null!;
         public virtual DbSet<SkillScore> SkillScores { get; set; } = null!;
         public virtual DbSet<InternSettings> Settings { get; set; } = null!;
-        public virtual DbSet<CourseForm> CourseForms { get; set; } = null!;
+        public virtual DbSet<LabourMarketForm> LabourMarketForms { get; set; } = null!;
         public virtual DbSet<StudentForm> StudentForms { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
