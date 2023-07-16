@@ -15,6 +15,7 @@ public class LabourMarketForm : BaseEntity<int>
     public int AnAbilityInProblemSolving { get; set; }
     public int InitiativeTaking { get; set; }
     public int AnAbilityToFunctionEffectivelyOnTeams { get; set; }
+    public int ProfessionalEthicsAndResponsibility { get; set; }
     public int AnAbilityToCommunicateEffectively { get; set; }
     public int AnAbilityToEngageInContinuingProfessionalDevelopment { get; set; }
     public int Independence { get; set; }

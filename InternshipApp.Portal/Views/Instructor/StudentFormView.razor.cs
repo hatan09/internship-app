@@ -4,7 +4,6 @@ using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
-using Wave5.UI.Forms;
 
 namespace InternshipApp.Portal.Views;
 
@@ -37,7 +36,9 @@ public partial class StudentFormView
 
     public StudentForm StudentForm { get; set; } = new();
 
-    public string Options1 { get; set; }
+    public string Options1 { 
+        get; 
+        set; }
     public string Options2 { get; set; }
     public string Options3 { get; set; }
     public string Options4 { get; set; }
@@ -74,6 +75,7 @@ public partial class StudentFormView
                 default:
                     break;
             }
+            StateHasChanged();
         }
         await base.OnAfterRenderAsync(firstRender);
     }
@@ -87,7 +89,7 @@ public partial class StudentFormView
 
         if (newForm != null && newForm != currentForm)
         {
-            await LoadDataAsync();
+            LoadData();
             return;
         }
     }
@@ -101,25 +103,25 @@ public partial class StudentFormView
     #endregion
 
     #region [ Methods - Data ]
-    private async Task LoadDataAsync()
+    private void LoadData()
     {
-        StudentForm = FormData?? new();
+        StudentForm = FormData ?? new();
 
-        Options1 = StudentForm.FulfilmentOfInternshipObjectives.ToString();
-        Options2 = StudentForm.AcademicPreparationOfTheStudents.ToString();
-        Options3 = StudentForm.InterestInWorkResearch.ToString();
-        Options4 = StudentForm.AbilityToLearn.ToString();
-        Options5 = StudentForm.Initiative.ToString();
-        Options6 = StudentForm.Independence.ToString();
-        Options7 = StudentForm.OrganizationPlanning.ToString();
-        Options8 = StudentForm.QualityOfWorkResearch.ToString();
-        Options9 = StudentForm.AnalyticalProblemSolvingSkills.ToString();
-        Options10 = StudentForm.Dependability.ToString();
-        Options11 = StudentForm.AcceptanceOfSuggestionsAndCriticisms.ToString();
-        Options12 = StudentForm.RelationsWithOthers.ToString();
-        Options13 = StudentForm.Attendance.ToString();
-        Options14 = StudentForm.Punctuality.ToString();
-        Options15 = StudentForm.OverallPerformance.ToString();
+        Options1 = ((int)StudentForm.FulfilmentOfInternshipObjectives).ToString();
+        Options2 = ((int)StudentForm.AcademicPreparationOfTheStudents).ToString();
+        Options3 = ((int)StudentForm.InterestInWorkResearch).ToString();
+        Options4 = ((int)StudentForm.AbilityToLearn).ToString();
+        Options5 = ((int)StudentForm.Initiative).ToString();
+        Options6 = ((int)StudentForm.Independence).ToString();
+        Options7 = ((int)StudentForm.OrganizationPlanning).ToString();
+        Options8 = ((int)StudentForm.QualityOfWorkResearch).ToString();
+        Options9 = ((int)StudentForm.AnalyticalProblemSolvingSkills).ToString();
+        Options10 = ((int)StudentForm.Dependability).ToString();
+        Options11 = ((int)StudentForm.AcceptanceOfSuggestionsAndCriticisms).ToString();
+        Options12 = ((int)StudentForm.RelationsWithOthers).ToString();
+        Options13 = ((int)StudentForm.Attendance).ToString();
+        Options14 = ((int)StudentForm.Punctuality).ToString();
+        Options15 = ((int)StudentForm.OverallPerformance).ToString();
 
         StateHasChanged();
     }
@@ -128,27 +130,27 @@ public partial class StudentFormView
     {
         var form = await StudentForms.FindAll(x => x.Id == StudentForm.Id).AsTracking().FirstOrDefaultAsync();
 
-        if(form == null)
+        if (form == null)
         {
             StudentForm.IsSubmitted = IsRecruiterViewing;
 
             if (IsRecruiterViewing)
             {
-                StudentForm.FulfilmentOfInternshipObjectives = Enum.Parse<FulfilmentOfInternshipObjectivesValues>(Options1.ToString());
-                StudentForm.AcademicPreparationOfTheStudents = Enum.Parse<AcademicPreparationOfTheStudentsValues>(Options2.ToString());
-                StudentForm.InterestInWorkResearch = Enum.Parse<InterestInWorkResearchValues>(Options3.ToString());
-                StudentForm.AbilityToLearn = Enum.Parse<AbilityToLearnValues>(Options4.ToString());
-                StudentForm.Initiative = Enum.Parse<InitiativeValues>(Options5.ToString());
-                StudentForm.Independence = Enum.Parse<IndependenceValues>(Options6.ToString());
-                StudentForm.OrganizationPlanning = Enum.Parse<OrganizationPlanningValues>(Options7.ToString());
-                StudentForm.QualityOfWorkResearch = Enum.Parse<QualityOfWorkResearchValues>(Options8.ToString());
-                StudentForm.AnalyticalProblemSolvingSkills = Enum.Parse<AnalyticalProblemSolvingSkillsValues>(Options9.ToString());
-                StudentForm.Dependability = Enum.Parse<DependabilityValues>(Options10.ToString());
-                StudentForm.AcceptanceOfSuggestionsAndCriticisms = Enum.Parse<AcceptanceOfSuggestionsAndCriticismsValues>(Options11.ToString());
-                StudentForm.RelationsWithOthers = Enum.Parse<RelationsWithOthersValues>(Options12.ToString());
-                StudentForm.Attendance = Enum.Parse<AttendanceAndPunctualityValues>(Options13.ToString());
-                StudentForm.Punctuality = Enum.Parse<AttendanceAndPunctualityValues>(Options14.ToString());
-                StudentForm.OverallPerformance = Enum.Parse<OverallPerformanceValues>(Options15.ToString());
+                StudentForm.FulfilmentOfInternshipObjectives = (FulfilmentOfInternshipObjectivesValues)int.Parse(Options1);
+                StudentForm.AcademicPreparationOfTheStudents = (AcademicPreparationOfTheStudentsValues)int.Parse(Options2);
+                StudentForm.InterestInWorkResearch = (InterestInWorkResearchValues)int.Parse(Options3);
+                StudentForm.AbilityToLearn = (AbilityToLearnValues)int.Parse(Options4);
+                StudentForm.Initiative = (InitiativeValues)int.Parse(Options5);
+                StudentForm.Independence = (IndependenceValues)int.Parse(Options6);
+                StudentForm.OrganizationPlanning = (OrganizationPlanningValues)int.Parse(Options7);
+                StudentForm.QualityOfWorkResearch = (QualityOfWorkResearchValues)int.Parse(Options8);
+                StudentForm.AnalyticalProblemSolvingSkills = (AnalyticalProblemSolvingSkillsValues)int.Parse(Options9);
+                StudentForm.Dependability = (DependabilityValues)int.Parse(Options10);
+                StudentForm.AcceptanceOfSuggestionsAndCriticisms = (AcceptanceOfSuggestionsAndCriticismsValues)int.Parse(Options11);
+                StudentForm.RelationsWithOthers = (RelationsWithOthersValues)int.Parse(Options12);
+                StudentForm.Attendance = (AttendanceAndPunctualityValues)int.Parse(Options13);
+                StudentForm.Punctuality = (AttendanceAndPunctualityValues)int.Parse(Options14);
+                StudentForm.OverallPerformance = (OverallPerformanceValues)int.Parse(Options15);
             }
 
             StudentForms.Add(StudentForm);
@@ -163,21 +165,21 @@ public partial class StudentFormView
         }
         else if (IsRecruiterViewing)
         {
-            form.FulfilmentOfInternshipObjectives = Enum.Parse<FulfilmentOfInternshipObjectivesValues>(Options1.ToString());
-            form.AcademicPreparationOfTheStudents = Enum.Parse<AcademicPreparationOfTheStudentsValues>(Options2.ToString());
-            form.InterestInWorkResearch = Enum.Parse<InterestInWorkResearchValues>(Options3.ToString());
-            form.AbilityToLearn = Enum.Parse<AbilityToLearnValues>(Options4.ToString());
-            form.Initiative = Enum.Parse<InitiativeValues>(Options5.ToString());
-            form.Independence = Enum.Parse<IndependenceValues>(Options6.ToString());
-            form.OrganizationPlanning = Enum.Parse<OrganizationPlanningValues>(Options7.ToString());
-            form.QualityOfWorkResearch = Enum.Parse<QualityOfWorkResearchValues>(Options8.ToString());
-            form.AnalyticalProblemSolvingSkills = Enum.Parse<AnalyticalProblemSolvingSkillsValues>(Options9.ToString());
-            form.Dependability = Enum.Parse<DependabilityValues>(Options10.ToString());
-            form.AcceptanceOfSuggestionsAndCriticisms = Enum.Parse<AcceptanceOfSuggestionsAndCriticismsValues>(Options11.ToString());
-            form.RelationsWithOthers = Enum.Parse<RelationsWithOthersValues>(Options12.ToString());
-            form.Attendance= Enum.Parse<AttendanceAndPunctualityValues>(Options13.ToString());
-            form.Punctuality = Enum.Parse<AttendanceAndPunctualityValues>(Options14.ToString());
-            form.OverallPerformance = Enum.Parse<OverallPerformanceValues>(Options15.ToString());
+            form.FulfilmentOfInternshipObjectives = (FulfilmentOfInternshipObjectivesValues)int.Parse(Options1);
+            form.AcademicPreparationOfTheStudents = (AcademicPreparationOfTheStudentsValues)int.Parse(Options2);
+            form.InterestInWorkResearch = (InterestInWorkResearchValues)int.Parse(Options3);
+            form.AbilityToLearn = (AbilityToLearnValues)int.Parse(Options4);
+            form.Initiative = (InitiativeValues)int.Parse(Options5);
+            form.Independence = (IndependenceValues)int.Parse(Options6);
+            form.OrganizationPlanning = (OrganizationPlanningValues)int.Parse(Options7);
+            form.QualityOfWorkResearch = (QualityOfWorkResearchValues)int.Parse(Options8);
+            form.AnalyticalProblemSolvingSkills = (AnalyticalProblemSolvingSkillsValues)int.Parse(Options9);
+            form.Dependability = (DependabilityValues)int.Parse(Options10);
+            form.AcceptanceOfSuggestionsAndCriticisms = (AcceptanceOfSuggestionsAndCriticismsValues)int.Parse(Options11);
+            form.RelationsWithOthers = (RelationsWithOthersValues)int.Parse(Options12);
+            form.Attendance = (AttendanceAndPunctualityValues)int.Parse(Options13);
+            form.Punctuality = (AttendanceAndPunctualityValues)int.Parse(Options14);
+            form.OverallPerformance = (OverallPerformanceValues)int.Parse(Options15);
 
             form.FulfilmentOfInternshipObjectivesComment = StudentForm.FulfilmentOfInternshipObjectivesComment;
             form.AcademicPreparationOfTheStudentsComment = StudentForm.AcademicPreparationOfTheStudentsComment;

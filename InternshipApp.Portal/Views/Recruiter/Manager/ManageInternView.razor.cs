@@ -122,7 +122,7 @@ public partial class ManageInternView
                 JobId = job.Id,
                 StudentName = student.FullName,
                 JobName = job.Title,
-                IsFormsCompleted = studentForm.IsSubmitted && labourMarketForm.IsSubmitted
+                IsFormsCompleted = studentForm != null && labourMarketForm != null && studentForm.IsSubmitted && labourMarketForm.IsSubmitted
             };
 
             if (item == null)

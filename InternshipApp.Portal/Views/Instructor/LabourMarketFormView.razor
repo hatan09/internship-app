@@ -1,0 +1,636 @@
+﻿@namespace InternshipApp.Portal.Views
+@using Syncfusion.Blazor.Buttons
+
+<Stack Style="padding:30px;background-color:white;margin-top:10px;">
+    @if (IsRecruiterViewing)
+    {
+        <FluentButton class="save-btn" Appearance="Appearance.Accent" @onclick=@OnSave>
+            Save
+        </FluentButton>
+    }
+
+    <Stack Horizontal HorizontalAlign="Wave5.UI.Alignment.Center">
+        <h3>
+            <b>LABOUR MARKET’S FEEDBACK</b>
+        </h3>
+    </Stack>
+
+    <br />
+
+    @*Entities*@
+    @if (IsRecruiterViewing)
+    {
+        <FluentTextField @bind-Value=@LabourMarketForm.ContactName>
+            <b>Contact Name</b>
+        </FluentTextField>
+        <FluentTextField @bind-Value=@LabourMarketForm.Phone>
+            <b>Phone</b>
+        </FluentTextField>
+        <FluentTextField @bind-Value=@LabourMarketForm.Email>
+            <b>Email</b>
+        </FluentTextField>
+    }
+    else
+    {
+        <b style="display:block;">Contact Name: @LabourMarketForm.ContactName</b>
+        <b style="display:block;">Phone: @LabourMarketForm.Phone</b>
+        <b style="display:block;">Email: @LabourMarketForm.Email</b>
+    }
+
+    <label>
+        We appreciate your feedbacks by answering each item to:
+    </label>
+    <Stack Style="padding-left:12px;">
+        <label>(1) improve the quality of graduates of International University in IT</label>
+        <label>(2) assess the Bachelor Programs.</label>
+    </Stack>
+    <label>
+        These items are ranged from 1 (disagree) to 5 (absolutely agree). Please choose one response for each item. Please answer all of the items.
+    </label>
+
+    @*Form Detail*@
+    <b style="display:block;">Computing program</b>
+    <Stack Horizontal Style="margin-bottom:24px;border-bottom:solid 1px gray;width:fit-content !important;">
+        <label class="option-title">
+            1. The Educational Goals and Program Outcomes are clear and appropriate as stated.
+        </label>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="1"
+                Name="options1" 
+                Value="1"
+                TChecked="@string"
+                @bind-Checked="@Options1"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="2"
+                Name="options1" 
+                Value="2"
+                TChecked="@string"
+                @bind-Checked="@Options1"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="3"
+                Name="options1" 
+                Value="3"
+                TChecked="@string"
+                @bind-Checked="@Options1"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="4"
+                Name="options1" 
+                Value="4"
+                TChecked="@string"
+                @bind-Checked="@Options1"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="5"
+                Name="options1" 
+                Value="5"
+                TChecked="@string"
+                @bind-Checked="@Options1"/>
+        </Stack>
+    </Stack>
+
+    <Stack Horizontal Style="margin-bottom:24px;border-bottom:solid 1px gray;width:fit-content !important;">
+        <label class="option-title">
+            2. The curriculum satisfactorily covers the profession of computing in terms of breadth and depth of knowledge.
+        </label>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="1"
+                Name="options2" 
+                Value="1"
+                TChecked="@string"
+                @bind-Checked="@Options2"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="2"
+                Name="options2" 
+                Value="2"
+                TChecked="@string"
+                @bind-Checked="@Options2"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="3"
+                Name="options2" 
+                Value="3"
+                TChecked="@string"
+                @bind-Checked="@Options2"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="4"
+                Name="options2" 
+                Value="4"
+                TChecked="@string"
+                @bind-Checked="@Options2"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="5"
+                Name="options2" 
+                Value="5"
+                TChecked="@string"
+                @bind-Checked="@Options2"/>
+        </Stack>
+    </Stack>
+
+    <br />
+
+    <b style="display:block;">The student’s performance</b>
+    <Stack Horizontal Style="margin-bottom:24px;border-bottom:solid 1px gray;width:fit-content !important;">
+        <label class="option-title">
+            1. An ability to apply professional knowledge in practice
+        </label>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="1"
+                Name="options3" 
+                Value="1"
+                TChecked="@string"
+                @bind-Checked="@Options3"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="2"
+                Name="options3" 
+                Value="2"
+                TChecked="@string"
+                @bind-Checked="@Options3"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="3"
+                Name="options3" 
+                Value="3"
+                TChecked="@string"
+                @bind-Checked="@Options3"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="4"
+                Name="options3" 
+                Value="4"
+                TChecked="@string"
+                @bind-Checked="@Options3"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="5"
+                Name="options3" 
+                Value="5"
+                TChecked="@string"
+                @bind-Checked="@Options3"/>
+        </Stack>
+    </Stack>
+
+    <Stack Horizontal Style="margin-bottom:24px;border-bottom:solid 1px gray;width:fit-content !important;">
+        <label class="option-title">
+            2. An ability to plan, organize and manage a project
+        </label>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="1"
+                Name="options4" 
+                Value="1"
+                TChecked="@string"
+                @bind-Checked="@Options4"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="2"
+                Name="options4" 
+                Value="2"
+                TChecked="@string"
+                @bind-Checked="@Options4"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="3"
+                Name="options4" 
+                Value="3"
+                TChecked="@string"
+                @bind-Checked="@Options4"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="4"
+                Name="options4" 
+                Value="4"
+                TChecked="@string"
+                @bind-Checked="@Options4"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="5"
+                Name="options4" 
+                Value="5"
+                TChecked="@string"
+                @bind-Checked="@Options4"/>
+        </Stack>
+    </Stack>
+
+    <Stack Horizontal Style="margin-bottom:24px;border-bottom:solid 1px gray;width:fit-content !important;">
+        <label class="option-title">
+            3. An ability in problem solving
+        </label>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="1"
+                Name="options5" 
+                Value="1"
+                TChecked="@string"
+                @bind-Checked="@Options5"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="2"
+                Name="options5" 
+                Value="2"
+                TChecked="@string"
+                @bind-Checked="@Options5"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="3"
+                Name="options5" 
+                Value="3"
+                TChecked="@string"
+                @bind-Checked="@Options5"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="4"
+                Name="options5" 
+                Value="4"
+                TChecked="@string"
+                @bind-Checked="@Options5"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="5"
+                Name="options5" 
+                Value="5"
+                TChecked="@string"
+                @bind-Checked="@Options5"/>
+        </Stack>
+    </Stack>
+
+    <Stack Horizontal Style="margin-bottom:24px;border-bottom:solid 1px gray;width:fit-content !important;">
+        <label class="option-title">
+            4. Initiative-taking
+        </label>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="1"
+                Name="options6" 
+                Value="1"
+                TChecked="@string"
+                @bind-Checked="@Options6"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="2"
+                Name="options6" 
+                Value="2"
+                TChecked="@string"
+                @bind-Checked="@Options6"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="3"
+                Name="options6" 
+                Value="3"
+                TChecked="@string"
+                @bind-Checked="@Options6"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="4"
+                Name="options6" 
+                Value="4"
+                TChecked="@string"
+                @bind-Checked="@Options6"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="5"
+                Name="options6" 
+                Value="5"
+                TChecked="@string"
+                @bind-Checked="@Options6"/>
+        </Stack>
+    </Stack>
+
+    <Stack Horizontal Style="margin-bottom:24px;border-bottom:solid 1px gray;width:fit-content !important;">
+        <label class="option-title">
+            5. An ability to function effectively on teams
+        </label>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="1"
+                Name="options7" 
+                Value="1"
+                TChecked="@string"
+                @bind-Checked="@Options7"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="2"
+                Name="options7" 
+                Value="2"
+                TChecked="@string"
+                @bind-Checked="@Options7"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="3"
+                Name="options7" 
+                Value="3"
+                TChecked="@string"
+                @bind-Checked="@Options7"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="4"
+                Name="options7" 
+                Value="4"
+                TChecked="@string"
+                @bind-Checked="@Options7"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="5"
+                Name="options7" 
+                Value="5"
+                TChecked="@string"
+                @bind-Checked="@Options7"/>
+        </Stack>
+    </Stack>
+
+    <Stack Horizontal Style="margin-bottom:24px;border-bottom:solid 1px gray;width:fit-content !important;">
+        <label class="option-title">
+            6. Professional ethics and responsibility
+        </label>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="1"
+                Name="options8" 
+                Value="1"
+                TChecked="@string"
+                @bind-Checked="@Options8"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="2"
+                Name="options8" 
+                Value="2"
+                TChecked="@string"
+                @bind-Checked="@Options8"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="3"
+                Name="options8" 
+                Value="3"
+                TChecked="@string"
+                @bind-Checked="@Options8"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="4"
+                Name="options8" 
+                Value="4"
+                TChecked="@string"
+                @bind-Checked="@Options8"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="5"
+                Name="options8" 
+                Value="5"
+                TChecked="@string"
+                @bind-Checked="@Options8"/>
+        </Stack>
+    </Stack>
+
+    <Stack Horizontal Style="margin-bottom:24px;border-bottom:solid 1px gray;width:fit-content !important;">
+        <label class="option-title">
+            7. An ability to communicate effectively
+        </label>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="1"
+                Name="options9" 
+                Value="1"
+                TChecked="@string"
+                @bind-Checked="@Options9"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="2"
+                Name="options9" 
+                Value="2"
+                TChecked="@string"
+                @bind-Checked="@Options9"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="3"
+                Name="options9" 
+                Value="3"
+                TChecked="@string"
+                @bind-Checked="@Options9"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="4"
+                Name="options9" 
+                Value="4"
+                TChecked="@string"
+                @bind-Checked="@Options9"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="5"
+                Name="options9" 
+                Value="5"
+                TChecked="@string"
+                @bind-Checked="@Options9"/>
+        </Stack>
+    </Stack>
+
+    <Stack Horizontal Style="margin-bottom:24px;border-bottom:solid 1px gray;width:fit-content !important;">
+        <label class="option-title">
+            8. An ability to engage in continuing professional development
+        </label>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="1"
+                Name="options10" 
+                Value="1"
+                TChecked="@string"
+                @bind-Checked="@Options10"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="2"
+                Name="options10" 
+                Value="2"
+                TChecked="@string"
+                @bind-Checked="@Options10"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="3"
+                Name="options10" 
+                Value="3"
+                TChecked="@string"
+                @bind-Checked="@Options10"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="4"
+                Name="options10" 
+                Value="4"
+                TChecked="@string"
+                @bind-Checked="@Options10"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="5"
+                Name="options10" 
+                Value="5"
+                TChecked="@string"
+                @bind-Checked="@Options10"/>
+        </Stack>
+    </Stack>
+
+    <Stack Horizontal Style="margin-bottom:24px;border-bottom:solid 1px gray;width:fit-content !important;">
+        <label class="option-title">
+            9. Independence
+        </label>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="1"
+                Name="options11" 
+                Value="1"
+                TChecked="@string"
+                @bind-Checked="@Options11"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="2"
+                Name="options11" 
+                Value="2"
+                TChecked="@string"
+                @bind-Checked="@Options11"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="3"
+                Name="options11" 
+                Value="3"
+                TChecked="@string"
+                @bind-Checked="@Options11"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="4"
+                Name="options11" 
+                Value="4"
+                TChecked="@string"
+                @bind-Checked="@Options11"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="5"
+                Name="options11" 
+                Value="5"
+                TChecked="@string"
+                @bind-Checked="@Options11"/>
+        </Stack>
+    </Stack>
+
+    <Stack Horizontal Style="margin-bottom:24px;border-bottom:solid 1px gray;width:fit-content !important;">
+        <label class="option-title">
+            10. Relations with others
+        </label>
+        <Stack Horizontal VerticalAlign="Wave5.UI.Alignment.Center">
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="1"
+                Name="options12" 
+                Value="1"
+                TChecked="@string"
+                @bind-Checked="@Options12"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="2"
+                Name="options12" 
+                Value="2"
+                TChecked="@string"
+                @bind-Checked="@Options12"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="3"
+                Name="options12" 
+                Value="3"
+                TChecked="@string"
+                @bind-Checked="@Options12"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="4"
+                Name="options12" 
+                Value="4"
+                TChecked="@string"
+                @bind-Checked="@Options12"/>
+            <SfRadioButton 
+                CssClass="option-value"
+                Label="5"
+                Name="options12" 
+                Value="5"
+                TChecked="@string"
+                @bind-Checked="@Options12"/>
+        </Stack>
+    </Stack>
+
+    <br />
+
+    <b style="display:block;">Additional Questions</b>
+    @if (IsRecruiterViewing)
+    {
+        <FluentNumberField @bind-Value=@LabourMarketForm.IUGraduates Placeholder="Number of IU graduates">
+            <label>11. The number of IU graduates working in your company: </label>
+        </FluentNumberField>
+
+        <FluentTextField @bind-Value=@LabourMarketForm.Prepared Placeholder="Good and missed skills of the student">
+            <label>12. Are our graduates adequately prepared or do they require additional training on the job?</label>
+        </FluentTextField>
+
+        <FluentTextField @bind-Value=@LabourMarketForm.Improvements Placeholder="Improvements in preparation">
+            <label>13. What improvements in preparation could be implemented to better meet the employer/industry/business needs?</label>
+        </FluentTextField>
+
+            <FluentTextField @bind-Value=@LabourMarketForm.Skills Placeholder="Skills and requirements">
+            <label>14. What are the new skills or future requirements of your employees?</label>
+        </FluentTextField>
+    }
+    else
+    {
+        <label style="display:block;">11. The number of IU graduates working in your company: </label>
+        <Stack Style="padding-left:12px;margin-bottom:6px;"><label> - @LabourMarketForm.IUGraduates.ToString()</label></Stack>
+
+        <label style="display:block;">12. Are our graduates adequately prepared or do they require additional training on the job?</label>
+        <Stack Style="padding-left:12px;margin-bottom:6px;"><label> - @LabourMarketForm.Prepared</label></Stack>
+
+        <label style="display:block;">13. What improvements in preparation could be implemented to better meet the employer/industry/business needs?</label>
+        <Stack Style="padding-left:12px;margin-bottom:6px;"><label> - @LabourMarketForm.Improvements</label></Stack>
+
+        <label style="display:block;">14. What are the new skills or future requirements of your employees?</label>
+        <Stack Style="padding-left:12px;margin-bottom:6px;"><label> - @LabourMarketForm.Skills</label></Stack>
+    }
+
+    <br />
+
+    <Stack Horizontal HorizontalAlign="Wave5.UI.Alignment.Center">
+        <b style="text-decoration: underline;">Thank you for your co-operation</b>
+    </Stack>
+</Stack>
+
+<style>
+    .option-title{
+        display:block;
+        width:500px;
+    }
+
+    .option-value{
+        margin-right:6px;
+    }
+
+    .save-btn{
+        position:fixed;
+        bottom:50px;
+        right:50px;
+        z-index:100;
+        width:75px;
+        height:75px;
+        box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+        font-size:18pt;
+        border-radius:50%
+    }
+</style>
