@@ -2,7 +2,7 @@
 
 namespace InternshipApp.Portal.Views;
 
-public partial class ManageStudentFormsPage
+public partial class FinalSubmissionViewPage
 {
     [Parameter]
     public string StudentId { get; set; }

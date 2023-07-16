@@ -36,7 +36,7 @@
 
     @if(States.Status == Stat.FINISHED.ToString())
     {
-        <CommandBarView ViewResultCallBack="OnViewResult"/>
+        <CommandBarView ViewResultCallback="OnViewResult" ViewFinalFormsCallback="OnOpenFinalForms"/>
     }
     else if (States.Status == Stat.REJECTED.ToString())
     {
@@ -44,7 +44,7 @@
     }
     else if (States.Status == Stat.HIRED.ToString())
     {
-        <CommandBarView EditCallback="OnEdit" ApplyListCallback="OnOpenApplyList" ViewEvaluationCallBack="OnViewEvaluation"/>
+        <CommandBarView EditCallback="OnEdit" ApplyListCallback="OnOpenApplyList" ViewEvaluationCallback="OnViewEvaluation" ViewFinalFormsCallback="OnOpenFinalForms"/>
 
     }
     else

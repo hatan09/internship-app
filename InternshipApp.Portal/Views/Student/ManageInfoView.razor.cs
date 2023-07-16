@@ -211,6 +211,11 @@ public partial class ManageInfoView
         this.NavigationManager.NavigateTo($"apply-status/{States.Id}");
     }
 
+    public void OnOpenFinalForms()
+    {
+        this.NavigationManager.NavigateTo($"final-forms/{States.Id}");
+    }
+
     public void OnViewEvaluation()
     {
         EvaluationPopupContext = new()

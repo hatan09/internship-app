@@ -110,6 +110,8 @@ builder.Services.AddTransient<ISkillScoreRepository, SkillScoreRepository>();
 builder.Services.AddTransient<IInternSettingsRepository, InternSettingsRepository>();
 builder.Services.AddTransient<IMatchingService, MatchingService>();
 builder.Services.AddTransient<IInternGroupServices, InternGroupServices>();
+builder.Services.AddTransient<IStudentFormRepository, StudentFormRepository>();
+builder.Services.AddTransient<ILabourMarketFormRepository, LabourMarketFormRepository>();
 
 //Services
 //builder.Services.AddTransient<IEmailService, EmailService>();

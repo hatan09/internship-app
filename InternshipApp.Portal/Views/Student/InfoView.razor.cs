@@ -221,6 +221,11 @@ public partial class InfoView
     {
     }
 
+    public void OnOpenFinalForms()
+    {
+        this.NavigationManager.NavigateTo($"final-forms/{States.Id}");
+    }
+
     public void OnEdit()
     {
         try

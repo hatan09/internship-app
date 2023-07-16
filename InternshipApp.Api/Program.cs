@@ -133,6 +133,15 @@ builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IInternGroupRepository, InternGroupRepository>();
 builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<IJobRepository, JobRepository>();
+builder.Services.AddScoped<IEvaluationRepository, EvaluationRepository>();
+builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<ISkillScoreRepository, SkillScoreRepository>();
+builder.Services.AddScoped<IInternSettingsRepository, InternSettingsRepository>();
+builder.Services.AddScoped<IMatchingService, MatchingService>();
+builder.Services.AddScoped<IInternGroupServices, InternGroupServices>();
+builder.Services.AddScoped<IStudentFormRepository, StudentFormRepository>();
+builder.Services.AddScoped<ILabourMarketFormRepository, LabourMarketFormRepository>();
 
 //Chat
 builder.Services.AddSignalR();

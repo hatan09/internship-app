@@ -28,10 +28,10 @@ else
 }
 
 <p>
-    The internship <b>@InternshipTitle</b> begins and opens for registration of students at <b>@StartTime</b> until <b>@CloseRegistrationTime</b>. After this time, students will no longer be able to register.
+    The internship <b>@InternshipTitle</b> begins and opens for registration of students on <b>@StartTime.ToLongDateString()</b> until <b>@CloseRegistrationTime.ToLongDateString()</b>. After this time, students will no longer be able to register.
 </p>
 <p>
-    Participants will work on this program until <b>@SummaryTime</b> which is the deadline to submit final reports and scores. Instructors will work on the submitted forms to evaluate students' work. Final result is expected to be available at <b>@EndTime</b>. 
+    Participants will work on this program until <b>@SummaryTime.ToLongDateString()</b> which is the deadline to submit final reports and scores. Instructors will work on the submitted forms to evaluate students' work. Final result is expected to be available on <b>@EndTime.ToLongDateString()</b>. 
 </p>
 
 <SfDialog Height="@(IsLogin? "35%" : "80%")" Width="35%" Target="#target" ShowCloseIcon="true" @bind-Visible="Visible" >

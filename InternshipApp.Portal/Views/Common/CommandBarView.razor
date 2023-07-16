@@ -39,7 +39,7 @@
     @if (IsAddGroupButtonVisible)
     {
         <SfTooltip Content="Add this student to my group">
-            <SfButton IconCss="oi oi-plus" CssClass="command-bar-button add-group" OnClick="@AddGroupCallBack"/>
+            <SfButton IconCss="oi oi-plus" CssClass="command-bar-button add-group" OnClick="@AddGroupCallback"/>
         </SfTooltip>
     }
 
@@ -60,7 +60,7 @@
     @if (IsShowScoreButtonVisible)
     {
         <SfTooltip Content="Check progress">
-            <SfButton IconCss="oi oi-graph" CssClass="command-bar-button score" OnClick="@ShowScoreCallBack" />
+            <SfButton IconCss="oi oi-graph" CssClass="command-bar-button score" OnClick="@ShowScoreCallback" />
         </SfTooltip>
     }
 
@@ -73,22 +73,29 @@
 
     @if (IsViewEvaluationButtonVisible)
     {
-        <SfTooltip Content="View result">
-            <SfButton IconCss="oi oi-bar-chart" CssClass="command-bar-button evaluation" OnClick="@ViewEvaluationCallBack" />
+        <SfTooltip Content="View Evaluations from your company">
+            <SfButton IconCss="oi oi-bar-chart" CssClass="command-bar-button evaluation" OnClick="@ViewEvaluationCallback" />
+        </SfTooltip>
+    }
+
+    @if (IsViewFinalFormsVisible)
+    {
+        <SfTooltip Content="View the final evaluation forms">
+            <SfButton IconCss="oi oi-book" CssClass="command-bar-button final" OnClick="@ViewFinalFormsCallback" />
         </SfTooltip>
     }
 
     @if (IsViewResultButtonVisible)
     {
         <SfTooltip Content="View result">
-            <SfButton IconCss="oi oi-document" CssClass="command-bar-button result" OnClick="@ViewResultCallBack" />
+            <SfButton IconCss="oi oi-document" CssClass="command-bar-button result" OnClick="@ViewResultCallback" />
         </SfTooltip>
     }
 
     @if (IsUndoButtonVisible)
     {
         <SfTooltip Content="Re-validate this student">
-            <SfButton IconCss="oi oi-action-undo" CssClass="command-bar-button undo" OnClick="@UndoCallBack" />
+            <SfButton IconCss="oi oi-action-undo" CssClass="command-bar-button undo" OnClick="@UndoCallback" />
         </SfTooltip>
     }
 </Stack>
@@ -143,8 +150,12 @@
         color: yellow;
     }
 
-    .oi-circle-document.e-btn-icon {
+    .oi-document.e-btn-icon {
         color: deepskyblue;
+    }
+
+    .oi-book.e-btn-icon {
+        color: saddlebrown;
     }
 
     .oi-bar-chart.e-btn-icon {

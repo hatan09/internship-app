@@ -49,11 +49,11 @@
     {
         @if (IsHired)
         {
-            <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" ShowScoreCallBack="OnShowScore" FinishCallback="OnFinish"/>
+            <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" ShowScoreCallback="OnShowScore" FinishCallback="OnFinish" ViewFinalFormsCallback="OnOpenFinalForms"/>
         }
         else if (States.InternGroupId < 1)
         {
-            <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" AddGroupCallBack="OnAddToGroup"/>
+            <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" AddGroupCallback="OnAddToGroup"/>
 
         }
         else if(States.Status == Stat.WAITING.ToString())
@@ -66,7 +66,7 @@
         }
         else
         {
-            <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" ShowScoreCallBack="OnShowScore"/>
+            <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" ShowScoreCallback="OnShowScore"/>
         }
     }
     else

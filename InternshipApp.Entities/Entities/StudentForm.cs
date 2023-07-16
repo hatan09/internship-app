@@ -2,64 +2,66 @@
 
 public class StudentForm : BaseEntity<int>
 {
-    public string StudentId { get; set; }
-    public string GeneralInformation { get; set; }
-    public string StudentName { get; set; }
-    public string CompanyName { get; set; }
-    public string EvaluatedBy  { get; set; }
+    public string? StudentId { get; set; } = string.Empty;
+    public string? GeneralInformation { get; set; } = string.Empty;
+    public string? StudentName { get; set; } = string.Empty;
+    public string? CompanyName { get; set; } = string.Empty;
+    public string? EvaluatedBy { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
+    public int AverageReportScore { get; set; }
     public int OverallScore { get; set; }
-    public string StudentComment { get; set; }
+    public string? StudentComment { get; set; } = string.Empty;
+    public bool IsSubmitted { get; set; }
 
+    #region [ Properties - Form Evaluations ]
     public FulfilmentOfInternshipObjectivesValues FulfilmentOfInternshipObjectives { get; set; }
-    public string FulfilmentOfInternshipObjectivesComment { get; set; }
+    public string? FulfilmentOfInternshipObjectivesComment { get; set; } = string.Empty;
 
     public AcademicPreparationOfTheStudentsValues AcademicPreparationOfTheStudents { get; set; }
-    public string AcademicPreparationOfTheStudentsComment { get; set; }
+    public string? AcademicPreparationOfTheStudentsComment { get; set; } = string.Empty;
 
     public InterestInWorkResearchValues InterestInWorkResearch { get; set; }
-    public string InterestInWorkResearchComment { get; set; }
+    public string? InterestInWorkResearchComment { get; set; } = string.Empty;
 
     public AbilityToLearnValues AbilityToLearn { get; set; }
-    public string AbilityToLearnComment { get; set; }
+    public string? AbilityToLearnComment { get; set; } = string.Empty;
 
     public InitiativeValues Initiative { get; set; }
-    public string InitiativeComment { get; set; }
+    public string? InitiativeComment { get; set; } = string.Empty;
 
     public IndependenceValues Independence { get; set; }
-    public string IndependenceComment { get; set; }
+    public string? IndependenceComment { get; set; } = string.Empty;
 
     public OrganizationPlanningValues OrganizationPlanning { get; set; }
-    public string OrganizationPlanningComment { get; set; }
+    public string? OrganizationPlanningComment { get; set; } = string.Empty;
 
     public QualityOfWorkResearchValues QualityOfWorkResearch { get; set; }
-    public string QualityOfWorkResearchComment { get; set; }
+    public string? QualityOfWorkResearchComment { get; set; } = string.Empty;
 
     public AnalyticalProblemSolvingSkillsValues AnalyticalProblemSolvingSkills { get; set; }
-    public string AnalyticalProblemSolvingSkillsComment { get; set; }
+    public string? AnalyticalProblemSolvingSkillsComment { get; set; } = string.Empty;
 
     public DependabilityValues Dependability { get; set; }
-    public string DependabilityComment { get; set; }
+    public string? DependabilityComment { get; set; } = string.Empty;
 
     public AcceptanceOfSuggestionsAndCriticismsValues AcceptanceOfSuggestionsAndCriticisms { get; set; }
-    public string AcceptanceOfSuggestionsAndCriticismsComment { get; set; }
+    public string? AcceptanceOfSuggestionsAndCriticismsComment { get; set; } = string.Empty;
 
     public RelationsWithOthersValues RelationsWithOthers { get; set; }
-    public string RelationsWithOthersComment { get; set; }
+    public string? RelationsWithOthersComment { get; set; } = string.Empty;
 
-    public AttendanceValues Attendance { get; set; }
-    public string AttendanceComment { get; set; }
-
-    public PunctualityValues Punctuality { get; set; }
-    public string PunctualityComment { get; set; }
+    public AttendanceAndPunctualityValues Attendance { get; set; }
+    public AttendanceAndPunctualityValues Punctuality { get; set; }
+    public string? AttendanceAndPunctualityComment { get; set; } = string.Empty;
 
     public OverallPerformanceValues OverallPerformance { get; set; }
-    public string OverallPerformanceComment { get; set; }
+    public string? OverallPerformanceComment { get; set; } = string.Empty;
+    #endregion
 
-    public bool IsSubmitted { get; set; }
 }
 
+#region [ Enums ]
 public enum FulfilmentOfInternshipObjectivesValues
 {
     Objectives_not_met,
@@ -120,8 +122,8 @@ public enum OrganizationPlanningValues
 public enum QualityOfWorkResearchValues
 {
     Work_usually_completed_in_a_careless_manner_and_constantly_plagued_with,
-    Work_usually_required_review___Satisfactory_work_but_may_contain_some_errors,
-    Usually_thorough___Generally_good_work_with_very_few_errors,
+    Work_usually_required_review__satisfactory_work__but_may_contain_some_errors,
+    Usually_thorough___Generally__good_work_with_very_few_errors,
     Very_thorough___Outstanding_attention_to_detail,
 }
 
@@ -138,7 +140,7 @@ public enum DependabilityValues
     Unreliable,
     Sometimes_neglectful_or_careless,
     Usually_dependable,
-    Completely_dependable___Worry_free,
+    Completely_dependable__worry_free,
 }
 
 public enum AcceptanceOfSuggestionsAndCriticismsValues
@@ -152,21 +154,12 @@ public enum AcceptanceOfSuggestionsAndCriticismsValues
 public enum RelationsWithOthersValues
 {
     General_difficulty_working_with_others,
-    Work_with_other_satisfactorily,
+    Works_with_other_satisfactorily,
     Works_very_well_with_others,
     Has_difficulty_with_some_individuals,
 }
 
-public enum AttendanceValues
-{
-    Poor,
-    Fair,
-    Satisfactory,
-    Good,
-    Excellent
-}
-
-public enum PunctualityValues
+public enum AttendanceAndPunctualityValues
 {
     Poor,
     Fair,
@@ -183,3 +176,4 @@ public enum OverallPerformanceValues
     Very_Good,
     Outstanding,
 }
+#endregion

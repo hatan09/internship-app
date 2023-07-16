@@ -24,22 +24,25 @@ public partial class CommandBarView
     public EventCallback ApplyListCallback { get; set; }
 
     [Parameter]
-    public EventCallback ShowScoreCallBack { get; set; }
+    public EventCallback ShowScoreCallback { get; set; }
 
     [Parameter]
     public EventCallback FinishCallback { get; set; }
 
     [Parameter]
-    public EventCallback ViewEvaluationCallBack { get; set; }
+    public EventCallback ViewEvaluationCallback { get; set; }
 
     [Parameter]
-    public EventCallback ViewResultCallBack { get; set; }
+    public EventCallback ViewFinalFormsCallback { get; set; }
 
     [Parameter]
-    public EventCallback AddGroupCallBack { get; set; }
+    public EventCallback ViewResultCallback { get; set; }
 
     [Parameter]
-    public EventCallback UndoCallBack { get; set; }
+    public EventCallback AddGroupCallback { get; set; }
+
+    [Parameter]
+    public EventCallback UndoCallback { get; set; }
     #endregion
 
     #region [ Properties ]
@@ -52,6 +55,7 @@ public partial class CommandBarView
     public bool IsShowScoreButtonVisible { get; set; }
     public bool IsFinishButtonVisible { get; set; }
     public bool IsViewEvaluationButtonVisible { get; set; }
+    public bool IsViewFinalFormsVisible { get; set; }
     public bool IsViewResultButtonVisible { get; set; }
     public bool IsAddGroupButtonVisible { get; set; }
     public bool IsUndoButtonVisible { get; set; }
@@ -66,12 +70,13 @@ public partial class CommandBarView
         IsAcceptButtonVisible = AcceptCallback.HasDelegate;
         IsRejectButtonVisible = RejectCallback.HasDelegate;
         IsApplyListButtonVisible = ApplyListCallback.HasDelegate;
-        IsShowScoreButtonVisible = ShowScoreCallBack.HasDelegate;
+        IsShowScoreButtonVisible = ShowScoreCallback.HasDelegate;
         IsFinishButtonVisible = FinishCallback.HasDelegate;
-        IsViewEvaluationButtonVisible = ViewEvaluationCallBack.HasDelegate;
-        IsViewResultButtonVisible = ViewResultCallBack.HasDelegate;
-        IsAddGroupButtonVisible = AddGroupCallBack.HasDelegate;
-        IsUndoButtonVisible = UndoCallBack.HasDelegate;
+        IsViewEvaluationButtonVisible = ViewEvaluationCallback.HasDelegate;
+        IsViewFinalFormsVisible = ViewFinalFormsCallback.HasDelegate;
+        IsViewResultButtonVisible = ViewResultCallback.HasDelegate;
+        IsAddGroupButtonVisible = AddGroupCallback.HasDelegate;
+        IsUndoButtonVisible = UndoCallback.HasDelegate;
 
         await base.OnInitializedAsync();
     }

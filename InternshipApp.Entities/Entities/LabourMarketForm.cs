@@ -2,11 +2,11 @@
 
 public class LabourMarketForm : BaseEntity<int>
 {
-    public string StudentId { get; set; }
+    public string? StudentId { get; set; } = string.Empty;
 
-    public string ContactName { get; set; }
-    public string Phone { get; set; }
-    public string Email { get; set; }
+    public string? ContactName { get; set; } = string.Empty;
+    public string? Phone { get; set; } = string.Empty;
+    public string? Email { get; set; } = string.Empty;
 
     public int TheEducationalGoalsAndProgramOutcomesAreClearAndAppropriateAsStated { get; set; }
     public int TheCurriculumSatisfactorilyCoversTheProfessionOfComputingInTermsOfBreadthAndDepthOfKnowledge { get; set; }
@@ -21,9 +21,9 @@ public class LabourMarketForm : BaseEntity<int>
     public int RelationsWithOthers { get; set; }
 
     public int IUGraduates { get; set; }
-    public string Prepared { get; set; }
-    public string Improvements { get; set; }
-    public string Skills { get; set; }
+    public string? Prepared { get; set; } = string.Empty;
+    public string? Improvements { get; set; } = string.Empty;
+    public string? Skills { get; set; } = string.Empty;
 
     public bool IsSubmitted { get; set; } = false;
 }

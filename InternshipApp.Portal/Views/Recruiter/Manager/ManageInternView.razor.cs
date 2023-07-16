@@ -1,6 +1,7 @@
 ﻿using InternshipApp.Contracts;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 using RCode;
 using Wave5.UI;
 using Wave5.UI.Blazor;
@@ -18,6 +19,12 @@ public partial class ManageInternView
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    public ILabourMarketFormRepository LabourMarketForms { get; set; }
+
+    [Inject]
+    public IStudentFormRepository StudentForms { get; set; }
     #endregion
 
     #region [ Properties - Parameter ]
@@ -73,7 +80,7 @@ public partial class ManageInternView
 
     protected void OnFinalReportButtonClicked(EventArgs args)
     {
-        NavigationManager.NavigateTo($"manage-student-forms/{States.StudentId}");
+        NavigationManager.NavigateTo($"final-forms/{States.StudentId}");
     }
     #endregion
 
@@ -106,12 +113,16 @@ public partial class ManageInternView
                 return;
             }
 
+            var studentForm = await StudentForms.FindAll(x => x.StudentId == StudentId).FirstOrDefaultAsync();
+            var labourMarketForm = await LabourMarketForms.FindAll(x => x.StudentId == StudentId).FirstOrDefaultAsync();
+
             var item = new ApplicationDetailsViewStates()
             {
                 StudentId = student.Id,
                 JobId = job.Id,
                 StudentName = student.FullName,
-                JobName = job.Title
+                JobName = job.Title,
+                IsFormsCompleted = studentForm.IsSubmitted && labourMarketForm.IsSubmitted
             };
 
             if (item == null)
