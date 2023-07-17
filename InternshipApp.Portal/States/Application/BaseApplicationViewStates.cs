@@ -25,6 +25,7 @@ public class BaseApplicationViewStates : BaseViewModel
     private int _studentFormId;
     private int _courseFormId;
     private bool _isFormsCompleted;
+    private string _studentEmail;
     #endregion
 
     #region [ CTor ]
@@ -148,6 +149,12 @@ public class BaseApplicationViewStates : BaseViewModel
     {
         get { return this._isFormsCompleted; }
         set { this.SetProperty(ref this._isFormsCompleted, value); }
+    }
+
+    public string StudentEmail
+    {
+        get { return this._studentEmail; }
+        set { this.SetProperty(ref this._studentEmail, value); }
     }
     #endregion
 }

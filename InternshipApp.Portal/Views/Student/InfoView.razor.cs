@@ -59,6 +59,9 @@ public partial class InfoView
     public ICompanyRepository Companies { get; set; }
 
     [Inject]
+    public IStudentFormRepository StudentForms { get; set; }
+
+    [Inject]
     public ILocalStorageService LocalStorage { get; set; }
 
     [Inject]
@@ -347,11 +350,13 @@ public partial class InfoView
         }
 
         var evaluations = await Evaluations.FindByStudentAsync(student.Id);
+        var finalEvaluation = await StudentForms.FindAll(x => x.StudentId == States.Id).FirstOrDefaultAsync();
         var score = evaluations.Average(x => x.Score);
+        score += finalEvaluation.OverallScore;
+        score /= 2;
 
         student.Stat = Stat.FINISHED;
         student.Score = (int)score;
-        student.StudentJobs.Clear();
 
         var result = await Students.UpdateAsync(student);
         if (!result.Succeeded)

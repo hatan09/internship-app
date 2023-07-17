@@ -24,8 +24,7 @@
                 </b>
             </h2>
             <CommandBarView 
-                AcceptCallback="@OnAccept" 
-                ChatCallback="OnChat" 
+                AcceptCallback="@OnAccept"
                 SendEmailCallback="OnSendEmail" 
                 RejectCallback="@OnReject" />
         </Stack>
@@ -91,6 +90,7 @@
     </Stack>
 </Stack>
 
+<PopupView IsSendEmailView Context=@SendEmailPopupContext />
 
 <style>
     h2{

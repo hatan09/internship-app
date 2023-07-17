@@ -1,6 +1,7 @@
 ﻿using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
+using InternshipApp.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
@@ -36,6 +37,9 @@ public partial class ApplicationInfoView
 
     [Inject]
     public IMatchingService MatchingService { get; set; }
+
+    [Inject]
+    public IEmailService EmailService { get; set; }
     #endregion
 
     #region [ Properties - Panel ]
@@ -46,6 +50,8 @@ public partial class ApplicationInfoView
     protected ApplicationDetailsViewStates States { get; private set; }
 
     protected List<Skill> AllSkills { get; private set; }
+
+    public PopupContext SendEmailPopupContext { get; set; }
     #endregion
 
     #region [ Protected Methods - Override ]
@@ -95,6 +101,7 @@ public partial class ApplicationInfoView
 
             this.States = item.ToDetailsViewStates();
             States.StudentName = student.FullName;
+            States.StudentEmail = student.Email;
             States.Year = student.Year;
             States.Credits = student.Credit;
             States.Gpa = student.GPA;
@@ -104,7 +111,7 @@ public partial class ApplicationInfoView
             States.CvUrl = student.CVUrl;
             States.ImgUrl = student.ImgUrl;
             States.JobName = job.Title;
-            
+
         }
         catch (Exception ex)
         {
@@ -224,15 +231,24 @@ public partial class ApplicationInfoView
         await LoadDataAsync();
     }
 
-    public async void OnChat()
+    public void OnSendEmail()
     {
-        NavigationManager.NavigateTo($"/chat/{States.Id}");
-
+        SendEmailPopupContext = new()
+        {
+            IsOpen = true,
+            StudentName = States.StudentName,
+            OnSendEmailCallback = SendEmailAsync
+        };
     }
 
-    public async void OnSendEmail()
+    public async void SendEmailAsync(string subject, string content)
     {
-
+        await EmailService.Send(new()
+        {
+            To = States.StudentEmail,
+            Subject = subject,
+            Body = content
+        });
     }
 
     public async void OnReject()
