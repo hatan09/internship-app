@@ -27,7 +27,10 @@ public partial class PopupView
     [Parameter]
     public PopupContext Context { get; set; }
 
-    public bool Visible { get; set; }
+    public bool IsVisible { get; set; }
+
+    public string EmailSubject { get; set; }
+    public string EmailBody { get; set; }
 
     private bool IsSkillEdited { get; set; } = false;
 
@@ -41,7 +44,7 @@ public partial class PopupView
         await base.SetParametersAsync(parameters);
         if (newContext != null && newContext != currentContext)
         {
-            Visible = Context.IsOpen;
+            IsVisible = Context.IsOpen;
             IsSkillEdited = false;
             StateHasChanged();
 
@@ -70,6 +73,12 @@ public partial class PopupView
         IsSkillEdited = true;
     }
 
+    public void OnSendButtonClicked()
+    {
+        Context.OnSendEmailCallback?.Invoke(EmailSubject, EmailBody);
+        IsVisible = false;
+    }
+
     public void OnCloseHandler()
     {
         if(IsEditSkillView && IsSkillEdited)
@@ -79,11 +88,11 @@ public partial class PopupView
         }
     }
 
-    public async void OnFinishButtonClicked()
+    public void OnFinishButtonClicked()
     {
         if (IsTeacherViewing)
         {
-            await Context.OnFinishCallBack.InvokeAsync();
+            Context.OnFinishCallback?.Invoke();
         }
     }
 }
@@ -93,8 +102,10 @@ public class PopupContext
     public bool IsOpen { get; set; }
     public string Message { get; set; }
     public string StudentId { get; set; }
+    public string StudentName { get; set; }
     public string CompanyName { get; set; }
     public List<Skill> AllSkills { get; set; }
     public Action OnEditedSkillCallback { get; set; }
-    public EventCallback OnFinishCallBack { get; set; }
+    public Action<string, string> OnSendEmailCallback { get; set; }
+    public Action OnFinishCallback { get; set; }
 }

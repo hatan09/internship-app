@@ -1,3 +1,6 @@
+using System.Net;
+using System.Net.Mail;
+using System.Text;
 using AutoMapper;
 using InternshipApp.Api.AppsettingConfig;
 using InternshipApp.Api.DataObjects;
@@ -6,12 +9,13 @@ using InternshipApp.Core.Database;
 using InternshipApp.Core.Entities;
 using InternshipApp.Hubs;
 using InternshipApp.Repository;
+using InternshipApp.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,7 +71,8 @@ builder.Services
     .AddDbContextPool<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection")));
 
 //UserIdentity
-builder.Services.AddIdentity<User, Role>(options => {
+builder.Services.AddIdentity<User, Role>(options =>
+{
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
@@ -145,7 +150,22 @@ builder.Services.AddScoped<ILabourMarketFormRepository, LabourMarketFormReposito
 
 //Chat
 builder.Services.AddSignalR();
-//builder.Services.AddScoped<ChatHub>();
+builder.Services.AddScoped<ChatHub>();
+
+//Email
+builder.Services.AddScoped(provider =>
+{
+    var config = provider.GetRequiredService<IOptionsMonitor<EmailConfig>>().CurrentValue;
+    SmtpClient client = new(config.Host, config.Port)
+    {
+        EnableSsl = config.EnableSsl,
+        UseDefaultCredentials = config.UseDefaultCredentials,
+        Credentials = new NetworkCredential(config.UserName, config.Password)
+    };
+
+    return client;
+});
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 //Authorization
 builder.Services.AddAuthorization();
@@ -177,6 +197,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
+app.UseAuthentication();
+
+app.UseAuthorization();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
@@ -186,9 +210,5 @@ app.UseEndpoints(endpoints =>
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAnySourceCors");
-
-app.UseAuthentication();
-
-app.UseAuthorization();
 
 app.Run();

@@ -2,7 +2,7 @@
 @using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.Buttons
 
-<SfDialog Height="50%" Width="50%" Target="#target" ShowCloseIcon="true" @bind-Visible="Visible" CloseOnEscape>
+<SfDialog Height="50%" Width="50%" Target="#target" ShowCloseIcon="true" @bind-Visible="IsVisible" CloseOnEscape>
     <DialogEvents Closed="@OnCloseHandler" ></DialogEvents>
     @if (IsEditSkillView)
     {
@@ -17,6 +17,28 @@
             </Content>
             <FooterTemplate>
                 <div>*Notes: Unfocus an adjusted field will automatically update that row</div>
+            </FooterTemplate>
+        </DialogTemplates>
+    }
+    else if (IsSendEmailView)
+    {
+        <DialogTemplates>
+            <Header>
+                <div>Send Email to @Context?.StudentName</div>
+            </Header>
+            <Content>
+                <Stack Style="width:100%">
+                    <FluentTextField @bind-Value=@EmailSubject Placeholder="Subject">
+                        <label><b>Subject</b></label>
+                    </FluentTextField>
+                    <br />
+                    <FluentTextArea Resize="TextAreaResize.Vertical" @bind-Value=@EmailBody Placeholder="Body">
+                        <label><b>Body</b></label>
+                    </FluentTextArea>
+                </Stack>
+            </Content>
+            <FooterTemplate>
+                <div><FluentButton Appearance="Appearance.Accent" @onclick=@OnSendButtonClicked>Send <span class=@($"ms-Icon ms-Icon--Send")></span> </FluentButton></div>
             </FooterTemplate>
         </DialogTemplates>
     }

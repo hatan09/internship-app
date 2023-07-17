@@ -2,6 +2,7 @@
 using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
+using InternshipApp.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
@@ -23,7 +24,8 @@ public partial class InfoView
 
     public List<string> StudentIds { get; set; }
 
-    public PopupContext PopupContext { get; set; }
+    public PopupContext ShowScorePopupContext { get; set; }
+    public PopupContext SendEmailPopupContext { get; set; }
     #endregion
 
     #region [ Properties - Parameter ]
@@ -61,6 +63,9 @@ public partial class InfoView
 
     [Inject]
     public IJSRuntime JSRuntime { get; private set; }
+
+    [Inject]
+    public IEmailService EmailService { get; set; }
     #endregion
 
     #region [ Properties - Panel ]
@@ -217,8 +222,24 @@ public partial class InfoView
         NavigationManager.NavigateTo($"/chat/{States.Id}");
     }
 
-    public async void OnSendEmail()
+    public void OnSendEmail()
     {
+        SendEmailPopupContext = new()
+        {
+            IsOpen = true,
+            StudentName = States.Name,
+            OnSendEmailCallback = SendEmailAsync
+        };
+    }
+
+    public async void SendEmailAsync(string subjeect, string content)
+    {
+        await EmailService.Send(new()
+        {
+            To = States.Email,
+            Subject = subjeect,
+            Body = content
+        });
     }
 
     public void OnOpenFinalForms()
@@ -265,10 +286,11 @@ public partial class InfoView
 
     public void OnShowScore()
     {
-        PopupContext = new()
+        ShowScorePopupContext = new()
         {
             IsOpen = true,
-            StudentId = StudentId
+            StudentId = StudentId,
+            OnFinishCallback = OnFinish
         };
     }
 
@@ -315,7 +337,7 @@ public partial class InfoView
         }
     }
 
-    public async Task OnFinish()
+    public async void OnFinish()
     {
         var student = await Students.FindAll(x => x.Id == States.Id).Include(x => x.StudentJobs).AsTracking().FirstOrDefaultAsync();
         if (student == null)

@@ -1,18 +1,20 @@
+using System.Net;
+using System.Net.Mail;
 using System.Text;
 using Blazored.LocalStorage;
-using BlogApi.Services;
+using InternshipApp.Api.AppsettingConfig;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Database;
 using InternshipApp.Core.Entities;
-using InternshipApp.Portal.AppsettingConfig;
+using InternshipApp.Portal;
 using InternshipApp.Repository;
+using InternshipApp.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.Fast.Components.FluentUI;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.JSInterop;
-using Services;
 using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -113,8 +115,20 @@ builder.Services.AddTransient<IInternGroupServices, InternGroupServices>();
 builder.Services.AddTransient<IStudentFormRepository, StudentFormRepository>();
 builder.Services.AddTransient<ILabourMarketFormRepository, LabourMarketFormRepository>();
 
-//Services
-//builder.Services.AddTransient<IEmailService, EmailService>();
+//Email
+builder.Services.AddScoped(provider =>
+{
+    var config = provider.GetRequiredService<IOptionsMonitor<EmailConfig>>().CurrentValue;
+    SmtpClient client = new(config.Host, config.Port)
+    {
+        EnableSsl = config.EnableSsl,
+        UseDefaultCredentials = config.UseDefaultCredentials,
+        Credentials = new NetworkCredential(config.UserName, config.Password)
+    };
+
+    return client;
+});
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 //Authorization
 

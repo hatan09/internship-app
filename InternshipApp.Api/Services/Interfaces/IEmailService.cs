@@ -1,6 +1,6 @@
 ﻿using Models;
 
-namespace Services;
+namespace InternshipApp.Services;
 
 public interface IEmailService
 {

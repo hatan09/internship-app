@@ -158,7 +158,9 @@
 
 <StudentInfoFormPanel FormRequest="@StudentFormRequest" FormResultCallback="@OnFormResultReceived" />
 
-<PopupView IsShowScoreView=true Context=@PopupContext />
+<PopupView IsShowScoreView Context=@ShowScorePopupContext />
+
+<PopupView IsSendEmailView Context=@SendEmailPopupContext />
 
 <SfDialog Height="30%" Width="30%" Target="#target" ShowCloseIcon="true" @bind-Visible="IsModalOpen">
     <DialogTemplates>
