@@ -1,9 +1,11 @@
-﻿namespace InternshipApp.Portal.WebApi;
+﻿using Blazored.LocalStorage;
+
+namespace InternshipApp.Portal.WebApi;
 
 public class RecruiterHttpClient : BaseEntityHttpClient
 {
     #region [ CTor ]
-    public RecruiterHttpClient(IHttpClientFactory clientFactory) : base(clientFactory) { }
+    public RecruiterHttpClient(IHttpClientFactory clientFactory, ILocalStorageService localStorageService) : base(clientFactory, localStorageService) { }
     #endregion
 
     #region [ Methods - Custom ]

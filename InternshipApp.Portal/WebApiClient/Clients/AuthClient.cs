@@ -1,4 +1,5 @@
-﻿using InternshipApp.Api.Models;
+﻿using Blazored.LocalStorage;
+using InternshipApp.Api.Models;
 using InternshipApp.Core.Entities;
 
 namespace InternshipApp.Portal.WebApi;
@@ -6,7 +7,7 @@ namespace InternshipApp.Portal.WebApi;
 public class AuthClient : BaseEntityHttpClient
 {
     #region [ CTor ]
-    public AuthClient(IHttpClientFactory clientFactory) : base(clientFactory) { }
+    public AuthClient(IHttpClientFactory clientFactory, ILocalStorageService localStorageService) : base(clientFactory, localStorageService) { }
     #endregion
 
     #region [ Methods - Custom ]

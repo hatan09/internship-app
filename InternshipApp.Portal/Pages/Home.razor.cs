@@ -1,6 +1,7 @@
 ﻿using Blazored.LocalStorage;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
+using InternshipApp.Portal.WebApi;
 using InternshipApp.Repository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -41,7 +42,7 @@ public partial class Home
     public DateTime EndTime { get; set; }
 
     [Inject]
-    public 
+    public AuthClient AuthClient { get; set; }
 
     [Inject]
     public ILocalStorageService LocalStorage { get; set; }

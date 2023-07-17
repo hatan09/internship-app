@@ -1,4 +1,5 @@
-﻿using InternshipApp.Core.Entities;
+﻿using Blazored.LocalStorage;
+using InternshipApp.Core.Entities;
 
 namespace InternshipApp.Portal.WebApi;
 
@@ -10,8 +11,8 @@ public abstract class BaseEntityHttpClient : BaseHttpClient
 
     #region [ CTor ]
     public BaseEntityHttpClient(
-        IHttpClientFactory clientFactory)
-        : base(clientFactory)
+        IHttpClientFactory clientFactory, ILocalStorageService localStorage)
+        : base(clientFactory, localStorage)
     {
 
     }

@@ -6,6 +6,7 @@ using InternshipApp.Api.AppsettingConfig;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Database;
 using InternshipApp.Core.Entities;
+using InternshipApp.Portal.WebApi;
 using InternshipApp.Repository;
 using InternshipApp.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -113,6 +114,14 @@ builder.Services.AddTransient<IMatchingService, MatchingService>();
 builder.Services.AddTransient<IInternGroupServices, InternGroupServices>();
 builder.Services.AddTransient<IStudentFormRepository, StudentFormRepository>();
 builder.Services.AddTransient<ILabourMarketFormRepository, LabourMarketFormRepository>();
+
+//HttpClients
+builder.Services.AddHttpClient();
+builder.Services.AddTransient<AuthClient>();
+builder.Services.AddTransient<StudentHttpClient>();
+builder.Services.AddTransient<InstructorHttpClient>();
+builder.Services.AddTransient<RecruiterHttpClient>();
+builder.Services.AddTransient<AdminHttpClient>();
 
 //Email
 builder.Services.AddScoped(provider =>
