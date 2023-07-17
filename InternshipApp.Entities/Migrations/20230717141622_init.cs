@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InternshipApp.Core.Migrations
 {
-    public partial class firstinit : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -31,6 +31,8 @@ namespace InternshipApp.Core.Migrations
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gender = table.Column<bool>(type: "bit", nullable: true),
                     Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SignalRConnectionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -77,7 +79,10 @@ namespace InternshipApp.Core.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Pin = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Pin = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastMessageTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastMessage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastSender = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -119,6 +124,58 @@ namespace InternshipApp.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LabourMarketForms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StudentId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ContactName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TheEducationalGoalsAndProgramOutcomesAreClearAndAppropriateAsStated = table.Column<int>(type: "int", nullable: false),
+                    TheCurriculumSatisfactorilyCoversTheProfessionOfComputingInTermsOfBreadthAndDepthOfKnowledge = table.Column<int>(type: "int", nullable: false),
+                    AnAbilityToApplyProfessionalKnowledgeInPractice = table.Column<int>(type: "int", nullable: false),
+                    AnAbilityToPlanOrganizeAndManageAProject = table.Column<int>(type: "int", nullable: false),
+                    AnAbilityInProblemSolving = table.Column<int>(type: "int", nullable: false),
+                    InitiativeTaking = table.Column<int>(type: "int", nullable: false),
+                    AnAbilityToFunctionEffectivelyOnTeams = table.Column<int>(type: "int", nullable: false),
+                    ProfessionalEthicsAndResponsibility = table.Column<int>(type: "int", nullable: false),
+                    AnAbilityToCommunicateEffectively = table.Column<int>(type: "int", nullable: false),
+                    AnAbilityToEngageInContinuingProfessionalDevelopment = table.Column<int>(type: "int", nullable: false),
+                    Independence = table.Column<int>(type: "int", nullable: false),
+                    RelationsWithOthers = table.Column<int>(type: "int", nullable: false),
+                    IUGraduates = table.Column<int>(type: "int", nullable: false),
+                    Prepared = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Improvements = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Skills = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsSubmitted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LabourMarketForms", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Settings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CloseRegistrationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    JobDeadline = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SummaryTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MaximumStudents = table.Column<int>(type: "int", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Settings", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Skills",
                 columns: table => new
                 {
@@ -145,6 +202,58 @@ namespace InternshipApp.Core.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SkillScores", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StudentForms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StudentId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GeneralInformation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StudentName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EvaluatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AverageReportScore = table.Column<int>(type: "int", nullable: false),
+                    OverallScore = table.Column<int>(type: "int", nullable: false),
+                    StudentComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsSubmitted = table.Column<bool>(type: "bit", nullable: false),
+                    FulfilmentOfInternshipObjectives = table.Column<int>(type: "int", nullable: false),
+                    FulfilmentOfInternshipObjectivesComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AcademicPreparationOfTheStudents = table.Column<int>(type: "int", nullable: false),
+                    AcademicPreparationOfTheStudentsComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InterestInWorkResearch = table.Column<int>(type: "int", nullable: false),
+                    InterestInWorkResearchComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AbilityToLearn = table.Column<int>(type: "int", nullable: false),
+                    AbilityToLearnComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Initiative = table.Column<int>(type: "int", nullable: false),
+                    InitiativeComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Independence = table.Column<int>(type: "int", nullable: false),
+                    IndependenceComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrganizationPlanning = table.Column<int>(type: "int", nullable: false),
+                    OrganizationPlanningComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    QualityOfWorkResearch = table.Column<int>(type: "int", nullable: false),
+                    QualityOfWorkResearchComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AnalyticalProblemSolvingSkills = table.Column<int>(type: "int", nullable: false),
+                    AnalyticalProblemSolvingSkillsComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Dependability = table.Column<int>(type: "int", nullable: false),
+                    DependabilityComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AcceptanceOfSuggestionsAndCriticisms = table.Column<int>(type: "int", nullable: false),
+                    AcceptanceOfSuggestionsAndCriticismsComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RelationsWithOthers = table.Column<int>(type: "int", nullable: false),
+                    RelationsWithOthersComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Attendance = table.Column<int>(type: "int", nullable: false),
+                    Punctuality = table.Column<int>(type: "int", nullable: false),
+                    AttendanceAndPunctualityComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OverallPerformance = table.Column<int>(type: "int", nullable: false),
+                    OverallPerformanceComment = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentForms", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -265,6 +374,8 @@ namespace InternshipApp.Core.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MinYear = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    JobPaths = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsAccepted = table.Column<bool>(type: "bit", nullable: false),
                     CompanyId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -356,7 +467,8 @@ namespace InternshipApp.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DepartmentId = table.Column<int>(type: "int", nullable: true)
+                    DepartmentId = table.Column<int>(type: "int", nullable: true),
+                    IsDepartmentManager = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -433,7 +545,7 @@ namespace InternshipApp.Core.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Slots = table.Column<int>(type: "int", nullable: false),
                     InstructorId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    DepartmentId = table.Column<int>(type: "int", nullable: false)
+                    DepartmentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -442,13 +554,13 @@ namespace InternshipApp.Core.Migrations
                         name: "FK_InternGroups_Departments_DepartmentId",
                         column: x => x.DepartmentId,
                         principalTable: "Departments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_InternGroups_Instructors_InstructorId",
                         column: x => x.InstructorId,
                         principalTable: "Instructors",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -466,6 +578,7 @@ namespace InternshipApp.Core.Migrations
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GitProfileUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Score = table.Column<int>(type: "int", nullable: false),
+                    Comments = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DepartmentId = table.Column<int>(type: "int", nullable: true),
                     InternGroupId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -486,7 +599,8 @@ namespace InternshipApp.Core.Migrations
                         name: "FK_Students_InternGroups_InternGroupId",
                         column: x => x.InternGroupId,
                         principalTable: "InternGroups",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -686,13 +800,22 @@ namespace InternshipApp.Core.Migrations
                 name: "JobSkill");
 
             migrationBuilder.DropTable(
+                name: "LabourMarketForms");
+
+            migrationBuilder.DropTable(
                 name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "Recruiters");
 
             migrationBuilder.DropTable(
+                name: "Settings");
+
+            migrationBuilder.DropTable(
                 name: "SkillScores");
+
+            migrationBuilder.DropTable(
+                name: "StudentForms");
 
             migrationBuilder.DropTable(
                 name: "StudentJob");

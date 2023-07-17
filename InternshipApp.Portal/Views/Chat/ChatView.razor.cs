@@ -80,7 +80,7 @@ public partial class ChatView
         RecruiterConversations = new();
 
         ConnectionContext = new HubConnectionBuilder()
-                .WithUrl("http://localhost:53353/internship-app-chat")
+                .WithUrl("http://app-internship-app.azurewebsites.net/internship-app-chat")
                 .WithAutomaticReconnect()
                 .Build();
 

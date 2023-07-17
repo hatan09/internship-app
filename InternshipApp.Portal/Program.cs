@@ -6,7 +6,6 @@ using InternshipApp.Api.AppsettingConfig;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Database;
 using InternshipApp.Core.Entities;
-using InternshipApp.Portal;
 using InternshipApp.Repository;
 using InternshipApp.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

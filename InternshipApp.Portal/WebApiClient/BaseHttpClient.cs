@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Blazored.LocalStorage;
 
 namespace InternshipApp.Portal.WebApi;
 
@@ -6,14 +7,15 @@ public abstract class BaseHttpClient
 {
     #region [ Fields ]
     protected readonly IHttpClientFactory HttpClientFactory;
-
-    protected readonly string _baseApiUrl;
+    protected readonly ILocalStorageService _localStorage;
+    protected readonly string _baseApiUrl = "https://app-internship-app.azurewebsites.net/api/";
     #endregion
 
     #region [ CTor ]
-    public BaseHttpClient(IHttpClientFactory clientFactory)
+    public BaseHttpClient(IHttpClientFactory clientFactory, ILocalStorageService localStorage)
     {
         this.HttpClientFactory = clientFactory;
+        this._localStorage = localStorage;
     }
     #endregion
 
@@ -165,11 +167,14 @@ public abstract class BaseHttpClient
     #endregion
 
     #region [ Public Methods - Client ]
-    protected Task<HttpClient> CreateClientAsync(bool useAuthProvider = true)
+    protected async Task<HttpClient> CreateClientAsync()
     {
+        var accessToken = await _localStorage.GetItemAsStringAsync("accessToken");
         var client = this.HttpClientFactory.CreateClient();
         client.BaseAddress = new Uri(_baseApiUrl);
-        return Task.FromResult(client);
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
+        client.DefaultRequestHeaders.Add("authentication", $"Bearer {accessToken}");
+        return client;
     }
     #endregion
 }

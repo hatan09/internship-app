@@ -41,6 +41,9 @@ public partial class Home
     public DateTime EndTime { get; set; }
 
     [Inject]
+    public 
+
+    [Inject]
     public ILocalStorageService LocalStorage { get; set; }
 
     [Inject]

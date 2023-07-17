@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternshipApp.Core.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230625104435_update")]
-    partial class update
+    [Migration("20230717141622_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -115,23 +115,6 @@ namespace InternshipApp.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Conversations");
-                });
-
-            modelBuilder.Entity("InternshipApp.Core.Entities.CourseForm", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CourseForms");
                 });
 
             modelBuilder.Entity("InternshipApp.Core.Entities.Department", b =>
@@ -326,6 +309,82 @@ namespace InternshipApp.Core.Migrations
                     b.ToTable("JobSkill");
                 });
 
+            modelBuilder.Entity("InternshipApp.Core.Entities.LabourMarketForm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AnAbilityInProblemSolving")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AnAbilityToApplyProfessionalKnowledgeInPractice")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AnAbilityToCommunicateEffectively")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AnAbilityToEngageInContinuingProfessionalDevelopment")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AnAbilityToFunctionEffectivelyOnTeams")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AnAbilityToPlanOrganizeAndManageAProject")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ContactName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IUGraduates")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Improvements")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Independence")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InitiativeTaking")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsSubmitted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Prepared")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProfessionalEthicsAndResponsibility")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RelationsWithOthers")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Skills")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TheCurriculumSatisfactorilyCoversTheProfessionOfComputingInTermsOfBreadthAndDepthOfKnowledge")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TheEducationalGoalsAndProgramOutcomesAreClearAndAppropriateAsStated")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LabourMarketForms");
+                });
+
             modelBuilder.Entity("InternshipApp.Core.Entities.Message", b =>
                 {
                     b.Property<int>("Id")
@@ -434,8 +493,124 @@ namespace InternshipApp.Core.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("AbilityToLearn")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AbilityToLearnComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("AcademicPreparationOfTheStudents")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AcademicPreparationOfTheStudentsComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("AcceptanceOfSuggestionsAndCriticisms")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AcceptanceOfSuggestionsAndCriticismsComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("AnalyticalProblemSolvingSkills")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AnalyticalProblemSolvingSkillsComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Attendance")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AttendanceAndPunctualityComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("AverageReportScore")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Dependability")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DependabilityComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EvaluatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FulfilmentOfInternshipObjectives")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FulfilmentOfInternshipObjectivesComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GeneralInformation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Independence")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IndependenceComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Initiative")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InitiativeComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("InterestInWorkResearch")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InterestInWorkResearchComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsSubmitted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OrganizationPlanning")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OrganizationPlanningComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OverallPerformance")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OverallPerformanceComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OverallScore")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Punctuality")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QualityOfWorkResearch")
+                        .HasColumnType("int");
+
+                    b.Property<string>("QualityOfWorkResearchComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RelationsWithOthers")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RelationsWithOthersComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("StudentComment")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("StudentId")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -548,6 +723,9 @@ namespace InternshipApp.Core.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SignalRConnectionId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
