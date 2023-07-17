@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
-using InternshipApp.Api.DataObjects;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Entities;
 using InternshipApp.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Hubs;
 
+[AllowAnonymous]
 public class ChatHub : Hub
 {
     private IMapper _mapper;
@@ -43,7 +44,7 @@ public class ChatHub : Hub
             await Clients.All.SendAsync("UserLogOut", Context.ConnectionId);
             if (user.Conversations != null && user.Conversations.Any())
             {
-                foreach(var conversation in user.Conversations)
+                foreach (var conversation in user.Conversations)
                 {
                     await Groups.RemoveFromGroupAsync(Context.ConnectionId, conversation.Id.ToString(), token);
                 }

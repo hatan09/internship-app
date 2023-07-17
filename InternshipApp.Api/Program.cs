@@ -68,7 +68,7 @@ builder.Services.AddSwaggerGen(c =>
 
 //Add database
 builder.Services
-    .AddDbContextPool<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection")));
+    .AddDbContextPool<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //UserIdentity
 builder.Services.AddIdentity<User, Role>(options =>
@@ -149,7 +149,9 @@ builder.Services.AddScoped<IStudentFormRepository, StudentFormRepository>();
 builder.Services.AddScoped<ILabourMarketFormRepository, LabourMarketFormRepository>();
 
 //Chat
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(x => {
+    x.EnableDetailedErrors = true;
+});
 builder.Services.AddScoped<ChatHub>();
 
 //Email
@@ -189,17 +191,16 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseRouting();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseCors("AllowAnySourceCors");
 
 app.UseEndpoints(endpoints =>
 {
@@ -209,6 +210,5 @@ app.UseEndpoints(endpoints =>
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAnySourceCors");
 
 app.Run();
