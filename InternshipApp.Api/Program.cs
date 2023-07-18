@@ -190,17 +190,16 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseRouting();
+app.UseCors("AllowAnySourceCors");
 
 app.UseAuthentication();
 
-app.UseAuthorization();
+app.UseRouting();
 
-app.UseCors("AllowAnySourceCors");
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
@@ -209,6 +208,5 @@ app.UseEndpoints(endpoints =>
 });
 
 app.UseHttpsRedirection();
-
 
 app.Run();

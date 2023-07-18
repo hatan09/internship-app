@@ -173,7 +173,7 @@ public abstract class BaseHttpClient
         var client = this.HttpClientFactory.CreateClient();
         client.BaseAddress = new Uri(_baseApiUrl);
         client.DefaultRequestHeaders.Add("Accept", "application/json");
-        client.DefaultRequestHeaders.Add("authentication", $"Bearer {accessToken}");
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
         return client;
     }
     #endregion

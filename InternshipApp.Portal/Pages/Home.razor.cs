@@ -237,6 +237,16 @@ public partial class Home
             return false;
         }
 
+        var response = await AuthClient.LoginAsync(Username, Password);
+        if(response != null && !string.IsNullOrEmpty(response.AccessToken))
+        {
+            await LocalStorage.SetItemAsync("accessToken", response.AccessToken);
+        }
+        else
+        {
+            //return false;
+        }
+
         var user = await Users.FindByNameAsync(Username);
         if (user == null)
         {

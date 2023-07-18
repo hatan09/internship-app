@@ -11,14 +11,16 @@ public class AuthClient : BaseEntityHttpClient
     #endregion
 
     #region [ Methods - Custom ]
-    public Task<LoginResponse> LoginAsync(string username, string password)
+    public async Task<LoginResponse> LoginAsync(string username, string password)
     {
-        var url = $"{base._baseApiUrl}/auth/login";
-        return base.PostAsJsonAsync<LoginResponse, LoginModel>(url, new()
+        var url = $"{base._baseApiUrl}auth/login";
+        using var client = await base.CreateClientAsync();
+        var response = await client.PostAsJsonAsync<LoginResponse, LoginModel>(url, new()
         {
             Username = username,
-            Password = password
-        });
+            Password = password,
+        }, false);
+        return response;
     }
 
     public Task RegisterAsync(Student student)

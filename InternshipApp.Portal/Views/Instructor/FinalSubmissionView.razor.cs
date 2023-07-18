@@ -70,7 +70,7 @@ public partial class FinalSubmissionView
             {
                 score += x.Score;
             });
-            score /= evaluation.Count;
+            score /= evaluation.Count == 0 ? 1 : evaluation.Count;
 
             StudentForm = new()
             {

@@ -36,9 +36,7 @@ public partial class StudentFormView
 
     public StudentForm StudentForm { get; set; } = new();
 
-    public string Options1 { 
-        get; 
-        set; }
+    public string Options1 { get; set; }
     public string Options2 { get; set; }
     public string Options3 { get; set; }
     public string Options4 { get; set; }

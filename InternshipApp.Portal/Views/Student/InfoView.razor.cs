@@ -222,7 +222,7 @@ public partial class InfoView
 
     public void OnChat()
     {
-        NavigationManager.NavigateTo($"/chat/{States.Id}");
+        NavigationManager.NavigateTo($"/chat");
     }
 
     public void OnSendEmail()
@@ -345,7 +345,7 @@ public partial class InfoView
         var student = await Students.FindAll(x => x.Id == States.Id).Include(x => x.StudentJobs).AsTracking().FirstOrDefaultAsync();
         if (student == null)
         {
-            await JSRuntime.InvokeVoidAsync("alert", "Can't mark as finished");
+            await JSRuntime.InvokeVoidAsync("alert", "Can't find student in database");
             return;
         }
 
