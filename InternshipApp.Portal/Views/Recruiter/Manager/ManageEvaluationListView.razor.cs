@@ -273,7 +273,13 @@ public partial class ManageEvaluationListView
             this.States.Items.Clear();
             this.StateHasChanged();
 
-            if (!string.IsNullOrEmpty(JobId))
+            if(!string.IsNullOrEmpty(JobId) && !string.IsNullOrEmpty(StudentId))
+            {
+                IsEditable = true;
+                var evaluations = await Evaluations.FindAll(x => x.JobId == int.Parse(JobId) && x.StudentId == StudentId).AsNoTracking().ToListAsync();
+                States.Items = evaluations.ToListRowList();
+            }
+            else if (!string.IsNullOrEmpty(JobId))
             {
                 IsEditable = true;
                 var evaluations = await Evaluations.FindAll(x => x.JobId == int.Parse(JobId)).AsNoTracking().ToListAsync();

@@ -55,7 +55,7 @@
     }
     else
     {
-        <CommandBarView EditCallback="OnEdit" />
+        <CommandBarView EditCallback="OnEdit" ApplyListCallback="OnOpenApplyList"/>
     }
 </Stack>
 
@@ -103,7 +103,7 @@
         <SkillTagList StudentId="@States.Id" 
             StudentSkills="@States.StudentSkills" 
             AllSkills="@States.AllSkills"
-            IsEditable=@(States.Status == Stat.WAITING.ToString() && States.Status == Stat.APPLIED.ToString() && States.Status == Stat.ACCEPTED.ToString())
+            IsEditable=@(States.Status == Stat.WAITING.ToString() || States.Status == Stat.APPLIED.ToString() || States.Status == Stat.ACCEPTED.ToString())
             OnEditButtonClickedCallback="OnEditSkill">
 
         </SkillTagList>

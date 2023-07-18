@@ -310,7 +310,7 @@ public partial class InfoView
             .Include(x => x.Instructor)
             .Include(x => x.Students)
             .AsTracking().FirstOrDefaultAsync();
-        var student = await Students.FindByIdAsync(States.Id);
+        var student = await Students.FindAll(x => x.Id == States.Id).AsTracking().FirstOrDefaultAsync();
         if (group != null && student != null && student.Stat == Stat.WAITING)
         {
             group.Students.Add(student);
@@ -338,6 +338,8 @@ public partial class InfoView
             await Groups.SaveChangesAsync();
             await Conversations.SaveChangesAsync();
         }
+
+        await LoadDataAsync();
     }
 
     public async void OnFinish()

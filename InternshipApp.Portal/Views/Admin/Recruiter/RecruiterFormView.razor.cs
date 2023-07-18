@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Wave5.UI.Forms;
 using InternshipApp.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
 
@@ -16,6 +17,9 @@ public partial class RecruiterFormView
 
     [Inject]
     public RoleManager<Role> Roles { get; private set; }
+
+    [Inject]
+    public InstructorManager Instructors { get; private set; }
 
     #endregion
 
@@ -155,6 +159,18 @@ public partial class RecruiterFormView
             if (!result.Succeeded)
             {
                 return;
+            }
+
+            var instructor = await Instructors.FindAll(x => x.IsDepartmentManager).AsTracking().FirstOrDefaultAsync();
+            var createdRecruiter = await Recruiters.FindAll(x => x.UserName == recruiter.UserName).AsTracking().FirstOrDefaultAsync();
+            if(instructor != null && createdRecruiter != null)
+            {
+                var newConversation = new Conversation()
+                {
+                    LastMessageTime= DateTime.Now,
+                    Title = $"{instructor.FullName}_{createdRecruiter.FullName}",
+                    Users = {instructor, createdRecruiter}
+                };
             }
 
             await this.InvokeFormResultCallbackAsync(FormResultState.Added);

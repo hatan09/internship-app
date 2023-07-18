@@ -117,13 +117,14 @@ public partial class ChatView : IAsyncDisposable
             if (ConnectionContext != null)
             {
                 var connectionId = await GetConnectionIdAsync();
-                //if (!string.IsNullOrEmpty(connectionId))
-                //{
-                //    var user = await LocalStorage.GetItemAsync<User>("login-user-info");
-                //    if (user != null) {
-                //        await ChatHubUserIdentify(connectionId, user.Id);
-                //    }
-                //}
+                if (!string.IsNullOrEmpty(connectionId))
+                {
+                    var user = await LocalStorage.GetItemAsync<User>("login-user-info");
+                    if (user != null)
+                    {
+                        await ChatHubUserIdentify(connectionId, user.Id);
+                    }
+                }
             }
             await LoadDataAsync();
         }

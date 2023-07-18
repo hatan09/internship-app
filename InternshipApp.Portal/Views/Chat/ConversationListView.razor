@@ -126,14 +126,10 @@
                     Department Manager Instructor
                 </b>
             </Stack>
-            <div class="conversation-item-list flex vertical-center">
-                <div class="padding">
-                    <div class="e-list-wrapper e-list-item e-single-item @(CurrentConversationId == InstructorConversation?.Id ? "selected" : "")" @onclick="(e => OnSelect(InstructorConversation))">
-                        <img src="@(InstructorConversation.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
-                        <span class="e-list-item-header">@InstructorConversation.Name</span>
-                        <span class="e-list-content">@InstructorConversation.LastMsgTime.ToString("dd/MM/yyyy HH:mm:ss")</span>
-                    </div>
-                </div>
+            <div class="e-list-wrapper e-list-item e-single-item @(CurrentConversationId == InstructorConversation?.Id ? "selected" : "")" @onclick="(e => OnSelect(InstructorConversation))">
+                <img src="@(InstructorConversation.Avatar)" class="e-avatar e-avatar-circle" alt="Avatar" />
+                <span class="e-list-item-header">@InstructorConversation.Name</span>
+                <span class="e-list-content">@InstructorConversation.LastMsgTime.ToString("dd/MM/yyyy HH:mm:ss")</span>
             </div>
         }
     }
