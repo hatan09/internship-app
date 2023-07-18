@@ -10,7 +10,7 @@
 @if (string.IsNullOrEmpty(LoginUser?.UserName))
 {
     <h1>
-        Hello!
+        Hello @Role?.ToLower()!
     </h1>
     <h4>Welcome to Internship App! Please login!</h4>
     <button @onclick=@ToggleLogin>
@@ -27,12 +27,19 @@ else
     <br />
 }
 
-<p>
-    The internship <b>@InternshipTitle</b> begins and opens for registration of students on <b>@StartTime.ToLongDateString()</b> until <b>@CloseRegistrationTime.ToLongDateString()</b>. After this time, students will no longer be able to register.
-</p>
-<p>
-    Participants will work on this program until <b>@SummaryTime.ToLongDateString()</b> which is the deadline to submit final reports and scores. Instructors will work on the submitted forms to evaluate students' work. Final result is expected to be available on <b>@EndTime.ToLongDateString()</b>. 
-</p>
+@if (IsInInternshipPeriod)
+{
+    <p>
+        The internship <b>@InternshipTitle</b> begins and opens for registration of students on <b>@StartTime.ToLongDateString()</b> until <b>@CloseRegistrationTime.ToLongDateString()</b>. After this time, students will no longer be able to register.
+    </p>
+    <p>
+        Participants will work on this program until <b>@SummaryTime.ToLongDateString()</b> which is the deadline to submit final reports and scores. Instructors will work on the submitted forms to evaluate students' work. Final result is expected to be available on <b>@EndTime.ToLongDateString()</b>.
+    </p>
+}
+else
+{
+    <p>There is currently no internship schedule. Please contact system Admin for more details.</p>
+}
 
 <SfDialog Height="@(IsLogin? "35%" : "80%")" Width="35%" Target="#target" ShowCloseIcon="true" @bind-Visible="Visible" >
     <DialogTemplates>

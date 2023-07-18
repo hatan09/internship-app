@@ -17,6 +17,8 @@ public partial class Home
     public bool IsRegisterOpen { get; set; } = true;
     public bool IsLogin { get; set; } = true;
 
+    public bool IsInInternshipPeriod { get; set; } = false;
+
     public string StudentId { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
@@ -81,6 +83,8 @@ public partial class Home
                 else
                 {
                     LoginUser = user;
+                    var role = await LocalStorage.GetItemAsStringAsync("role");
+                    this.Role = role;
                 }
 
                 await LoadDataAsync();
@@ -108,7 +112,7 @@ public partial class Home
     }
     #endregion
 
-    #region [ Methods - Login ]
+    #region [ Methods - Login/Register/Validation ]
     public async void ToggleRegister()
     {
         if (!IsRegisterOpen)
@@ -167,8 +171,8 @@ public partial class Home
         Visible = !result;
         if (result)
         {
-            NavigationManager.NavigateTo("/", result);
             ResetForm();
+            NavigationManager.NavigateTo("/", result);
         }
     }
 
@@ -238,7 +242,7 @@ public partial class Home
         }
 
         var response = await AuthClient.LoginAsync(Username, Password);
-        if(response != null && !string.IsNullOrEmpty(response.AccessToken))
+        if (response != null && !string.IsNullOrEmpty(response.AccessToken))
         {
             await LocalStorage.SetItemAsync("accessToken", response.AccessToken);
         }
@@ -365,7 +369,7 @@ public partial class Home
     }
     #endregion
 
-    #region [ Methods -  ]
+    #region [ Methods - Data ]
     private async Task LoadDataAsync()
     {
         try
@@ -373,6 +377,8 @@ public partial class Home
             var settings = await Settings.GetCurrentSemester();
             if (settings != null)
             {
+                IsInInternshipPeriod = true;
+
                 InternshipTitle = settings.Title;
                 StartTime = settings.StartTime;
                 CloseRegistrationTime = settings.CloseRegistrationTime;
@@ -382,7 +388,8 @@ public partial class Home
             }
             else
             {
-                if(Role == "ADMIN")
+                IsInInternshipPeriod = false;
+                if (Role == "ADMIN")
                 {
                     await JSRuntime.InvokeVoidAsync("alert", "There is currently no internship settings for semester. Please add soon!");
 

@@ -7,7 +7,6 @@ using InternshipApp.Api.DataObjects;
 using InternshipApp.Contracts;
 using InternshipApp.Core.Database;
 using InternshipApp.Core.Entities;
-using InternshipApp.Hubs;
 using InternshipApp.Repository;
 using InternshipApp.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -148,12 +147,6 @@ builder.Services.AddScoped<IInternGroupServices, InternGroupServices>();
 builder.Services.AddScoped<IStudentFormRepository, StudentFormRepository>();
 builder.Services.AddScoped<ILabourMarketFormRepository, LabourMarketFormRepository>();
 
-//Chat
-builder.Services.AddSignalR(x => {
-    x.EnableDetailedErrors = true;
-});
-builder.Services.AddScoped<ChatHub>();
-
 //Email
 builder.Services.AddScoped(provider =>
 {
@@ -201,11 +194,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-    endpoints.MapHub<ChatHub>("/internship-app-chat");
-});
+app.MapControllers();
 
 app.UseHttpsRedirection();
 

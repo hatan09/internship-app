@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Wave5.UI.Forms;
 using InternshipApp.Contracts;
 using Blazored.LocalStorage;
+using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
 
@@ -87,6 +88,9 @@ public partial class JobFormView
             case FormAction.Add:
                 await this.AddedAsync();
                 break;
+            case FormAction.Edit:
+                await this.UpdatedAsync();
+                break;
         }
     }
 
@@ -157,6 +161,34 @@ public partial class JobFormView
             this.FormRequest.Data = this.States.ToEntity();
             FormRequest.Data.CompanyId = await GetCompanyId();
             this.Jobs.Add(this.FormRequest.Data);
+            await Jobs.SaveChangesAsync();
+
+            await this.InvokeFormResultCallbackAsync(FormResultState.Added);
+        }
+        catch (Exception ex)
+        {
+
+        }
+        finally
+        {
+        }
+    }
+
+    private async Task UpdatedAsync()
+    {
+        try
+        {
+            var job = await Jobs.FindAll(x => x.Id == States.Id).AsTracking().FirstOrDefaultAsync();
+            if(job == null) return;
+
+            job.Title = States.Title;
+            job.Description = States.Description;
+            job.MinCredit = States.Credit;
+            job.MinGPA = States.Gpa;
+            job.MinYear = States.Year;
+            job.Slots = States.Slots;
+
+            this.Jobs.Update(job);
             await Jobs.SaveChangesAsync();
 
             await this.InvokeFormResultCallbackAsync(FormResultState.Added);

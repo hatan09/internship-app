@@ -15,6 +15,7 @@
         </h1>
     </Stack>
 
+    @*Notification*@
     @if (States.Status == Stat.REJECTED.ToString())
     {
         <label>
@@ -34,6 +35,7 @@
         </label>
     }
 
+    @*Command Bar*@
     @if(States.Status == Stat.FINISHED.ToString())
     {
         <CommandBarView ViewResultCallback="OnViewResult" ViewFinalFormsCallback="OnOpenFinalForms"/>
@@ -47,9 +49,13 @@
         <CommandBarView EditCallback="OnEdit" ApplyListCallback="OnOpenApplyList" ViewEvaluationCallback="OnViewEvaluation" ViewFinalFormsCallback="OnOpenFinalForms"/>
 
     }
+    else if (States.InternGroupId < 1)
+    {
+        <CommandBarView EditCallback="OnEdit" />
+    }
     else
     {
-        <CommandBarView EditCallback="OnEdit" ApplyListCallback="OnOpenApplyList"/>
+        <CommandBarView EditCallback="OnEdit" />
     }
 </Stack>
 
@@ -96,8 +102,8 @@
         </h2>
         <SkillTagList StudentId="@States.Id" 
             StudentSkills="@States.StudentSkills" 
-            AllSkills="@States.AllSkills" 
-            IsEditable=true 
+            AllSkills="@States.AllSkills"
+            IsEditable=@(States.Status == Stat.WAITING.ToString() && States.Status == Stat.APPLIED.ToString() && States.Status == Stat.ACCEPTED.ToString())
             OnEditButtonClickedCallback="OnEditSkill">
 
         </SkillTagList>

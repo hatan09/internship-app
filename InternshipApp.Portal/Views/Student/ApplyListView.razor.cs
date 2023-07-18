@@ -34,19 +34,27 @@ public partial class ApplyListView
     #endregion
 
     #region [ Properties - States - Contexts ]
+    //hire
+    protected CommandBarContext HireViewCommandBarContext { get; private set; }
+
+    protected DetailsCardContainerContext HireViewDetailsContainerContext { get; private set; }
+
+    //apply
     public FormRequest<FormAction, StudentJob> ApplicationFormRequest { get; private set; }
 
-    protected DetailsListContainerContext ListContainerContext { get; private set; }
+    protected DetailsListContainerContext ApplyViewListContainerContext { get; private set; }
 
-    protected DataListSearchContext SearchContext { get; private set; }
+    protected DataListSearchContext ApplyViewSearchContext { get; private set; }
 
-    protected CommandBarContext CommandBarContext { get; private set; }
+    protected CommandBarContext ApplyViewCommandBarContext { get; private set; }
 
-    protected DetailsListContext<ApplicationListRowViewStates> ListContext { get; private set; }
+    protected DetailsListContext<ApplicationListRowViewStates> ApplyViewListContext { get; private set; }
     #endregion
 
     #region [ Properties - States - DataList ]
-    protected ApplicationListViewStates States { get; private set; }
+    protected bool IsHired { get; set; } = false;
+    protected ApplicationDetailsViewStates HireViewStates { get; private set; }
+    protected ApplicationListViewStates ApplyViewStates { get; private set; }
     #endregion
 
     #region [ Protected Override Methods - Page ]
@@ -54,15 +62,25 @@ public partial class ApplyListView
     {
         try
         {
-            States = new();
+            //hire
+            HireViewStates = new();
+            this.HireViewCommandBarContext = new CommandBarContext();
+            this.HireViewDetailsContainerContext = new DetailsCardContainerContext();
 
-            SearchContext = new DataListSearchContext();
-            ListContainerContext = new DetailsListContainerContext();
-            ListContext = new DetailsListContext<ApplicationListRowViewStates>();
-            ListContext.SelectionMode = SelectionMode.None;
-            ListContext.OnItemInvoked += OnRowClicked;
+            this.InitializeHireViewCommandBar();
 
-            InitializeCommandBar();
+            //apply
+            ApplyViewStates = new();
+
+            ApplyViewSearchContext = new();
+            ApplyViewListContainerContext = new();
+            ApplyViewListContext = new()
+            {
+                SelectionMode = SelectionMode.None
+            };
+            ApplyViewListContext.OnItemInvoked += OnRowClicked;
+
+            InitializeApplyViewCommandBar();
             InitializeColumn();
 
             await base.OnInitializedAsync();
@@ -73,13 +91,17 @@ public partial class ApplyListView
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
-        if (firstRender)
+        var currentStudentId = this.StudentId;
+        var parameterStudentId = parameters.GetValueOrDefault<string>(nameof(this.StudentId));
+
+        await base.SetParametersAsync(parameters);
+
+        if (currentStudentId != parameterStudentId)
         {
-            await LoadDataAsync();
+            await this.LoadDataAsync();
         }
-        await base.OnAfterRenderAsync(firstRender);
     }
     #endregion
 
@@ -91,7 +113,7 @@ public partial class ApplyListView
         var value = args?.Value.ToString();
         if (String.IsNullOrWhiteSpace(value))
         {
-            filtered = States.Items;
+            filtered = ApplyViewStates.Items;
         }
         else
         {
@@ -128,74 +150,86 @@ public partial class ApplyListView
             Width = "1fr"
         };
 
-        ListContext.Columns.Definitions.Add(comp);
-        ListContext.Columns.Definitions.Add(job);
-        ListContext.Columns.Definitions.Add(stat);
+        ApplyViewListContext.Columns.Definitions.Add(comp);
+        ApplyViewListContext.Columns.Definitions.Add(job);
+        ApplyViewListContext.Columns.Definitions.Add(stat);
     }
     #endregion
 
     #region [ Private Methods - CommandBars ]
-    private void InitializeCommandBar()
+    private void InitializeApplyViewCommandBar()
     {
         // Search
-        SearchContext.OnDatalistSearch = OnSearchDatalist;
+        ApplyViewSearchContext.OnDatalistSearch = OnSearchDatalist;
 
         // Items
-        CommandBarContext = new CommandBarContext();
-        CommandBarContext.Items.AddRefreshButton(OnRefreshButtonClicked);
+        ApplyViewCommandBarContext = new CommandBarContext();
+        ApplyViewCommandBarContext.Items.AddRefreshButton(OnApplyViewRefreshButtonClicked);
 
         //filter
-        this.CommandBarContext.FarItems.AddFilterButton(new() {
+        this.ApplyViewCommandBarContext.FarItems.AddFilterButton(new() {
             CommandBarFactory.CreateMenuItem("All", "All Applications", "", OnAllFilterButtonClicked),
             CommandBarFactory.CreateMenuItem("Waiting", "Waiting Applications", "", OnWaitingFilterButtonClicked),
             CommandBarFactory.CreateMenuItem("Accepted", "Accepted Applications", "", OnAcceptedFilterButtonClicked),
             CommandBarFactory.CreateMenuItem("Rejected", "Rejected Applications", "", OnRejectedFilterButtonClicked),
         });
     }
+
+    private void InitializeHireViewCommandBar()
+    {
+        // Items
+        HireViewCommandBarContext = new CommandBarContext();
+        HireViewCommandBarContext.Items.AddRefreshButton(OnHireViewRefreshButtonClicked);
+    }
     #endregion
 
     #region [ Event Handlers - CommandBars - Buttons ]
-    private async void OnRefreshButtonClicked(EventArgs e)
+    private async void OnApplyViewRefreshButtonClicked(EventArgs e)
     {
-        SearchContext.SetDefafultSearchValue(string.Empty);
+        ApplyViewSearchContext.SetDefafultSearchValue(string.Empty);
+        await LoadDataAsync();
+    }
+
+    private async void OnHireViewRefreshButtonClicked(EventArgs e)
+    {
         await LoadDataAsync();
     }
 
     private void OnAllFilterButtonClicked(MouseEventArgs obj)
     {
-        this.OnFilterDataList(this.States.Items, "All Applications");
+        this.OnFilterDataList(this.ApplyViewStates.Items, "All Applications");
     }
 
     private void OnWaitingFilterButtonClicked(MouseEventArgs obj)
     {
-        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.WAITING);
+        var filtered = this.ApplyViewStates.Items.Where(x => x.Status == ApplyStatus.WAITING);
         this.OnFilterDataList(filtered, "Waiting Applications");
     }
 
     private void OnAcceptedFilterButtonClicked(MouseEventArgs obj)
     {
-        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.ACCEPTED);
+        var filtered = this.ApplyViewStates.Items.Where(x => x.Status == ApplyStatus.ACCEPTED);
         this.OnFilterDataList(filtered, "Accepted Applications");
     }
 
     private void OnRejectedFilterButtonClicked(MouseEventArgs obj)
     {
-        var filtered = this.States.Items.Where(x => x.Status == ApplyStatus.REJECTED);
+        var filtered = this.ApplyViewStates.Items.Where(x => x.Status == ApplyStatus.REJECTED);
         this.OnFilterDataList(filtered, "Rejected Applications");
     }
 
     private void OnFilterDataList(IEnumerable<ApplicationListRowViewStates> filtered, string filterName = "")
     {
-        this.ListContext.ClearSelectedItems();
+        this.ApplyViewListContext.ClearSelectedItems();
 
-        this.ListContext.ItemsSource.Clear();
-        this.ListContext.ItemsSource.AddRange(filtered);
-        this.ListContext.Columns.Definitions.ForEach(x => x.IsSorted = false);
-        this.ListContainerContext.HasData = this.ListContext.ItemsSource.Any();
+        this.ApplyViewListContext.ItemsSource.Clear();
+        this.ApplyViewListContext.ItemsSource.AddRange(filtered);
+        this.ApplyViewListContext.Columns.Definitions.ForEach(x => x.IsSorted = false);
+        this.ApplyViewListContainerContext.HasData = this.ApplyViewListContext.ItemsSource.Any();
 
         if (!string.IsNullOrEmpty(filterName))
         {
-            this.CommandBarContext.FarItems.SetItemLabel(ButtonNames.FilterButton, filterName);
+            this.ApplyViewCommandBarContext.FarItems.SetItemLabel(ButtonNames.FilterButton, filterName);
         }
         this.StateHasChanged();
     }
@@ -208,11 +242,15 @@ public partial class ApplyListView
         {
             Guard.IsNullOrEmpty(StudentId, nameof(StudentId));
 
-            ListContainerContext.SetProcessingStates(true, false);
-            SearchContext.SetProcessingStates(true);
-            CommandBarContext.SetProcessingStates(true);
-            ListContext.SetProcessingStates(true);
-            States.Items.Clear();
+            HireViewDetailsContainerContext.SetProcessingStates(true, false);
+            HireViewCommandBarContext.SetProcessingStates(true);
+
+            ApplyViewListContainerContext.SetProcessingStates(true, false);
+            ApplyViewSearchContext.SetProcessingStates(true);
+            ApplyViewCommandBarContext.SetProcessingStates(true);
+            ApplyViewListContext.SetProcessingStates(true);
+            ApplyViewListContext.ItemsSource.Clear();
+            ApplyViewStates.Items.Clear();
 
             StateHasChanged();
 
@@ -220,39 +258,70 @@ public partial class ApplyListView
 
             var student = await Students.FindAll(x => x.Id == StudentId)
                 .AsNoTracking()
-                .Include(x => x.StudentJobs.Where(x => x.Status == ApplyStatus.WAITING || 
-                                                    x.Status == ApplyStatus.ACCEPTED || 
-                                                    x.Status == ApplyStatus.REJECTED))
+                .Include(x => x.StudentJobs)
                 .FirstOrDefaultAsync();
 
             if(student == null)
             {
+                HireViewStates = null;
                 return;
             }
 
-            items.AddRange(student.StudentJobs);
+            IsHired = student.StudentJobs?.Where(x => x.Status == ApplyStatus.HIRED).Any() ?? false;
 
-            var jobs = await Jobs.FindAll(x => student.StudentJobs.Select(x => x.JobId).Contains(x.Id))
-                .AsNoTracking()
-                .ToListAsync();
-
-            var companies = await Companies.FindAll(x => jobs.Select(x => x.CompanyId).Contains(x.Id)).AsNoTracking().ToListAsync();
-
-            States.Items = items.ToListRowList();
-
-            States.Items.ForEach(x =>
+            if(IsHired)
             {
-                x.StudentName = student.FullName;
-                var job = jobs.FirstOrDefault(y => y.Id == x.JobId);
-                if(job != null)
+                var studentJob = student.StudentJobs?.Where(x => x.Status == ApplyStatus.HIRED).FirstOrDefault();
+                if(studentJob == null)
                 {
-                    x.JobName = job.Title;
-                    x.CompanyName = companies.FirstOrDefault(y => y.Id == job.CompanyId)?.Title;
+                    HireViewStates = null;
+                    IsHired = false;
+                    return;
                 }
-            });
 
-            ListContext.GetKey = (x => x.Id);
-            OnFilterDataList(States.Items, "All Applications");
+                var job = await Jobs.FindAll(x => x.Id == (studentJob.JobId ?? 0)).Include(x => x.Company).FirstOrDefaultAsync();
+                if (job == null)
+                {
+                    HireViewStates = null;
+                    IsHired = false;
+                    return;
+                }
+
+                HireViewStates = new ApplicationDetailsViewStates()
+                {
+                    StudentId = student.Id,
+                    JobId = job.Id,
+                    StudentName = student.FullName,
+                    JobName = job.Title,
+                    CompanyName = job.Company?.Title
+                };
+            }
+            else
+            {
+                items.AddRange(student.StudentJobs);
+
+                var jobs = await Jobs.FindAll(x => student.StudentJobs.Select(x => x.JobId).Contains(x.Id))
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                var companies = await Companies.FindAll(x => jobs.Select(x => x.CompanyId).Contains(x.Id)).AsNoTracking().ToListAsync();
+
+                ApplyViewStates.Items = items.ToListRowList();
+
+                ApplyViewStates.Items.ForEach(x =>
+                {
+                    x.StudentName = student.FullName;
+                    var job = jobs.FirstOrDefault(y => y.Id == x.JobId);
+                    if (job != null)
+                    {
+                        x.JobName = job.Title;
+                        x.CompanyName = companies.FirstOrDefault(y => y.Id == job.CompanyId)?.Title;
+                    }
+                });
+
+                ApplyViewListContext.GetKey = (x => x.Id);
+                OnFilterDataList(ApplyViewStates.Items, "All Applications");
+            }
         }
         catch (Exception ex)
         {
@@ -260,10 +329,13 @@ public partial class ApplyListView
         }
         finally
         {
-            ListContainerContext.SetProcessingStates(false, ListContext.ItemsSource.Any());
-            ListContext.SetProcessingStates(false);
-            SearchContext.SetProcessingStates(false);
-            CommandBarContext.SetProcessingStates(false);
+            HireViewDetailsContainerContext.SetProcessingStates(false, HireViewStates != null);
+            HireViewCommandBarContext.SetProcessingStates(false);
+
+            ApplyViewListContainerContext.SetProcessingStates(false, ApplyViewListContext.ItemsSource.Any());
+            ApplyViewListContext.SetProcessingStates(false);
+            ApplyViewSearchContext.SetProcessingStates(false);
+            ApplyViewCommandBarContext.SetProcessingStates(false);
             StateHasChanged();
         }
     }

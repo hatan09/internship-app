@@ -53,7 +53,7 @@
         }
         else if (States.InternGroupId < 1)
         {
-            <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" AddGroupCallback="OnAddToGroup"/>
+            <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" AddGroupCallback="OnAddToGroup" RejectCallback="OnReject" />
 
         }
         else if(States.Status == Stat.WAITING.ToString())
@@ -64,9 +64,9 @@
         {
             <CommandBarView ChatCallback="OnChat"/>
         }
-        else
+        else if(States.Status == Stat.FINISHED.ToString())
         {
-            <CommandBarView ChatCallback="OnChat" SendEmailCallback="OnSendEmail" ShowScoreCallback="OnShowScore"/>
+            <CommandBarView ChatCallback="OnChat" ViewFinalFormsCallback="OnOpenFinalForms" />
         }
     }
     else

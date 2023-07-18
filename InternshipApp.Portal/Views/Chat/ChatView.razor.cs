@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InternshipApp.Portal.Views;
 
-public partial class ChatView
+public partial class ChatView : IAsyncDisposable
 {
     #region [ Properties - Inject ]
     [Inject]
@@ -80,7 +80,7 @@ public partial class ChatView
         RecruiterConversations = new();
 
         ConnectionContext = new HubConnectionBuilder()
-                .WithUrl("http://app-internship-app.azurewebsites.net/internship-app-chat")
+                .WithUrl("https://app-signalr-hub.azurewebsites.net/chathub")
                 .WithAutomaticReconnect()
                 .Build();
 
@@ -113,6 +113,18 @@ public partial class ChatView
                 default:
                     break;
             }
+
+            if (ConnectionContext != null)
+            {
+                var connectionId = await GetConnectionIdAsync();
+                //if (!string.IsNullOrEmpty(connectionId))
+                //{
+                //    var user = await LocalStorage.GetItemAsync<User>("login-user-info");
+                //    if (user != null) {
+                //        await ChatHubUserIdentify(connectionId, user.Id);
+                //    }
+                //}
+            }
             await LoadDataAsync();
         }
         await base.OnAfterRenderAsync(firstRender);
@@ -122,8 +134,8 @@ public partial class ChatView
     #region [ Events - ChatHub ]
     private void RegisterHubCallHandlers()
     {
-        ConnectionContext.On<string>("IdentifyUserAsync", this.OnIdentifyUser);
-        ConnectionContext.On<int, string, DateTime, string>("IdentifyUserAsync", this.OnReceiveMessage);
+        ConnectionContext.On<string>("IdentifyUser", this.OnIdentifyUser);
+        ConnectionContext.On<int, string, DateTime, string>("ReceiveMessage", this.OnReceiveMessage);
     }
 
     public void OnIdentifyUser(string id)
@@ -171,6 +183,8 @@ public partial class ChatView
             Conversations.Update(conversation);
             await Conversations.SaveChangesAsync();
 
+            await SendMessageAsync(message);
+
             UpdateConversationLastMessage(CurrentConversation.Id, message.SentTime);
             ProcessConversationContext();
         }
@@ -189,6 +203,31 @@ public partial class ChatView
     public async void OnRefresh()
     {
 
+    }
+    #endregion
+
+    #region [ Methods - Hub ]
+    public async Task<string> GetConnectionIdAsync()
+    {
+        while (ConnectionContext.State != HubConnectionState.Connected)
+        {
+            if(ConnectionContext.State == HubConnectionState.Disconnected)
+            {
+                break;
+            }
+            await Task.Delay(1000);
+        }
+        return ConnectionId;
+    }
+
+    public async Task SendMessageAsync(Message message)
+    {
+        await ConnectionContext?.InvokeAsync("SendMessage", message.Content, message.SentTime, message.ConversationId, Sender.Id, Receiver.Id);
+    }
+
+    public async Task ChatHubUserIdentify(string connectionId, string userId)
+    {
+        await ConnectionContext?.InvokeAsync("ChatHubUserIndentity", connectionId, userId);
     }
     #endregion
 
@@ -351,10 +390,6 @@ public partial class ChatView
             var user = await GetCurrentUserAsync();
             Sender = user;
 
-            await ConnectionContext.InvokeAsync("OnConnectedAsync");
-
-            await ConnectionContext.InvokeAsync("ChatHubUserIndentity", ConnectionId, user.Id);
-
             if (IsAdminViewing)
             {
                 var instructorRole = await Roles.FindByNameAsync("instructor");
@@ -476,6 +511,11 @@ public partial class ChatView
     {
         ProcessConversationContext();
         ChatContext = new();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await ConnectionContext.DisposeAsync();
     }
     #endregion
 }

@@ -67,7 +67,7 @@ public partial class NavMenu : ComponentBase
     #region [ Methods - Logout ]
     public async void OnLogout()
     {
-        await StorageService.RemoveItemsAsync(new List<string>() { "role", "login-user-info" });
+        await StorageService.RemoveItemsAsync(new List<string>() { "role", "login-user-info", "accessToken" });
         NavigationManager.NavigateTo("/", true);
         StateHasChanged();
     }

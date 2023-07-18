@@ -37,6 +37,10 @@ namespace InternshipApp.Api.DataObjects
                 .ForMember(ent => ent.Id, opt => opt.Ignore())
                 .ForMember(ent => ent.Birthdate, o => o.MapFrom(dto => DateTime.Parse(dto.Birthdate, null, DateTimeStyles.AssumeUniversal)));
 
+            CreateMap<Company, CompanyDTO>();
+            CreateMap<CompanyDTO, Company>()
+                .ForMember(ent => ent.Id, opt => opt.Ignore());
+
             CreateMap<Job, JobDTO>()
                 .ForMember(dto => dto.SkillIds, opt => opt.MapFrom(job => job.JobSkills!.Select(js => js.SkillId)));
             CreateMap<JobDTO, Job>()

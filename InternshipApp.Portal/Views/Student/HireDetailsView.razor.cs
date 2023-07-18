@@ -97,7 +97,7 @@ public partial class HireDetailsView
                 return;
             }
 
-            IsHired = student.StudentJobs.Count == 1;
+            IsHired = student.StudentJobs.Any();
             if (IsHired)
             {
                 var job = await Jobs.FindByIdAsync(student.StudentJobs.First().JobId?? 0);

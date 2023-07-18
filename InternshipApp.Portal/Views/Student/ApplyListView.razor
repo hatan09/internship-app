@@ -2,12 +2,46 @@
 @using Wave5.UI.DataGrids
 @using Wave5.UI
 
-<DetailsListContainer ContainerContext=@ListContainerContext
-                      CommandBarContext=@CommandBarContext
-                      SearchContext=@SearchContext
+@if (IsHired)
+{
+    <Stack>
+        <DetailsCardContainer CommandBarContext=@HireViewCommandBarContext
+                          ContainerContext=@HireViewDetailsContainerContext
+                          Title="Job Info">
+
+            @if (HireViewStates == null)
+            {
+                <span><i>Student is not accpeted to take any job yet!</i></span>
+            }
+            else
+            {
+                <Stack Style="font-family: var(--body-font);"
+                        Horizontal
+                        Tokens=@(new StackTokens { Padding="15px 10px" })>
+                    <Stack Style="width:100%" Horizontal=false>
+                        <FormDetailsField Label="Company's Title" Value=@(HireViewStates.CompanyName) />
+                        <FormDetailsField Label="Job's Title" Value=@(HireViewStates.JobName) />
+                        <FormDetailsField Label="Student's Fullname" Value=@(HireViewStates.StudentName) />
+                    </Stack>
+                </Stack>
+            }
+
+        </DetailsCardContainer>
+    </Stack>
+}
+else
+{
+    <DetailsListContainer ContainerContext=@ApplyViewListContainerContext
+                      CommandBarContext=@ApplyViewCommandBarContext
+                      SearchContext=@ApplyViewSearchContext
                       TItem="ApplicationListRowViewStates"
                       Title="Apply History">
 
-    <DetailsList DetailsListContext=@ListContext />
+        <DetailsList DetailsListContext=@ApplyViewListContext />
 
-</DetailsListContainer>
+    </DetailsListContainer>
+}
+
+<Stack Style="width:100%;" HorizontalAlign="Wave5.UI.Alignment.End">
+    <label>@(IsHired?"*You are hired":"*You are not hired")</label>
+</Stack>

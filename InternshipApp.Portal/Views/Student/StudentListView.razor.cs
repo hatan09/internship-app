@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
+using Newtonsoft.Json.Linq;
 using Wave5.UI;
 using Wave5.UI.Blazor;
 using Wave5.UI.DataGrids;
@@ -403,6 +404,11 @@ public partial class StudentListView : ComponentBase
     {
         try
         {
+            if (!IsManagingGroup)
+            {
+                return;
+            }
+
             var selectedItems = this.NoGroupListContext.GetSelectedItems();
             if (selectedItems.Count == 0)
             {
@@ -538,14 +544,9 @@ public partial class StudentListView : ComponentBase
                             x.InternGroupName = group.Title;
                         });
                     }
+                }
 
-                    await LoadNoGroupDataAsync();
-                }
-                else
-                {
-                    this.NoGroupListContext.GetKey = x => x.Id;
-                    this.NoGroupListContext.ItemsSource.Clear();
-                }
+                await LoadNoGroupDataAsync();
             }
             //admin
             else
@@ -611,6 +612,8 @@ public partial class StudentListView : ComponentBase
             this.NoGroupListContext.GetKey = x => x.Id;
             this.NoGroupListContext.ItemsSource.Clear();
             this.NoGroupListContext.ItemsSource.AddRange(NoGroupStates.Items);
+
+            this.NoGroupCommandBarContext.SetItemIsVisible("AddToGroupButton", false);
         }
         catch (Exception ex) 
         {
